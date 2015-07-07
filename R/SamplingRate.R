@@ -1,3 +1,15 @@
+#' @export
+#' @import plyr
+SamplingRate.summary = function(sensorData, breaks = "min"){
+  result = plyr::ddply(sensorData,.(cut(HEADER_TIME_STAMP, breaks= breaks)),nrow)
+  names(result)[1] = "BREAKS"
+  names(result)[2] = "SAMPLING_RATE_PER_MINUTE"
+  result$BREAKS = as.POSIXct(result$BREAKS)
+  return(result)
+}
+
+#' @export
+#' @import lubridate
 SamplingRate.plot = function(sr_dat){
   st = sr_dat$BREAKS[ceiling(nrow(sr_dat)/2)]
   hour(st) = hour(st) - 1

@@ -1,8 +1,3 @@
-require("lubridate")
-source("io/sensorData.R")
-source("postprocess/TimeDomainSummary.R")
-source("visualization/SummaryVisualization.R")
-
 require("rChoiceDialogs")
 filename = rchoose.files(default = getwd(), caption = "Select csv or csv.gz file", multi = FALSE)
 if(length(filename) == 0) stop("No file selected, program terminated")
