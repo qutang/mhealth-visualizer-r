@@ -2,7 +2,9 @@
 
 export(SamplingRate.plot)
 export(SamplingRate.summary)
-export(SensorData.importBin)
+export(SensorData.importBinary)
 export(SensorData.importCsv)
+export(SensorData.importGT3X)
 import(lubridate)
 import(plyr)
+import(rJava)

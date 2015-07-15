@@ -5,12 +5,15 @@ SamplingRate.summary = function(sensorData, breaks = "min"){
   names(result)[1] = "BREAKS"
   names(result)[2] = "SAMPLING_RATE_PER_MINUTE"
   result$BREAKS = as.POSIXct(result$BREAKS)
+  result$INTERVAL = breaks
   return(result)
 }
 
 #' @export
 #' @import lubridate
 SamplingRate.plot = function(sr_dat){
+  breaks = sr_dat$INTERVAL[1]
+  sr_dat = sr_dat[1:2]
   st = sr_dat$BREAKS[ceiling(nrow(sr_dat)/2)]
   hour(st) = hour(st) - 1
   minute(st) = 55

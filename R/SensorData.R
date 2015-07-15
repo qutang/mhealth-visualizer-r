@@ -3,6 +3,8 @@ MHEALTH_CSV_ACCELEROMETER_CALIBRATED_X_HEADER = "X_ACCELATION_METERS_PER_SECOND_
 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Y_HEADER = "Y_ACCELATION_METERS_PER_SECOND_SQUARED"
 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Z_HEADER = "Z_ACCELATION_METERS_PER_SECOND_SQUARED"
 
+#' @name SensorData.importCsv
+#' @title Import mhealth sensor data file and load into memory as data frame in mhealth format
 #' @export
 SensorData.importCsv = function(filename) {
   op <- options(digits.secs = 3)
@@ -22,30 +24,44 @@ SensorData.importCsv = function(filename) {
   return(dat)
 }
 
+#' @name SensorData.importBinary
+#' @title Import and decode binary file from the smart watch and load into dataframe as mhealth format
+#' @description The default destination directory for the decoded file is stored in .fromBinary folder of current working directory
 #' @export
-SensorData.importBin = function(filename) {
-  op <- options(digits.secs = 3)
-  con <- file(filename, "rb")
-  size = file.size(filename)
-  count = 1
-  N = floor(size / 20)
-  rawx = double(N)
-  rawy = double(N)
-  rawz = double(N)
-  timestamp = integer(N)
-  while (count <= N) {
-    rawx[count] = readBin(con = con, "numeric", 4)
-    rawy[count] = readBin(con = con, "numeric", 4)
-    rawz[count] = readBin(con = con, "numeric", 4)
-    timestamp[count] = readBin(con = con, "double", 8)
-    count = count + 1;
+#' @import rJava
+SensorData.importBinary = function(filename, dest = file.path(getwd(), ".fromBinary")) {
+  if(dir.exists(dest)){
+    unlink(dest, recursive = TRUE, force = TRUE)
   }
-  timestamp = as.POSIXct(timestamp / 1000, origin = origin)
-  dat = data.frame(
-    MHEALTH_CSV_TIMESTAMP_HEADER = timestamp,
-    MHEALTH_CSV_ACCELEROMETER_CALIBRATED_X_HEADER = rawx,
-    MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Y_HEADER = rawy,
-    MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Z_HEADER = rawz
-  )
-  return(dat)
+  dir.create(dest, recursive = TRUE)
+  paras = c(filename, dest)
+  J("edu.neu.mhealthformat.utils.converter.WatchBinaryDecoder")$main(.jarray(paras))
+  # load iteratively into dataframe
+}
+
+#' @name SensorData.importGT3X
+#' @title Import and decode GT3X files and load into dataframe as mhealth format
+#' @export
+#' @import rJava
+#' @description The default destination folder will be .fromGT3X in current working directory
+SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"), split = FALSE){
+  dir.create(dest, recursive = TRUE)
+  if(split){
+    para_split = "SPLIT"
+  }else{
+    para_split = "NO_SPLIT"
+  }
+  paras = c(filename, dest, "G_VALUE", "WITH_TIMESTAMP", para_split)
+  J("com.qmedic.data.converter.gt3x.ConverterMain")$main(.jarray(paras))
+
+  # load iteratively into dataframe
+  csvFiles = list.files(dest, pattern = ".csv", full.names = TRUE, recursive = TRUE)
+  datList = lapply(csvFiles, function(file){
+    return(SensorData.importCsv(filename = file))
+  })
+}
+
+SensorData.merge = function(csvList, ...){
+  otherList = list(...)
+
 }
