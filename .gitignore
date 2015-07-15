@@ -16,3 +16,5 @@ vignettes/*.html
 vignettes/*.pdf
 
 **/.DS_STORE
+.fromBinary/
+.fromGT3X/
