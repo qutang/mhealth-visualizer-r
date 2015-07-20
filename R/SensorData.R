@@ -37,6 +37,8 @@ SensorData.importBinary = function(filename, dest = file.path(getwd(), ".fromBin
   paras = c(filename, dest)
   J("edu.neu.mhealthformat.utils.converter.WatchBinaryDecoder")$main(.jarray(paras))
   # load iteratively into dataframe
+  csvFile = list.files(path = dest, full.names = TRUE)[1]
+  return(SensorData.importCsv(csvFile))
 }
 
 #' @name SensorData.importGT3X
