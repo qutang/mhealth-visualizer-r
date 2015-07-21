@@ -86,6 +86,20 @@ SensorData.importActigraphCsv = function(filename){
   return(dat)
 }
 
+#' @name SensorData.merge
+#' @export
+#' @title Merge two or more mhealth data frames and sorted by timestamp
+#' @note Make sure that the data frame is including timestamps
+
+SensorData.merge = function(listOfData, ...){
+  if(!missing(listOfData)){
+    input = c(listOfData, list(...))
+  }
+  dat = Reduce(rbind, input)
+  dat = dat[order(dat$HEADER_TIME_STAMP),]
+  return(dat)
+}
+
 #' @import stringr
 .SensorData.parseActigraphCsvHeader = function(filename){
   headlines = readLines(filename, n = 10, encoding="UTF-8");
@@ -160,4 +174,83 @@ SensorData.importActigraphCsv = function(filename){
   header$imu = imu
 
   return(header)
+}
+
+#' @import stringr
+.SensorData.parseGT3XHeader = function(filename){
+    fromTicksToMs = function(ticks){
+      TICKS_AT_EPOCH = 621355968000000000;
+      TICKS_PER_MILLISECOND = 10000;
+      ms = (ticks - TICKS_AT_EPOCH) / TICKS_PER_MILLISECOND;
+      sec = ms / 1000;
+      return(sec)
+    }
+    # save in a hidden tmp folder
+    tmpFolder = ".fromGT3X"
+    unzip(file, overwrite = TRUE, exdir = tmpFolder)
+    infoFile = file.path(tmpFolder, ACTIGRAPH_GT3X_HEADER_FILENAME)
+    headerStr = paste(readLines(infoFile), collapse=" ")
+
+    # Sampling rate
+    sr_pattern = ACTIGRAPH_GT3X_HEADER_SR_PATTERN
+    sr = headerStr
+    sr = str_match(sr, sr_pattern)
+    sr = as.numeric(sr[2])
+
+    # Firmware code
+    fw_pattern = ACTIGRAPH_GT3X_HEADER_FIRMWARE_PATTERN
+    fw = headerStr
+    fw = str_match(fw, fw_pattern)
+    fw = fw[2]
+
+    # Serial number
+    sn_pattern = ACTIGRAPH_GT3X_HEADER_SERIALNUM_PATTERN
+    sn = headerStr
+    sn = str_match(sn, sn_pattern)
+    sn = sn[2]
+
+    # actigraph type
+    at = substr(sn, 1, 3)
+
+    # device type
+    device_pattern = ACTIGRAPH_GT3X_HEADER_DEVICETYPE_PATTERN
+    deviceType = headerStr
+    deviceType = str_match(deviceType, device_pattern)
+    deviceType = deviceType[2]
+
+    # Session start time
+    st_pattern = ACTIGRAPH_GT3X_HEADER_STARTDATE_PATTERN
+    st = str_match(headerStr, st_pattern)
+    timeFormat = ACTIGRAPH_TIMESTAMP
+    st = fromTicksToMs(as.numeric(st[2]))
+    st = as.POSIXct(st, "GMT", origin = "1970-01-01")
+    options(digits.secs = 3);
+
+    # Session download time
+    dt_pattern = ACTIGRAPH_GT3X_HEADER_DOWNLOADTIME_PATTERN
+    dt = str_match(headerStr, dt_pattern)
+    timeFormat = ACTIGRAPH_TIMESTAMP
+    dt = fromTicksToMs(as.numeric(dt[2]))
+    dt = as.POSIXct(dt, "GMT", origin = "1970-01-01")
+    options(digits.secs = 3);
+
+    # Dynamic range
+    dr_pattern = ACTIGRAPH_GT3X_HEADER_RANGE_PATTERN
+    dr = str_match(headerStr, dr_pattern)
+    dr = as.numeric(dr[2])
+    options(digits.secs = 3);
+
+    # header object as output
+    header = {}
+    header$sr = sr
+    header$fw = fw
+    header$sw = 'ownparser'
+    header$sn = sn
+    header$st = st
+    header$dt = dt
+    header$at = at
+    header$dr = dr
+    header$deviceType = deviceType
+
+    return(header)
 }

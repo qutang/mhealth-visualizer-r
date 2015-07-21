@@ -10,6 +10,6 @@ SensorData.importActigraphCsv(filename)
 Import and convert actigraph raw csv files and load into data frame as in mhealth format
 }
 \note{
-Please make sure the actigraph raw csv file has timestamp included and the input filename has its serial number
+Please make sure the actigraph raw csv file has timestamp included
 }
 

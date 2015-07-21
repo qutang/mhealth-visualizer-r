@@ -11,5 +11,6 @@ LazyData: TRUE
 Requirement: Java ( >= 1.8.45 )
 Imports: plyr,
     lubridate,
-    rJava
+    rJava,
+    stringr
 Suggests: testthat
