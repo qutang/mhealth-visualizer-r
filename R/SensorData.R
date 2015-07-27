@@ -1,4 +1,3 @@
-
 MHEALTH_CSV_TIMESTAMP_HEADER = "HEADER_TIME_STAMP"
 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_X_HEADER = "X_ACCELATION_METERS_PER_SECOND_SQUARED"
 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Y_HEADER = "Y_ACCELATION_METERS_PER_SECOND_SQUARED"
@@ -31,7 +30,7 @@ SensorData.importCsv = function(filename) {
 #' @export
 #' @import rJava
 SensorData.importBinary = function(filename, dest = file.path(getwd(), ".fromBinary")) {
-  if(dir.exists(dest)){
+  if (dir.exists(dest)) {
     unlink(dest, recursive = TRUE, force = TRUE)
   }
   dir.create(dest, recursive = TRUE)
@@ -47,9 +46,9 @@ SensorData.importBinary = function(filename, dest = file.path(getwd(), ".fromBin
 #' @export
 #' @import rJava
 #' @description The default destination folder will be .fromGT3X in current working directory
-SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"), split = FALSE){
+SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"), split = FALSE) {
   dir.create(dest, recursive = TRUE)
-  if(split){
+  if (split) {
     para_split = "SPLIT"
   }else{
     para_split = "NO_SPLIT"
@@ -59,7 +58,7 @@ SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"
 
   # load iteratively into dataframe
   csvFiles = list.files(dest, pattern = ".csv", full.names = TRUE, recursive = TRUE)
-  datList = lapply(csvFiles, function(file){
+  datList = lapply(csvFiles, function(file) {
     return(SensorData.importCsv(filename = file))
   })
 }
@@ -69,14 +68,18 @@ SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"
 #' @title Import and convert actigraph raw csv files and load into data frame as in mhealth format
 #' @export
 #' @note Please make sure the actigraph raw csv file has timestamp included
-SensorData.importActigraphCsv = function(filename){
+SensorData.importActigraphCsv = function(filename) {
   actigraphHeader = .SensorData.parseActigraphCsvHeader(filename)
-  dat = read.table(filename, header = FALSE, sep= ",", strip.white = TRUE, skip = 11, stringsAsFactors = FALSE);
+  dat = read.table(
+    filename, header = FALSE, sep = ",", strip.white = TRUE, skip = 11, stringsAsFactors = FALSE
+  );
   dat = dat[,1:4]
-  names(dat) = c(MHEALTH_CSV_TIMESTAMP_HEADER,
-                 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_X_HEADER,
-                 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Y_HEADER,
-                 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Z_HEADER)
+  names(dat) = c(
+    MHEALTH_CSV_TIMESTAMP_HEADER,
+    MHEALTH_CSV_ACCELEROMETER_CALIBRATED_X_HEADER,
+    MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Y_HEADER,
+    MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Z_HEADER
+  )
   timeFormat = ifelse(test = actigraphHeader$imu,
                       yes = ACTIGRAPH_IMU_TIMESTAMP,
                       no = ACTIGRAPH_TIMESTAMP)
@@ -91,8 +94,8 @@ SensorData.importActigraphCsv = function(filename){
 #' @title Merge two or more mhealth data frames and sorted by timestamp
 #' @note Make sure that the data frame is including timestamps
 
-SensorData.merge = function(listOfData, ...){
-  if(!missing(listOfData)){
+SensorData.merge = function(listOfData, ...) {
+  if (!missing(listOfData)) {
     input = c(listOfData, list(...))
   }
   dat = Reduce(rbind, input)
@@ -100,9 +103,32 @@ SensorData.merge = function(listOfData, ...){
   return(dat)
 }
 
+#' @name SensorData.split
+#' @title Split sensor data into list of smaller data frame with meaningful intervals (e.g. hourly, minutely, secondly or daily)
+#' @import plyr
+#' @export
+SensorData.split = function(sensorData, breaks = "hour"){
+  result = plyr::dlply(sensorData,.(cut(HEADER_TIME_STAMP, breaks= breaks)), function(x)return(x))
+  return(result)
+}
+
+#' @name SensorData.plot
+#' @title Plot nicely the raw sensor data data frame
+#' @export
+SensorData.plot = function(sensorData){
+  par(mfrow=c(3,1), mai=c(0,1,0,1))
+  ts = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]]
+  x = sensorData[[MHEALTH_CSV_ACCELEROMETER_CALIBRATED_X_HEADER]]
+  y = sensorData[[MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Y_HEADER]]
+  z = sensorData[[MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Z_HEADER]]
+  plot(ts, x, type = "l")
+  plot(ts, y, type = "l")
+  plot(ts, z, type = "l")
+}
+
 #' @import stringr
-.SensorData.parseActigraphCsvHeader = function(filename){
-  headlines = readLines(filename, n = 10, encoding="UTF-8");
+.SensorData.parseActigraphCsvHeader = function(filename) {
+  headlines = readLines(filename, n = 10, encoding = "UTF-8");
 
   # Sampling rate
   sr_pattern = ACTIGRAPH_HEADER_SR_PATTERN
@@ -132,7 +158,7 @@ SensorData.merge = function(listOfData, ...){
   at = substr(sn, 1, 3)
 
   # IMU or not
-  if(str_detect(headlines[[1]], "IMU")){
+  if (str_detect(headlines[[1]], "IMU")) {
     imu = TRUE
   }else{
     imu = FALSE
@@ -143,9 +169,9 @@ SensorData.merge = function(listOfData, ...){
   sd = headlines[[4]]
   timeReg = "[0-9]{2}(:[0-9]{2}){1,2}+";
   dateReg = "[0-9]+/[0-9]+/[0-9]{4}";
-  st = regmatches(st, regexpr(timeReg, st, perl=TRUE))
-  sd = regmatches(sd, regexpr(dateReg, sd, perl=TRUE))
-  st = paste(sd, st, sep=' ')
+  st = regmatches(st, regexpr(timeReg, st, perl = TRUE))
+  sd = regmatches(sd, regexpr(dateReg, sd, perl = TRUE))
+  st = paste(sd, st, sep = ' ')
   timeFormat = ACTIGRAPH_TIMESTAMP
   st = strptime(st, timeFormat) + 0.0005
   options(digits.secs = 3);
@@ -155,15 +181,16 @@ SensorData.merge = function(listOfData, ...){
   dd = headlines[[7]]
   timeReg = "[0-9]{2}(:[0-9]{2}){1,2}+";
   dateReg = "[0-9]{2}/[0-9]{2}/[0-9]{4}";
-  dt = regmatches(dt, regexpr(timeReg, dt, perl=TRUE))
-  dd = regmatches(dd, regexpr(dateReg, dd, perl=TRUE))
-  dt = paste(dd, dt, sep=' ')
+  dt = regmatches(dt, regexpr(timeReg, dt, perl = TRUE))
+  dd = regmatches(dd, regexpr(dateReg, dd, perl = TRUE))
+  dt = paste(dd, dt, sep = ' ')
   timeFormat = ACTIGRAPH_TIMESTAMP
   dt = strptime(dt, timeFormat) + 0.0005
   options(digits.secs = 3);
 
   # header object as output
-  header = {}
+  header = {
+  }
   header$sr = sr
   header$fw = fw
   header$sw = sw
@@ -177,80 +204,81 @@ SensorData.merge = function(listOfData, ...){
 }
 
 #' @import stringr
-.SensorData.parseGT3XHeader = function(filename){
-    fromTicksToMs = function(ticks){
-      TICKS_AT_EPOCH = 621355968000000000;
-      TICKS_PER_MILLISECOND = 10000;
-      ms = (ticks - TICKS_AT_EPOCH) / TICKS_PER_MILLISECOND;
-      sec = ms / 1000;
-      return(sec)
-    }
-    # save in a hidden tmp folder
-    tmpFolder = ".fromGT3X"
-    unzip(file, overwrite = TRUE, exdir = tmpFolder)
-    infoFile = file.path(tmpFolder, ACTIGRAPH_GT3X_HEADER_FILENAME)
-    headerStr = paste(readLines(infoFile), collapse=" ")
+.SensorData.parseGT3XHeader = function(filename) {
+  fromTicksToMs = function(ticks) {
+    TICKS_AT_EPOCH = 621355968000000000;
+    TICKS_PER_MILLISECOND = 10000;
+    ms = (ticks - TICKS_AT_EPOCH) / TICKS_PER_MILLISECOND;
+    sec = ms / 1000;
+    return(sec)
+  }
+  # save in a hidden tmp folder
+  tmpFolder = ".fromGT3X"
+  unzip(file, overwrite = TRUE, exdir = tmpFolder)
+  infoFile = file.path(tmpFolder, ACTIGRAPH_GT3X_HEADER_FILENAME)
+  headerStr = paste(readLines(infoFile), collapse = " ")
 
-    # Sampling rate
-    sr_pattern = ACTIGRAPH_GT3X_HEADER_SR_PATTERN
-    sr = headerStr
-    sr = str_match(sr, sr_pattern)
-    sr = as.numeric(sr[2])
+  # Sampling rate
+  sr_pattern = ACTIGRAPH_GT3X_HEADER_SR_PATTERN
+  sr = headerStr
+  sr = str_match(sr, sr_pattern)
+  sr = as.numeric(sr[2])
 
-    # Firmware code
-    fw_pattern = ACTIGRAPH_GT3X_HEADER_FIRMWARE_PATTERN
-    fw = headerStr
-    fw = str_match(fw, fw_pattern)
-    fw = fw[2]
+  # Firmware code
+  fw_pattern = ACTIGRAPH_GT3X_HEADER_FIRMWARE_PATTERN
+  fw = headerStr
+  fw = str_match(fw, fw_pattern)
+  fw = fw[2]
 
-    # Serial number
-    sn_pattern = ACTIGRAPH_GT3X_HEADER_SERIALNUM_PATTERN
-    sn = headerStr
-    sn = str_match(sn, sn_pattern)
-    sn = sn[2]
+  # Serial number
+  sn_pattern = ACTIGRAPH_GT3X_HEADER_SERIALNUM_PATTERN
+  sn = headerStr
+  sn = str_match(sn, sn_pattern)
+  sn = sn[2]
 
-    # actigraph type
-    at = substr(sn, 1, 3)
+  # actigraph type
+  at = substr(sn, 1, 3)
 
-    # device type
-    device_pattern = ACTIGRAPH_GT3X_HEADER_DEVICETYPE_PATTERN
-    deviceType = headerStr
-    deviceType = str_match(deviceType, device_pattern)
-    deviceType = deviceType[2]
+  # device type
+  device_pattern = ACTIGRAPH_GT3X_HEADER_DEVICETYPE_PATTERN
+  deviceType = headerStr
+  deviceType = str_match(deviceType, device_pattern)
+  deviceType = deviceType[2]
 
-    # Session start time
-    st_pattern = ACTIGRAPH_GT3X_HEADER_STARTDATE_PATTERN
-    st = str_match(headerStr, st_pattern)
-    timeFormat = ACTIGRAPH_TIMESTAMP
-    st = fromTicksToMs(as.numeric(st[2]))
-    st = as.POSIXct(st, "GMT", origin = "1970-01-01")
-    options(digits.secs = 3);
+  # Session start time
+  st_pattern = ACTIGRAPH_GT3X_HEADER_STARTDATE_PATTERN
+  st = str_match(headerStr, st_pattern)
+  timeFormat = ACTIGRAPH_TIMESTAMP
+  st = fromTicksToMs(as.numeric(st[2]))
+  st = as.POSIXct(st, "GMT", origin = "1970-01-01")
+  options(digits.secs = 3);
 
-    # Session download time
-    dt_pattern = ACTIGRAPH_GT3X_HEADER_DOWNLOADTIME_PATTERN
-    dt = str_match(headerStr, dt_pattern)
-    timeFormat = ACTIGRAPH_TIMESTAMP
-    dt = fromTicksToMs(as.numeric(dt[2]))
-    dt = as.POSIXct(dt, "GMT", origin = "1970-01-01")
-    options(digits.secs = 3);
+  # Session download time
+  dt_pattern = ACTIGRAPH_GT3X_HEADER_DOWNLOADTIME_PATTERN
+  dt = str_match(headerStr, dt_pattern)
+  timeFormat = ACTIGRAPH_TIMESTAMP
+  dt = fromTicksToMs(as.numeric(dt[2]))
+  dt = as.POSIXct(dt, "GMT", origin = "1970-01-01")
+  options(digits.secs = 3);
 
-    # Dynamic range
-    dr_pattern = ACTIGRAPH_GT3X_HEADER_RANGE_PATTERN
-    dr = str_match(headerStr, dr_pattern)
-    dr = as.numeric(dr[2])
-    options(digits.secs = 3);
+  # Dynamic range
+  dr_pattern = ACTIGRAPH_GT3X_HEADER_RANGE_PATTERN
+  dr = str_match(headerStr, dr_pattern)
+  dr = as.numeric(dr[2])
+  options(digits.secs = 3);
 
-    # header object as output
-    header = {}
-    header$sr = sr
-    header$fw = fw
-    header$sw = 'ownparser'
-    header$sn = sn
-    header$st = st
-    header$dt = dt
-    header$at = at
-    header$dr = dr
-    header$deviceType = deviceType
+  # header object as output
+  header = {
+  }
+  header$sr = sr
+  header$fw = fw
+  header$sw = 'ownparser'
+  header$sn = sn
+  header$st = st
+  header$dt = dt
+  header$at = at
+  header$dr = dr
+  header$deviceType = deviceType
 
-    return(header)
+  return(header)
 }

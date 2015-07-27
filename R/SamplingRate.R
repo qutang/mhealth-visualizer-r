@@ -32,7 +32,7 @@ SamplingRate.plot = function(sr_dat, unit = "Count", ref){
     if(missing(ref)) stop("ref argument in sample count must be provided!")
     sr_dat[2] = (1 - sr_dat[2] / ref) * 100
     ylab = paste("Data loss (%) per", breaks)
-    if(min(sr_dat[2]) < 0) ylim = c(min(sr_dat[2], 100))
+    if(min(sr_dat[2]) < 0) ylim = c(min(sr_dat[2]), 100)
     else ylim = c(0, 100)
     plot(sr_dat, type = "h",
          xaxt = 'n', xlim = c(st, et), xlab = breaks,
