@@ -115,15 +115,20 @@ SensorData.split = function(sensorData, breaks = "hour"){
 #' @name SensorData.plot
 #' @title Plot nicely the raw sensor data data frame
 #' @export
+#' @import ggthemes
 SensorData.plot = function(sensorData){
-  par(mfrow=c(3,1), mai=c(0,1,0,1))
+  par(mfrow=c(3,1), mai=c(0.5,0.5,0.5,0.5))
   ts = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]]
   x = sensorData[[MHEALTH_CSV_ACCELEROMETER_CALIBRATED_X_HEADER]]
   y = sensorData[[MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Y_HEADER]]
   z = sensorData[[MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Z_HEADER]]
-  plot(ts, x, type = "l")
-  plot(ts, y, type = "l")
-  plot(ts, z, type = "l")
+  cols = gdocs_pal()(3)
+  par(mai=c(0,1,1,1))
+  plot(ts, x, type = "o", col = cols[1], xaxt = "n")
+  par(mai=c(0,1,0,1))
+  plot(ts, y, type = "o", col = cols[2], xaxt = "n")
+  par(mai=c(1,1,0,1))
+  plot(ts, z, type = "o", col = cols[3])
 }
 
 #' @import stringr
