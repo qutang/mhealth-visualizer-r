@@ -80,7 +80,7 @@ SummaryData.plot = function(summaryData, range = NULL){
 #' @title Plot summary data using ggplot2
 #' @export
 #' @import lubridate ggplot2 reshape2
-SummaryData.ggplot = function(summaryData, range = NULL){
+SummaryData.ggplot = function(summaryData){
   data = summaryData[,1:4]
   xlab = "time"
   ylab = "value"
@@ -106,7 +106,7 @@ SummaryData.ggplot = function(summaryData, range = NULL){
   p = ggplot(data = data, aes_string(x = MHEALTH_CSV_TIMESTAMP_HEADER, y = "value", colour = "variable"))
 
   p = p + geom_line() +
-    labs(title = titleText, x = xlab, y = ylab, colour = "axes") + xlim(c(st, et)) + ylim(range)
+    labs(title = titleText, x = xlab, y = ylab, colour = "axes") + xlim(c(st, et))
 
   p = p + scale_x_datetime(breaks = breaks)
 

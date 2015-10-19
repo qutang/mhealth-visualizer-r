@@ -4,7 +4,7 @@
 \alias{SummaryData.ggplot}
 \title{Plot summary data using ggplot2}
 \usage{
-SummaryData.ggplot(summaryData, range = NULL)
+SummaryData.ggplot(summaryData)
 }
 \description{
 Plot summary data using ggplot2
