@@ -70,7 +70,7 @@ SamplingRate.plot = function(sr_dat, unit = "Count", ref){
 #' "Dataloss" will display the sampling rate in data loss percentage (count divided by reference)
 SamplingRate.ggplot = function(sr_dat, unit = "Count", ref){
   data = sr_dat
-  breaks = pretty_dates(sr_dat[,1], n = 10)
+  breaks = pretty_dates(sr_dat[,1], n = 6)
   st = breaks[1]
   et = tail(breaks, 1)
   interval = as.period(new_interval(sr_dat[1,1], sr_dat[2,1]))
@@ -104,6 +104,9 @@ SamplingRate.ggplot = function(sr_dat, unit = "Count", ref){
     p = p + geom_hline(yintercept = ref, linetype = "dashed") +
       annotate("text", x = et, y = ref, label = paste(ref, unit), hjust = 1, vjust = 0)
   }
+
+  p = p + scale_x_datetime(breaks = breaks)
+
   p = p + scale_color_gdocs() + theme_bw()
   return(p)
 }

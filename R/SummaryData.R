@@ -2,6 +2,10 @@ MHEALTH_CSV_MEAN_ACCELEROMETER_CALIBRATED_X_HEADER = "MEAN_X_ACCELATION_METERS_P
 MHEALTH_CSV_MEAN_ACCELEROMETER_CALIBRATED_Y_HEADER = "MEAN_Y_ACCELATION_METERS_PER_SECOND_SQUARED"
 MHEALTH_CSV_MEAN_ACCELEROMETER_CALIBRATED_Z_HEADER = "MEAN_Z_ACCELATION_METERS_PER_SECOND_SQUARED"
 
+MHEALTH_CSV_AUC_ACCELEROMETER_CALIBRATED_X_HEADER = "AUC_X_ACCELATION_METERS_PER_SECOND_SQUARED"
+MHEALTH_CSV_AUC_ACCELEROMETER_CALIBRATED_Y_HEADER = "AUC_Y_ACCELATION_METERS_PER_SECOND_SQUARED"
+MHEALTH_CSV_AUC_ACCELEROMETER_CALIBRATED_Z_HEADER = "AUC_Z_ACCELATION_METERS_PER_SECOND_SQUARED"
+
 #' @name SummaryData.simpleMean
 #' @title Calculate summary value (simple mean) over a certain break (e.g. hour, min)
 #' @export
@@ -15,6 +19,25 @@ SummaryData.simpleMean = function(sensorData, breaks = "min"){
   names(result)[2] = MHEALTH_CSV_MEAN_ACCELEROMETER_CALIBRATED_X_HEADER
   names(result)[3] = MHEALTH_CSV_MEAN_ACCELEROMETER_CALIBRATED_Y_HEADER
   names(result)[4] = MHEALTH_CSV_MEAN_ACCELEROMETER_CALIBRATED_Z_HEADER
+  result[MHEALTH_CSV_TIMESTAMP_HEADER] = as.POSIXct(result[[MHEALTH_CSV_TIMESTAMP_HEADER]])
+  return(result)
+}
+
+#' @name SummaryData.auc
+#' @title Calculate summary value (area under curve) over a certain break (e.g. hour, min)
+#' @export
+#' @import plyr flux
+SummaryData.auc = function(sensorData, breaks = "min", method = 1){
+  sensorData[,2:4] = abs(sensorData[,2:4])
+  result = plyr::ddply(sensorData,.(cut(HEADER_TIME_STAMP, breaks=breaks)), function(rows){
+    rows[,1] = as.numeric(rows[,1])
+    aucValues = numcolwise(auc, x = rows[,1])(rows[,2:4])
+    return(aucValues)
+  })
+  names(result)[1] = MHEALTH_CSV_TIMESTAMP_HEADER
+  names(result)[2] = MHEALTH_CSV_AUC_ACCELEROMETER_CALIBRATED_X_HEADER
+  names(result)[3] = MHEALTH_CSV_AUC_ACCELEROMETER_CALIBRATED_Y_HEADER
+  names(result)[4] = MHEALTH_CSV_AUC_ACCELEROMETER_CALIBRATED_Z_HEADER
   result[MHEALTH_CSV_TIMESTAMP_HEADER] = as.POSIXct(result[[MHEALTH_CSV_TIMESTAMP_HEADER]])
   return(result)
 }
@@ -69,7 +92,8 @@ SummaryData.ggplot = function(summaryData, range = NULL){
     range = c(-maxy, maxy)*1.1
   }
 
-  breaks = pretty_dates(data[,1], n = 10)
+  breaks = pretty_dates(data[,1], n = 6)
+  minor_breaks = pretty_dates(data[,1], n = 30)
   st = breaks[1]
   et = tail(breaks, 1)
   titleText = paste("Summary data per", interval,
@@ -83,6 +107,8 @@ SummaryData.ggplot = function(summaryData, range = NULL){
 
   p = p + geom_line() +
     labs(title = titleText, x = xlab, y = ylab, colour = "axes") + xlim(c(st, et)) + ylim(range)
+
+  p = p + scale_x_datetime(breaks = breaks)
 
   p = p + scale_color_few(labels = c("x","y","z")) + theme_bw()
 
