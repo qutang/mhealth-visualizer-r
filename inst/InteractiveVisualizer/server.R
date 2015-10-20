@@ -1,38 +1,75 @@
 library(shiny)
 library(shinyFiles)
 library(ggplot2)
+library(shinyjs)
+
 
 shinyServer(function(input, output, session) {
+  volumes <- c(root = file.path('~','Desktop'))
   shinyDirChoose(
-    input, 'datasetFolder', roots = c(root = '~/Desktop/'), hidden = TRUE, session = session
+    input, 'datasetFolder', roots = volumes, hidden = TRUE, session = session
   )
-  begin_xrange = c(min(auc14sec[,1], ann[,2]), max(auc14sec[,1], ann[,3]))
-  xrange = reactiveValues(xlim = begin_xrange)
+
+  rValues <<- reactiveValues(xlim = NULL,
+                             currentAnnotations = NULL,
+                             masterFolder = NULL,
+                             summaryData = NULL,
+                             summaryPlot = NULL,
+                             annotationData = NULL)
+  source(file.path(getwd(),"serverhandler.R"))
   output$plot1 <- renderPlot({
-    p = SummaryData.ggplot(auc14sec)
-    p = AnnotationData.addToGgplot(p, ann)
-    p = p + coord_cartesian(xlim = xrange$xlim) + scale_x_datetime()
-    p
+    input$refreshPlot
+    withProgress(message = "Generate summary plot", value = 0.1, {
+      Sys.sleep(0.25)
+      if(!is.null(rValues$summaryData)){
+        p = SummaryData.ggplot(rValues$summaryData)
+        if(!is.null(rValues$xlim)){
+          p = p + coord_cartesian(xlim = rValues$xlim)
+        }
+        if(!is.null(rValues$annotationData)){
+          p = AnnotationData.addToGgplot(p, rValues$annotationData)
+        }
+        rValues$summaryPlot = p
+        rValues$summaryPlot
+      }
+    })
   })
 
   output$info <- renderText({
     paste0(
-      "begin=", as.POSIXct(xrange$xlim[1], origin = "1970-01-01"),
-      "\nend=", as.POSIXct(xrange$xlim[2], origin = "1970-01-01")
+      "begin=", as.POSIXct(rValues$xlim[1], origin = "1970-01-01"),
+      "\nend=", as.POSIXct(rValues$xlim[2], origin = "1970-01-01")
+
     )
   })
 
-  observe({
-    brush = input$plot_brush
-    if (!is.null(brush)) {
-      xrange$xlim = c(
-        as.POSIXct(brush$xmin, origin = "1970-01-01"),
-        as.POSIXct(brush$xmax, origin = "1970-01-01")
+  output$annotationBox = renderInfoBox({
+    infoBox(
+      title = "Current Annotations",
+      value = paste(rValues$currentAnnotations, sep = ","),
+      icon = icon("tag")
       )
-    }
   })
 
-  observeEvent(input$plot_dblclick, {
-    xrange$xlim = begin_xrange
-  })
+  observe(x = generalHandler(input))
+
+  handlePlotDoubleClick(input)
+
+  handlePlotHover(input)
+
+  handlePlotBrush(input)
+
+  handleDatasetFolderChosen(input, session, volumes = volumes)
+
+  handleYearSelection(input, session)
+
+  handleMonthSelection(input, session)
+
+  handleDaySelection(input, session)
+
+  handleHourSelection(input, session)
+
+  handleComputeSummaryClicked(input, session)
+
+  handleAnnotationSelect(input, session)
 })

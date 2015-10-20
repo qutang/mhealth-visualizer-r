@@ -25,6 +25,22 @@ AnnotationData.importCsv = function(filename) {
   return(dat)
 }
 
+#' @name AnnotationData.getLabelNames
+#' @title get all matched label names given a timestamp, return NULL if no match
+#' @export
+AnnotationData.getLabelNames = function(annotationData, currentTime) {
+  if(is.null(currentTime)){
+    return(NULL)
+  }
+  if(sum(class(currentTime) == class(annotationData[1, MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER])) == 0){
+    stop("The class type of the timestamp should match the annotation data set")
+  }
+  criteria = annotationData[,MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER] <= currentTime &
+    annotationData[,MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER] >= currentTime
+  labelNames = unique(annotationData[criteria, MHEALTH_CSV_ANNOTATION_LABEL_HEADER])
+  return(labelNames)
+}
+
 #' @name AnnotationData.addToGgplot
 #' @title add annotation bars to an existing ggplot (most likely a sensor data plot)
 #' @import foreach RColorBrewer
@@ -79,6 +95,11 @@ AnnotationData.addToGgplot = function(p, annotationData) {
                      fill = annotationData[, "COLOR"],
                      alpha = 0.6
     )
+
+    p = p + annotate("text", x = annotationData[,MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER],
+                     y = annotationData[, "Y_MAX"],
+                     label = annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER],
+                     hjust = 0, vjust = 1, size = 3)
 
     p
     return(p)

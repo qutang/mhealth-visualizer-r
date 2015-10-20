@@ -30,9 +30,19 @@ SummaryData.simpleMean = function(sensorData, breaks = "min"){
 SummaryData.auc = function(sensorData, breaks = "min", method = 1){
   sensorData[,2:4] = abs(sensorData[,2:4])
   result = plyr::ddply(sensorData,.(cut(HEADER_TIME_STAMP, breaks=breaks)), function(rows){
-    rows[,1] = as.numeric(rows[,1])
-    aucValues = numcolwise(auc, x = rows[,1])(rows[,2:4])
-    return(aucValues)
+    tryCatch({
+      rows[,1] = as.numeric(rows[,1])
+      rows = na.omit(rows)
+      if(nrow(rows) > 1){
+        aucValues = numcolwise(auc, x = rows[,1])(rows[,2:4])
+      }else{
+        aucValues = as.data.frame(lapply(rows, function(x) rep.int(NA, 1)))
+        aucValues = aucValues[,2:4]
+      }
+      return(aucValues)
+    }, error = function(e){
+      print(rows)
+    })
   })
   names(result)[1] = MHEALTH_CSV_TIMESTAMP_HEADER
   names(result)[2] = MHEALTH_CSV_AUC_ACCELEROMETER_CALIBRATED_X_HEADER
