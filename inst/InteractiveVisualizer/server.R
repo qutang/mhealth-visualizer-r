@@ -5,7 +5,11 @@ library(shinyjs)
 
 
 shinyServer(function(input, output, session) {
-  volumes <- c(root = file.path('~','Desktop'))
+  switch(Sys.info()[['sysname']],
+         Windows= {root = "C:\\"},
+         Linux  = {root = "~"},
+         Darwin = {root = file.path("~", "Desktop")})
+  volumes <- c(root = file.path(root))
   shinyDirChoose(
     input, 'datasetFolder', roots = volumes, hidden = TRUE, session = session
   )
