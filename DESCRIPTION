@@ -12,5 +12,16 @@ Requirement: Java ( >= 1.8.45 )
 Imports: plyr,
     lubridate,
     rJava,
-    stringr
+    stringr,
+    shiny,
+    foreach,
+    shinyFiles,
+    shinydashboard,
+    shinyjs,
+    ggplot2,
+    ggthemes,
+    shinyBS,
+    RColorBrewer,
+    flux,
+    reshape2
 Suggests: testthat

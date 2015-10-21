@@ -7,7 +7,7 @@ SummaryData.simpleMean = function(sensorData, breaks = "min"){
   nCols = ncol(sensorData)
   sensorData$breaks = cut(sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks= breaks)
   result = plyr::ddply(sensorData,.(breaks), function(rows){
-      meanValues = colMeans(rows[,2:nCols], na.rm = TRUE)
+      meanValues = colMeans(rows[2:nCols], na.rm = TRUE)
       return(meanValues)
   })
   names(result)[1] = MHEALTH_CSV_TIMESTAMP_HEADER
@@ -30,7 +30,7 @@ SummaryData.auc = function(sensorData, breaks = "min"){
       rows[,1] = as.numeric(rows[,1])
       rows = na.omit(rows)
       if(nrow(rows) > 1){
-        aucValues = numcolwise(auc, x = rows[,1])(rows[,2:nCols])
+        aucValues = numcolwise(auc, x = rows[,1])(rows[2:nCols])
       }else{
         aucValues = as.data.frame(lapply(rows, function(x) rep.int(NA, 1)))
         aucValues = aucValues[,2:nCols]
@@ -54,7 +54,7 @@ SummaryData.ggplot = function(summaryData){
   data = summaryData
 
   nCols = ncol(data)
-  labelNames = names(data[,2:nCols])
+  labelNames = names(data[2:nCols])
   labelNames = c(str_match(labelNames, "[A-Za-z0-9]+_[A-Za-z0-9]+"))
   xlab = "time"
   ylab = "value"
