@@ -32,8 +32,10 @@ require("shinyjs")
                   selected = NULL, multiple = FALSE, width = "100%"),
       selectInput("summaryValue", label = "Choose summary value", choices = list("magnitude", "axis"),
                   selected = NULL, multiple = FALSE, width = "100%"),
+      selectInput("summaryInterval", label = "Choose summary interval", choices = list("sec", "min"),
+                  selected = NULL, multiple = FALSE , width = "100%"),
       bsButton("computeSummary", label = "Compute summary data", style="primary"),
-      width = 4
+      width = 4, collapsible = TRUE, title = "Summary data control"
     )
   )
 }

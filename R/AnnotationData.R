@@ -25,6 +25,19 @@ AnnotationData.importCsv = function(filename) {
   return(dat)
 }
 
+#' @name AnnotationData.merge
+#' @title merge two or more annotation data frames and sort according to start time
+#' @export
+AnnotationData.merge = function(annotationDataList, ...){
+  if (!missing(annotationDataList)) {
+    input = c(annotationDataList, list(...))
+  }else{
+    input = list(...)
+  }
+  dat = Reduce(rbind, input)
+  dat = dat[order(dat[MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER]),]
+}
+
 #' @name AnnotationData.getLabelNames
 #' @title get all matched label names given a timestamp, return NULL if no match
 #' @export

@@ -91,16 +91,43 @@ SensorData.importActigraphCsv = function(filename) {
 
 #' @name SensorData.merge
 #' @export
-#' @title Merge two or more mhealth data frames and sorted by timestamp
+#' @title Merge two or more mhealth data frames and sorted by timestamp, duplicated rows will be removed based on timestamp
 #' @note Make sure that the data frame is including timestamps
 
 SensorData.merge = function(listOfData, ...) {
   if (!missing(listOfData)) {
     input = c(listOfData, list(...))
+  }else{
+    input = list(...)
   }
   dat = Reduce(rbind, input)
-  dat = dat[order(dat$HEADER_TIME_STAMP),]
+  dat = dat[!duplicated(dat[,MHEALTH_CSV_TIMESTAMP_HEADER]),] # remove duplication
+  dat = dat[order(dat[MHEALTH_CSV_TIMESTAMP_HEADER]),]
   return(dat)
+}
+
+#' @name SensorData.cleanup
+#' @export
+#' @title Clean up sensor data by removing invalid timestamps, according to matched level (e.g. year, month, day, hour, min, sec)
+#' @note Make sure that the data frame is including timestamps
+SensorData.cleanup = function(sensorData, level = "year", gt = NULL){
+  # extract a valid date
+  pattern = switch(level,
+         year = "%Y",
+         month = "%Y-%m",
+         day = "%Y-%m-%d",
+         hour = "%Y-%m-%d %H",
+         minute = "%Y-%m-%d %H:%M",
+         second = "%Y-%m-%d %H:%M:%S")
+  validDates = format(sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], pattern)
+  if(is.null(gt)){
+    countDates = as.data.frame(table(validDates))
+    validDate = as.character(countDates$validDates[countDates$Freq == max(countDates$Freq)])
+  }else{
+    validDate = as.character(gt)
+  }
+  sensorData = sensorData[validDates == validDate,]
+  return(sensorData)
 }
 
 #' @name SensorData.split

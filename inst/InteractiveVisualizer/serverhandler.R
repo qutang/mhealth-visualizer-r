@@ -115,10 +115,14 @@ handleHourSelection = function(input, session){
        !is.null(input$hourSelect)){
       if(input$hourSelect != "All"){
         hourFolder = file.path(rValues$masterFolder, input$yearSelect, input$monthSelect, input$daySelect, input$hourSelect)
+        recursive = FALSE
+      }else{
+        hourFolder = file.path(rValues$masterFolder, input$yearSelect, input$monthSelect, input$daySelect)
+        recursive = TRUE
       }
-      sensors = list.files(hourFolder, full.names = FALSE, recursive = FALSE, pattern = "*.sensor.csv*")
-      annotations = list.files(hourFolder, full.names = FALSE, recursive = FALSE, pattern = "*.annotation.csv*")
-      events = list.files(hourFolder, full.names = FALSE, recursive = FALSE, pattern = "*.event.csv*")
+      sensors = list.files(hourFolder, full.names = TRUE, recursive = recursive, pattern = "*.sensor.csv*")
+      annotations = list.files(hourFolder, full.names = TRUE, recursive = recursive, pattern = "*.annotation.csv*")
+      events = list.files(hourFolder, full.names = TRUE, recursive = recursive, pattern = "*.event.csv*")
 
       if(length(sensors) > 0){
         updateSelectInput(session = session, inputId = "sensorSelect", choices = .getDisplayNames(sensors))
@@ -149,26 +153,37 @@ handleComputeSummaryClicked = function(input, session){
                   title = "No sensor data selected",
                   content = "Please select at least one sensor data file", style = "warning")
     }else{
-      inputFolder = file.path(rValues$masterFolder, input$yearSelect, input$monthSelect, input$daySelect, input$hourSelect)
-      sensorFiles = list.files(path = inputFolder, full.names = TRUE, recursive = FALSE)
+      if(input$hourSelect != "All"){
+        hourFolder = file.path(rValues$masterFolder, input$yearSelect, input$monthSelect, input$daySelect, input$hourSelect)
+        recursive = FALSE
+      }else{
+        hourFolder = file.path(rValues$masterFolder, input$yearSelect, input$monthSelect, input$daySelect)
+        recursive = TRUE
+      }
+
+      sensorFiles = list.files(path = hourFolder, full.names = TRUE, recursive = recursive)
 
       selectedFiles = sensorFiles[str_detect(sensorFiles, input$sensorSelect)]
-
-      if(length(selectedFiles) >= 4){
+      if(length(selectedFiles) >= 5){
           #do in parrallel
       }else{
         withProgress(message = "Import sensor data", value = 0.1, {
-          merged <<- foreach(filename = selectedFiles, .combine = "SensorData.merge", .export = "incProgress") %do% {
+          dataList = foreach(filename = selectedFiles, .export = "incProgress") %do% {
+            incProgress(message = paste("Importing", basename(filename)))
             SensorData.importCsv(filename)
           }
+          incProgress(message = "Merge imported data")
+          merged = SensorData.merge(dataList)
+          merged = SensorData.cleanup(merged)
           withProgress(message = "Compute summary data", value = 0.6, {
             method = input$summaryMethod
             valueType = input$summaryValue
+            interval = input$summaryInterval
             switch(valueType,
                    magnitude = {merged = Magnitude.compute(merged)})
             switch(method,
-                   mean = {rValues$summaryData = SummaryData.simpleMean(merged, breaks = "sec")},
-                   AUC ={rValues$summaryData = SummaryData.auc(merged, breaks = "sec")})
+                   mean = {rValues$summaryData = SummaryData.simpleMean(merged, breaks = interval)},
+                   AUC ={rValues$summaryData = SummaryData.auc(merged, breaks = interval)})
             rValues$begin_xrange= c(min(rValues$summaryData[,1], rValues$annotationData[,2]),
                                max(rValues$summaryData[,1], rValues$annotationData[,3]))
             setProgress(value = 1, message = "Summary data is ready")
@@ -182,15 +197,23 @@ handleComputeSummaryClicked = function(input, session){
 
 handleAnnotationSelect = function(input, session){
   observeEvent(input$annotationSelect, {
-    inputFolder = file.path(rValues$masterFolder, input$yearSelect, input$monthSelect, input$daySelect, input$hourSelect)
-    annotationFiles = list.files(path = inputFolder, full.names = TRUE, recursive = FALSE)
+    if(input$hourSelect == "All"){
+      inputFolder = file.path(rValues$masterFolder, input$yearSelect, input$monthSelect, input$daySelect)
+      recursive = TRUE
+    }else{
+      inputFolder = file.path(rValues$masterFolder, input$yearSelect, input$monthSelect, input$daySelect, input$hourSelect)
+      recursive = FALSE
+    }
+
+    annotationFiles = list.files(path = inputFolder, full.names = TRUE, recursive = recursive)
 
     selectedFiles = annotationFiles[str_detect(annotationFiles, input$annotationSelect)]
 
     withProgress(message = "Import annotation data", value = 0.1, {
-      mergedAnnotation = foreach(filename = selectedFiles, .combine = "SensorData.merge", .export = "incProgress") %do% {
+      annotationList = foreach(filename = selectedFiles) %do% {
         AnnotationData.importCsv(filename)
       }
+      mergedAnnotation = AnnotationData.merge(annotationList)
       rValues$annotationData = mergedAnnotation
     })
   })
@@ -200,8 +223,10 @@ library(stringr)
 library(plyr)
 .getDisplayNames = function(listOfFilenames){
   displayableNames= llply(listOfFilenames, function(name){
+    name = basename(name)
     tokens = str_split(name, "\\.")
     return(paste(tokens[[1]][1],str_split(tokens[[1]][2], "-")[[1]][1], sep = "."))
   })
+  displayableNames = unique(displayableNames)
   return(displayableNames)
 }
