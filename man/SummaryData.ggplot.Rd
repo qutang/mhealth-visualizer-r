@@ -6,6 +6,9 @@
 \usage{
 SummaryData.ggplot(summaryData)
 }
+\arguments{
+\item{summaryData:}{should be compatible with the mhealth sensor data format, first column should be HEADER_TIME_STAMP, and the following arbitrary number of columns should be numeric}
+}
 \description{
 Plot summary data using ggplot2
 }

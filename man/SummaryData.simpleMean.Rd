@@ -6,6 +6,9 @@
 \usage{
 SummaryData.simpleMean(sensorData, breaks = "min")
 }
+\arguments{
+\item{sensorData:}{should be compatible with the mhealth sensor data format, first column should be HEADER_TIME_STAMP, and the following arbitrary number of columns should be numeric}
+}
 \description{
 Calculate summary value (simple mean) over a certain break (e.g. hour, min)
 }
