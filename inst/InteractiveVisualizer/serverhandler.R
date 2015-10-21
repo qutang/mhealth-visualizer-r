@@ -127,14 +127,20 @@ handleHourSelection = function(input, session){
       if(length(sensors) > 0){
         updateSelectInput(session = session, inputId = "sensorSelect", choices = .getDisplayNames(sensors))
         shinyjs::enable("sensorSelect")
+      }else{
+        shinyjs::disable("sensorSelect")
       }
       if(length(annotations) > 0){
         updateSelectInput(session, "annotationSelect", choices = .getDisplayNames(annotations))
         shinyjs::enable("annotationSelect")
+      }else{
+        shinyjs::disable("annotationSelect")
       }
       if(length(annotations) > 0){
         updateSelectInput(session, "eventSelect", choices = .getDisplayNames(events))
         shinyjs::enable("eventSelect")
+      }else{
+        shinyjs::disable("eventSelect")
       }
     }else{
       print(rValues$masterFolder)

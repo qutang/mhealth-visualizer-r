@@ -34,6 +34,9 @@ AnnotationData.merge = function(annotationDataList, ...){
   }else{
     input = list(...)
   }
+  if(length(input) == 0){
+    return(NULL)
+  }
   dat = Reduce(rbind, input)
   dat = dat[order(dat[MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER]),]
 }
