@@ -19,6 +19,7 @@ shinyUI(
     body = dashboardBody(fluidRow(
       .dateControlBox(),
       .dataControlBox(),
+      .summaryDataControlBox(),
       .summaryPlotBox(),
       .annotationBox()
     ),

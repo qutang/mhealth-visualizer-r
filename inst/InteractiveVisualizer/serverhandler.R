@@ -162,7 +162,13 @@ handleComputeSummaryClicked = function(input, session){
             SensorData.importCsv(filename)
           }
           withProgress(message = "Compute summary data", value = 0.6, {
-            rValues$summaryData = SummaryData.simpleMean(merged, breaks = "sec")
+            method = input$summaryMethod
+            valueType = input$summaryValue
+            switch(valueType,
+                   magnitude = {merged = Magnitude.compute(merged)})
+            switch(method,
+                   mean = {rValues$summaryData = SummaryData.simpleMean(merged, breaks = "sec")},
+                   AUC ={rValues$summaryData = SummaryData.auc(merged, breaks = "sec")})
             rValues$begin_xrange= c(min(rValues$summaryData[,1], rValues$annotationData[,2]),
                                max(rValues$summaryData[,1], rValues$annotationData[,3]))
             setProgress(value = 1, message = "Summary data is ready")

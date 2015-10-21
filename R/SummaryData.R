@@ -33,7 +33,7 @@ SummaryData.auc = function(sensorData, breaks = "min"){
         aucValues = numcolwise(auc, x = rows[,1])(rows[2:nCols])
       }else{
         aucValues = as.data.frame(lapply(rows, function(x) rep.int(NA, 1)))
-        aucValues = aucValues[,2:nCols]
+        aucValues = aucValues[2:nCols]
       }
       return(aucValues)
   })

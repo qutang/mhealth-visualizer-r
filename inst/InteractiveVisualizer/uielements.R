@@ -25,14 +25,26 @@ require("shinyjs")
   ))
 }
 
+.summaryDataControlBox = function(){
+  return(
+    box(
+      selectInput("summaryMethod", label = "Choose summary method", choices = list("mean", "AUC"),
+                  selected = NULL, multiple = FALSE, width = "100%"),
+      selectInput("summaryValue", label = "Choose summary value", choices = list("magnitude", "axis"),
+                  selected = NULL, multiple = FALSE, width = "100%"),
+      bsButton("computeSummary", label = "Compute summary data", style="primary"),
+      width = 4
+    )
+  )
+}
+
 .summaryPlotBox = function(){
   return(
     box(
     fluidRow(
-      column(width = 3, bsButton("computeSummary", label = "Compute summary data", style="primary")),
       column(width = 3, bsButton("saveSummary", label = "Save summary data", style="primary")),
       column(width = 3, bsButton("saveImage", label = "Save current image as PDF", style="primary")),
-      column(width = 1, offset = 1, bsButton("refreshPlot", label = "", style="primary", icon = icon("refresh")))
+      column(width = 1, offset = 4, bsButton("refreshPlot", label = "", style="primary", icon = icon("refresh")))
     ),
     plotOutput(
       "plot1",
