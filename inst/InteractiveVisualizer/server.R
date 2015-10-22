@@ -50,7 +50,7 @@ shinyServer(function(input, output, session) {
   output$annotationBox = renderInfoBox({
     infoBox(
       title = "Current Annotations",
-      value = paste(rValues$currentAnnotations, sep = ","),
+      value = paste(str_trim(rValues$currentAnnotations), collapse = ","),
       icon = icon("tag")
       )
   })
