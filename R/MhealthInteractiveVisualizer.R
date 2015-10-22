@@ -3,5 +3,5 @@
 #' @import shiny
 #' @export
 MhealthInteractiveVisualizer.run = function() {
-  shiny::runApp(system.file('InteractiveVisualizer', package='mhealthformatsupportr', mustWork=T))
+  shiny::runApp(system.file('InteractiveVisualizer', package='mhealthformatsupportr', mustWork=T), port = "10001")
 }
