@@ -79,7 +79,7 @@ SummaryData.ggplot = function(summaryData){
 
   p = ggplot(data = data, aes_string(x = MHEALTH_CSV_TIMESTAMP_HEADER, y = "value", colour = "variable"))
 
-  p = p + geom_line() +
+  p = p + geom_line() + geom_point() +
     labs(title = titleText, x = xlab, y = ylab, colour = "axes") + xlim(c(st, et))
 
   p = p + scale_x_datetime(breaks = breaks)

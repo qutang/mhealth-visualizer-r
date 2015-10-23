@@ -76,4 +76,8 @@ shinyServer(function(input, output, session) {
   handleComputeSummaryClicked(input, session)
 
   handleAnnotationSelect(input, session)
+
+  handleSaveImageAsPdf(input, output)
+
+  handleSaveSummaryDataAsCsv(input, output)
 })

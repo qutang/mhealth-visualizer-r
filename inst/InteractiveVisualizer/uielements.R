@@ -44,8 +44,8 @@ require("shinyjs")
   return(
     box(
     fluidRow(
-      column(width = 3, bsButton("saveSummary", label = "Save summary data", style="primary")),
-      column(width = 3, bsButton("saveImage", label = "Save current image as PDF", style="primary")),
+      column(width = 3, downloadButton("saveSummary", label = "Save summary data as CSV")),
+      column(width = 3, offset = 1, downloadButton("saveImage", label = "Save current image as PDF")),
       column(width = 1, offset = 4, bsButton("refreshPlot", label = "", style="primary", icon = icon("refresh")))
     ),
     plotOutput(

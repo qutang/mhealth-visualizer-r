@@ -19,7 +19,9 @@ handlePlotHover = function(input) {
     }else{
       labelNames = NULL
     }
-    rValues$currentAnnotations = labelNames
+    if(!is.null(rValues$summaryData) || !is.null(rValues$annotationData)){
+      rValues$currentAnnotations = paste(currentTime, paste(str_trim(labelNames), collapse = ","), sep = ":")
+    }
   })
 }
 
@@ -287,6 +289,26 @@ handleAnnotationSelect = function(input, session) {
       )
     })
   })
+}
+
+handleSaveImageAsPdf = function(input, output){
+    output$saveImage = downloadHandler(.getPdfFilename(), content = function(filename){
+        ggsave(filename = filename, plot = rValues$summaryPlot, scale = 2, units = "in", width = 7, height = 3)
+    })
+}
+
+handleSaveSummaryDataAsCsv = function(input, output){
+    output$saveSummary = downloadHandler(.getCsvFilename(), content = function(filename){
+      write.csv(rValues$summaryData, filename, sep = ",", quote = FALSE, row.names = FALSE)
+    })
+}
+
+.getPdfFilename = function(){
+  paste("summary_plot",Sys.Date(),"pdf", sep = ".")
+}
+
+.getCsvFilename = function(){
+  paste("summary_data",Sys.Date(),"csv", sep = ".")
 }
 
 library(stringr)
