@@ -1,11 +1,11 @@
 #' @name SummaryData.simpleMean
 #' @title Calculate summary value (simple mean) over a certain break (e.g. hour, min)
 #' @export
-#' @import plyr
+#' @import plyr lubridate
 #' @param sensorData: should be compatible with the mhealth sensor data format, first column should be HEADER_TIME_STAMP, and the following arbitrary number of columns should be numeric
 SummaryData.simpleMean = function(sensorData, breaks = "min"){
   nCols = ncol(sensorData)
-  sensorData$breaks = cut(sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks= breaks)
+  sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
   result = plyr::ddply(sensorData,.(breaks), function(rows){
       meanValues = colMeans(rows[2:nCols], na.rm = TRUE)
       return(meanValues)
@@ -25,7 +25,7 @@ SummaryData.simpleMean = function(sensorData, breaks = "min"){
 SummaryData.auc = function(sensorData, breaks = "min"){
   nCols = ncol(sensorData)
   sensorData[,2:nCols] = abs(sensorData[,2:nCols])
-  sensorData$breaks = cut(sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
+  sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
   result = plyr::ddply(sensorData,.(breaks), function(rows){
       rows[,1] = as.numeric(rows[,1])
       rows = na.omit(rows)
@@ -91,5 +91,17 @@ SummaryData.ggplot = function(summaryData){
   return(p)
 }
 
-
+.SummaryData.getBreaks = function(ts, breaks){
+  if(str_detect(breaks, "sec")){
+    ts[1] = floor_date(ts[1], unit = c("second"))
+  }else if(str_detect(breaks, "min")){
+    ts[1] = floor_date(ts[1], unit = c("minute"))
+  }else if(str_detect(breaks, "hour")){
+    ts[1] = floor_date(ts[1], unit = c("hour"))
+  }else if(str_detect(breaks, "day")){
+    ts[1] = floor_date(ts[1], unit = c("day"))
+  }
+  br = cut(ts, breaks= breaks)
+  return(br)
+}
 
