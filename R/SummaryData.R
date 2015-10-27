@@ -84,7 +84,7 @@ SummaryData.ggplot = function(summaryData){
 
   p = p + scale_x_datetime(breaks = breaks)
 
-  p = p + scale_color_few(labels = labelNames) + theme_bw()
+  p = p + scale_color_few(labels = labelNames) + theme_bw() + theme(legend.position="bottom")
 
   p
 

@@ -10,6 +10,7 @@ require("shinyjs")
       tags$li("Hover: show annotation name"),
       tags$li("Click \" Refresh\" button to redraw summary plot")
     ),
+    tags$b(tags$a(href="https://github.com/qutang/mhealthformat-support-r/issues", "Click to give feedback")),
     width = 12, background = "black", title = "Help"
   ))
 }
@@ -44,9 +45,10 @@ require("shinyjs")
   return(
     box(
     fluidRow(
+      column(width = 1, bsButton("refreshPlot", label = "", style="primary", icon = icon("refresh"))),
       column(width = 3, downloadButton("saveSummary", label = "Save summary data as CSV")),
       column(width = 3, offset = 1, downloadButton("saveImage", label = "Save current image as PDF")),
-      column(width = 1, offset = 4, bsButton("refreshPlot", label = "", style="primary", icon = icon("refresh")))
+      column(width = 3, offset = 1, bsButton("showRawPlot", label = "Show raw plot", style = "primary"))
     ),
     plotOutput(
       "plot1",
@@ -62,8 +64,30 @@ require("shinyjs")
         clip = FALSE
       )
     ),
+    .annotationBox(),
     width = 12, collapsible = TRUE, title = "Summary data view"
   ))
+}
+
+.rawPlotBox = function(){
+
+  return(
+    tags$div(
+    box(
+      fluidRow(
+        column(width = 1, bsButton("refreshRawPlot", label = "", style="primary", icon = icon("refresh"))),
+        column(width = 3, downloadButton("saveClippedRawData", label = "Save raw data as CSV")),
+        column(width = 3, offset = 1, downloadButton("saveRawImage", label = "Save current image as PDF"))
+      ),
+      plotOutput(
+        "plot2",
+        brush = brushOpts(
+          id = "plot_brush2", direction = "x", resetOnNew = TRUE
+        ),
+        dblclick = "plot_dblclick2"
+      ),
+      width = 12, collapsible = TRUE, title = "Raw data view"
+    ), id = "raw_plot_box"))
 }
 
 .annotationBox = function(){

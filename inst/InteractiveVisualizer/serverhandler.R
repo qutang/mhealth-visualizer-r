@@ -5,6 +5,7 @@ generalHandler = function(input) {
   shinyjs::disable("sensorSelect")
   shinyjs::disable("annotationSelect")
   shinyjs::disable("eventSelect")
+  shinyjs::hide("raw_plot_box")
   if (is.null(input$datasetFolder)) {
     shinyjs::hide("subjectId")
     shinyjs::disable("yearSelect")
@@ -29,6 +30,10 @@ handlePlotDoubleClick = function(input) {
   observeEvent(input$plot_dblclick, {
     rValues$xlim = rValues$begin_xrange
   })
+
+  observeEvent(input$plot_dblclick2, {
+    rValues$raw_xlim = rValues$begin_xrange_raw
+  })
 }
 
 handlePlotBrush = function(input) {
@@ -36,6 +41,18 @@ handlePlotBrush = function(input) {
     brush = input$plot_brush
     if (!is.null(brush)) {
       rValues$xlim = c(
+        as.POSIXct(brush$xmin, origin = "1970-01-01"),
+        as.POSIXct(brush$xmax, origin = "1970-01-01")
+      )
+      rValues$rawData = NULL
+      shinyjs::hide("raw_plot_box")
+    }
+  })
+
+  observeEvent(input$plot_brush2, {
+    brush = input$plot_brush2
+    if (!is.null(brush)) {
+      rValues$raw_xlim = c(
         as.POSIXct(brush$xmin, origin = "1970-01-01"),
         as.POSIXct(brush$xmax, origin = "1970-01-01")
       )
@@ -49,6 +66,8 @@ handleDatasetFolderChosen = function(input, session, volumes) {
     rValues$summaryData = NULL
     rValues$xlim = NULL
     rValues$begin_xrange = NULL
+    rValues$rawData = NULL
+    shinyjs::hide("raw_plot_box")
     folder = parseDirPath(volumes, input$datasetFolder)
     rValues$masterFolder = file.path(folder, "MasterSynced")
     if (is.null(folder)) {
@@ -72,6 +91,8 @@ handleYearSelection = function(input, session) {
     rValues$summaryData = NULL
     rValues$xlim = NULL
     rValues$begin_xrange = NULL
+    rValues$rawData = NULL
+    shinyjs::hide("raw_plot_box")
     if (!is.null(input$yearSelect) &&
         !is.null(rValues$masterFolder)) {
       yearFolder = file.path(rValues$masterFolder, input$yearSelect)
@@ -91,6 +112,8 @@ handleMonthSelection = function(input, session) {
     rValues$summaryData = NULL
     rValues$xlim = NULL
     rValues$begin_xrange = NULL
+    rValues$rawData = NULL
+    shinyjs::hide("raw_plot_box")
     if (!is.null(input$monthSelect) &&
         !is.null(rValues$masterFolder) && !is.null(input$yearSelect)) {
       monthFolder = file.path(rValues$masterFolder, input$yearSelect, input$monthSelect)
@@ -110,6 +133,8 @@ handleDaySelection = function(input, session) {
     rValues$summaryData = NULL
     rValues$xlim = NULL
     rValues$begin_xrange = NULL
+    rValues$rawData = NULL
+    shinyjs::hide("raw_plot_box")
     if (!is.null(input$monthSelect) &&
         !is.null(rValues$masterFolder)
         && !is.null(input$yearSelect) && !is.null(input$daySelect)) {
@@ -134,6 +159,8 @@ handleHourSelection = function(input, session) {
     rValues$summaryData = NULL
     rValues$xlim = NULL
     rValues$begin_xrange = NULL
+    rValues$rawData = NULL
+    shinyjs::hide("raw_plot_box")
     if (!is.null(input$monthSelect) &&
         !is.null(rValues$masterFolder)
         && !is.null(input$yearSelect) && !is.null(input$daySelect) &&
@@ -287,28 +314,78 @@ handleAnnotationSelect = function(input, session) {
         min(rValues$summaryData[,1], rValues$annotationData[,2], na.rm = TRUE),
         max(rValues$summaryData[,1], rValues$annotationData[,3], na.rm = TRUE)
       )
+      rValues$xlim = rValues$begin_xrange
     })
   })
 }
 
 handleSaveImageAsPdf = function(input, output){
-    output$saveImage = downloadHandler(.getPdfFilename(), content = function(filename){
+    output$saveImage = downloadHandler(.getPdfFilename("summary_data"), content = function(filename){
         ggsave(filename = filename, plot = rValues$summaryPlot, scale = 2, units = "in", width = 7, height = 3)
+    })
+    output$saveRawImage = downloadHandler(.getPdfFilename("raw_data"), content = function(filename){
+        ggsave(filename = filename, plot = rValues$rawPlot, scale = 2, units = "in", width = 7, height = 3)
     })
 }
 
 handleSaveSummaryDataAsCsv = function(input, output){
-    output$saveSummary = downloadHandler(.getCsvFilename(), content = function(filename){
-      write.csv(rValues$summaryData, filename, sep = ",", quote = FALSE, row.names = FALSE)
+
+    output$saveSummary = downloadHandler(.getCsvFilename("summary_data"), content = function(filename){
+      clipped = SensorData.clip(rValues$summaryData, rValues$xlim[1], rValues$xlim[2])
+      write.csv(clipped, filename, sep = ",", quote = FALSE, row.names = FALSE)
+    })
+
+    output$saveClippedRawData = downloadHandler(.getCsvFilename("raw_data"), content = function(filename){
+      clipped = SensorData.clip(rValues$rawData, rValues$raw_xlim[1], rValues$raw_xlim[2])
+      write.csv(clipped, filename, sep = ",", quote = FALSE, row.names = FALSE)
     })
 }
 
-.getPdfFilename = function(){
-  paste("summary_plot",Sys.Date(),"pdf", sep = ".")
+handleShowRawPlot = function(input, session){
+  observeEvent(input$showRawPlot, {
+    tdiff = as.numeric(rValues$xlim[2]) - as.numeric(rValues$xlim[1])
+    if(tdiff > 5 * 60){#greater than five minutes
+      createAlert(
+        session, "alert", alertId = "too long for raw plot",
+        title = "Raw plot is not available",
+        content = "Raw plot will only be available for period within 5 minutes", style = "warning"
+      )
+    }else{
+      # extract the hourly folder
+      startHour = format(rValues$xlim[1], "%H")
+      endHour = format(rValues$xlim[2], "%H")
+      inputFolder = file.path(
+        rValues$masterFolder, input$yearSelect, input$monthSelect, input$daySelect, unique(c(startHour, endHour)))
+      sensorFiles = list.files(path = inputFolder, full.names = TRUE, recursive = TRUE)
+      selectedFiles = sensorFiles[str_detect(sensorFiles, input$sensorSelect)]
+      withProgress(message = "Import selected sensor data", value = 0.1, {
+        dataList = foreach(filename = selectedFiles, .export = "incProgress") %do% {
+          incProgress(message = paste("Importing", basename(filename)))
+          SensorData.importCsv(filename)
+        }
+        incProgress(message = "Merge imported data")
+        merged = SensorData.merge(dataList)
+        merged = SensorData.cleanup(merged)
+        incProgress(message = "Clip merged data")
+        cliped = SensorData.clip(merged, rValues$xlim[1], rValues$xlim[2])
+        rValues$rawData = cliped
+        rValues$begin_xrange_raw = c(
+          min(rValues$rawData[,1], na.rm = TRUE),
+          max(rValues$rawData[,1], na.rm = TRUE)
+        )
+        rValues$raw_xlim = rValues$begin_xrange_raw
+        shinyjs::show("raw_plot_box")
+      })
+    }
+  })
 }
 
-.getCsvFilename = function(){
-  paste("summary_data",Sys.Date(),"csv", sep = ".")
+.getPdfFilename = function(filename){
+  paste(filename,Sys.Date(),"pdf", sep = ".")
+}
+
+.getCsvFilename = function(filename){
+  paste(filename,Sys.Date(),"csv", sep = ".")
 }
 
 library(stringr)

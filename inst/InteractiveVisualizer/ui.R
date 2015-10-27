@@ -21,7 +21,7 @@ shinyUI(
       .dataControlBox(),
       .summaryDataControlBox(),
       .summaryPlotBox(),
-      .annotationBox()
+      .rawPlotBox()
     ),
     verbatimTextOutput("info"))
   )

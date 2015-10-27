@@ -41,6 +41,18 @@ AnnotationData.merge = function(annotationDataList, ...){
   dat = dat[order(dat[MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER]),]
 }
 
+#' @name AnnotationData.clip
+#' @export
+#' @title Clip annotation data according to the start and end time
+#' @note Make sure that the data frame is compatible with mhealth annotation data file format
+AnnotationData.clip = function(annotationData, startTime, endTime){
+  clippedTs = annotationData[[MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER]] >= startTime & annotationData[[MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER]] <= endTime
+  result = annotationData[clippedTs,]
+  result[1,MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER] = as.POSIXct(startTime)
+  result[nrow(result), MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER] = as.POSIXct(endTime)
+  return(result)
+}
+
 #' @name AnnotationData.getLabelNames
 #' @title get all matched label names given a timestamp, return NULL if no match
 #' @export

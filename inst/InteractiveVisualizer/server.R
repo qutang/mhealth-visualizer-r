@@ -19,7 +19,12 @@ shinyServer(function(input, output, session) {
                              masterFolder = NULL,
                              summaryData = NULL,
                              summaryPlot = NULL,
-                             annotationData = NULL)
+                             annotationData = NULL,
+                             rawData = NULL,
+                             rawPlot = NULL,
+                             begin_xrange = NULL,
+                             begin_xrange_raw = NULL,
+                             raw_xlim = NULL)
   source(file.path(getwd(),"serverhandler.R"))
   output$plot1 <- renderPlot({
     input$refreshPlot
@@ -35,6 +40,27 @@ shinyServer(function(input, output, session) {
         }
         rValues$summaryPlot = p
         rValues$summaryPlot
+      }
+    })
+  })
+
+  output$plot2 <- renderPlot({
+    input$refreshRawPlot
+    withProgress(message = "Generate raw plot", value = 0.1, {
+      Sys.sleep(0.25)
+      if(!is.null(rValues$rawData)){
+        shinyjs::show("raw_plot_box")
+        p = SensorData.ggplot(rValues$rawData)
+        if(!is.null(rValues$raw_xlim)){
+          p = p + coord_cartesian(xlim = rValues$raw_xlim)
+        }
+        if(!is.null(rValues$annotationData)){
+          p = AnnotationData.addToGgplot(p, AnnotationData.clip(rValues$annotationData,
+                                                                rValues$raw_xlim[1],
+                                                                rValues$raw_xlim[2]))
+        }
+        rValues$rawPlot = p
+        rValues$rawPlot
       }
     })
   })
@@ -80,4 +106,6 @@ shinyServer(function(input, output, session) {
   handleSaveImageAsPdf(input, output)
 
   handleSaveSummaryDataAsCsv(input, output)
+
+  handleShowRawPlot(input, session)
 })

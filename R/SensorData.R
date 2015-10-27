@@ -130,6 +130,15 @@ SensorData.cleanup = function(sensorData, level = "year", gt = NULL){
   return(sensorData)
 }
 
+#' @name SensorData.clip
+#' @export
+#' @title Clip sensor data according to the start and end time
+#' @note Make sure that the data frame is including timestamps
+SensorData.clip = function(sensorData, startTime, endTime){
+  clippedTs = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]] >= startTime & sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]] <= endTime
+  return(sensorData[clippedTs,])
+}
+
 #' @name SensorData.split
 #' @title Split sensor data into list of smaller data frame with meaningful intervals (e.g. hourly, minutely, secondly or daily)
 #' @import plyr
@@ -156,6 +165,49 @@ SensorData.plot = function(sensorData){
   plot(ts, y, type = "o", col = cols[2], xaxt = "n")
   par(mai=c(1,1,0,1))
   plot(ts, z, type = "o", col = cols[3])
+}
+
+#' @name SensorData.ggplot
+#' @title Plot sensor raw data using ggplot2
+#' @export
+#' @import lubridate ggplot2 reshape2
+#' @param sensorData: should be compatible with the mhealth sensor data format, first column should be HEADER_TIME_STAMP, and the following arbitrary number of columns should be numeric
+SensorData.ggplot = function(sensorData){
+  data = sensorData
+  nCols = ncol(data)
+  labelNames = names(data[2:nCols])
+  labelNames = c(str_match(labelNames, "[A-Za-z0-9]+_[A-Za-z0-9]+"))
+  xlab = "time"
+  ylab = "value"
+
+  if(is.null(range)){
+    maxy = max(abs(data[,2:nCols]))
+    range = c(-maxy, maxy)*1.1
+  }
+
+  breaks = pretty_dates(data[,MHEALTH_CSV_TIMESTAMP_HEADER], n = 6)
+  minor_breaks = pretty_dates(data[,MHEALTH_CSV_TIMESTAMP_HEADER], n = 30)
+  st = breaks[1]
+  et = tail(breaks, 1)
+  titleText = paste("Raw data plot",
+                    paste("\n", st,
+                          "\n", et,
+                          sep=""))
+
+  data = melt(data, id = c(MHEALTH_CSV_TIMESTAMP_HEADER))
+
+  p = ggplot(data = data, aes_string(x = MHEALTH_CSV_TIMESTAMP_HEADER, y = "value", colour = "variable"))
+
+  p = p + geom_line(lwd = 1.2) +
+    labs(title = titleText, x = xlab, y = ylab, colour = "axes") + xlim(c(st, et))
+
+  p = p + scale_x_datetime(breaks = breaks)
+
+  p = p + scale_color_few(labels = labelNames) + theme_bw() + theme(legend.position="bottom")
+
+  p
+
+  return(p)
 }
 
 #' @import stringr
