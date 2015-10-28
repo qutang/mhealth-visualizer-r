@@ -2,6 +2,7 @@ library(shiny)
 library(shinyFiles)
 library(ggplot2)
 library(shinyjs)
+library(lubridate)
 
 
 shinyServer(function(input, output, session) {
@@ -35,6 +36,7 @@ shinyServer(function(input, output, session) {
         p = SummaryData.ggplot(rValues$summaryData)
         if(!is.null(rValues$xlim)){
           p = p + coord_cartesian(xlim = rValues$xlim)
+          p = p + scale_x_datetime()
         }
         if(!is.null(rValues$annotationData)){
           p = AnnotationData.addToGgplot(p, rValues$annotationData)
@@ -54,6 +56,7 @@ shinyServer(function(input, output, session) {
         p = SensorData.ggplot(rValues$rawData)
         if(!is.null(rValues$raw_xlim)){
           p = p + coord_cartesian(xlim = rValues$raw_xlim)
+          p = p + scale_x_datetime()
         }
         if(!is.null(rValues$annotationData)){
           p = AnnotationData.addToGgplot(p, AnnotationData.clip(rValues$annotationData,
