@@ -16,6 +16,7 @@ shinyServer(function(input, output, session) {
 
   rValues <<- reactiveValues(xlim = NULL,
                              currentAnnotations = NULL,
+                             currentAnnotations2 = NULL,
                              masterFolder = NULL,
                              summaryData = NULL,
                              summaryPlot = NULL,
@@ -79,6 +80,14 @@ shinyServer(function(input, output, session) {
       value = paste(str_trim(rValues$currentAnnotations), collapse = ","),
       icon = icon("tag")
       )
+  })
+
+  output$annotationBox2 = renderInfoBox({
+    infoBox(
+      title = "Current Annotations",
+      value = paste(str_trim(rValues$currentAnnotations2), collapse = ","),
+      icon = icon("tag")
+    )
   })
 
   observe(x = generalHandler(input))

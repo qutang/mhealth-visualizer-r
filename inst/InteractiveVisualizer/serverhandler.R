@@ -24,6 +24,18 @@ handlePlotHover = function(input) {
       rValues$currentAnnotations = paste(currentTime, paste(str_trim(labelNames), collapse = ","), sep = ":")
     }
   })
+
+  observeEvent(input$plot_hover2,{
+    currentTime = as.POSIXct(input$plot_hover2$x, origin = "1970-01-01")
+    if (!is.null(rValues$annotationData)) {
+      labelNames = AnnotationData.getLabelNames(rValues$annotationData, currentTime)
+    }else{
+      labelNames = NULL
+    }
+    if(!is.null(rValues$rawData) || !is.null(rValues$annotationData)){
+      rValues$currentAnnotations2 = paste(currentTime, paste(str_trim(labelNames), collapse = ","), sep = ":")
+    }
+  })
 }
 
 handlePlotDoubleClick = function(input) {
@@ -314,7 +326,7 @@ handleAnnotationSelect = function(input, session) {
         min(rValues$summaryData[,1], rValues$annotationData[,2], na.rm = TRUE),
         max(rValues$summaryData[,1], rValues$annotationData[,3], na.rm = TRUE)
       )
-      rValues$xlim = rValues$begin_xrange
+      rValues$xlim = as.POSIXct(rValues$begin_xrange, origin = "1970-01-01")
     })
   })
 }
@@ -373,7 +385,7 @@ handleShowRawPlot = function(input, session){
           min(rValues$rawData[,1], na.rm = TRUE),
           max(rValues$rawData[,1], na.rm = TRUE)
         )
-        rValues$raw_xlim = rValues$begin_xrange_raw
+        rValues$raw_xlim = as.POSIXct(rValues$begin_xrange_raw, origin = "1970-01-01")
         shinyjs::show("raw_plot_box")
       })
     }

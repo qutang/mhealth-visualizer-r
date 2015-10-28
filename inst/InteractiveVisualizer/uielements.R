@@ -84,14 +84,26 @@ require("shinyjs")
         brush = brushOpts(
           id = "plot_brush2", direction = "x", resetOnNew = TRUE
         ),
-        dblclick = "plot_dblclick2"
+        dblclick = "plot_dblclick2",
+        hover = hoverOpts(
+          id = "plot_hover2",
+          delay = 150,
+          delayType = "throttle",
+          nullOutside = TRUE,
+          clip = FALSE
+        )
       ),
+      .annotationBox2(),
       width = 12, collapsible = TRUE, title = "Raw data view"
     ), id = "raw_plot_box"))
 }
 
 .annotationBox = function(){
   infoBoxOutput(outputId = "annotationBox", width = 12)
+}
+
+.annotationBox2 = function(){
+  infoBoxOutput(outputId = "annotationBox2", width = 12)
 }
 
 .dateControlBox = function(){
