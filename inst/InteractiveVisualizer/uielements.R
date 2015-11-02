@@ -29,7 +29,7 @@ require("shinyjs")
 .summaryDataControlBox = function(){
   return(
     box(
-      selectInput("summaryMethod", label = "Choose summary method", choices = list("mean", "AUC"),
+      selectInput("summaryMethod", label = "Choose summary method", choices = list("mean", "AUC", "SamplingRate"),
                   selected = NULL, multiple = FALSE, width = "100%"),
       selectInput("summaryValue", label = "Choose summary value", choices = list("magnitude", "axis"),
                   selected = NULL, multiple = FALSE, width = "100%"),

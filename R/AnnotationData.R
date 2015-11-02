@@ -101,8 +101,14 @@ AnnotationData.addToGgplot = function(p, annotationData) {
     p = p + theme_bw() + scale_color_few()
     return(p)
   }else{
-    ylimits = max(p$data$value, na.rm = TRUE)
-    ylimitsl = min(p$data$value, na.rm = TRUE)
+    if(is.null(p$coordinates$limits$y)){
+      pureNumbers = p$data[,-grep ("Date|factor|character|POSIXct|POSIXlt", sapply (p$data, class))]
+      ylimits = max(pureNumbers, na.rm = TRUE)
+      ylimitsl = min(pureNumbers, na.rm = TRUE)
+    }else{
+      ylimits = p$coordinates$limits$y[2]
+      ylimitsl = p$coordinates$limits$y[1]
+    }
     newYLimit = ylimits*1.3
     # p = p + coord_cartesian(ylim = c(ylimitsl * 1.1, newYLimit))
     locations = seq(ylimits, newYLimit, by = (newYLimit - ylimits)/length(categories))

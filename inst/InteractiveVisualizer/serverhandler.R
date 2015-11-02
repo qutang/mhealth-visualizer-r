@@ -283,6 +283,9 @@ handleComputeSummaryClicked = function(input, session) {
                  },
                  AUC = {
                    rValues$summaryData = SummaryData.auc(merged, breaks = interval)
+                 },
+                 SamplingRate = {
+                   rValues$summaryData = SamplingRate.summary(merged, breaks = interval)
                  })
           rValues$begin_xrange = c(
             min(

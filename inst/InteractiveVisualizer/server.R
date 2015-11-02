@@ -33,7 +33,11 @@ shinyServer(function(input, output, session) {
     withProgress(message = "Generate summary plot", value = 0.1, {
       Sys.sleep(0.25)
       if(!is.null(rValues$summaryData)){
-        p = SummaryData.ggplot(rValues$summaryData)
+        if(input$summaryMethod != "SamplingRate"){
+          p = SummaryData.ggplot(rValues$summaryData)
+        }else{
+          p = SamplingRate.ggplot(rValues$summaryData, unit = "Count")
+        }
         if(!is.null(rValues$xlim)){
           p = p + coord_cartesian(xlim = rValues$xlim)
           p = p + scale_x_datetime()
