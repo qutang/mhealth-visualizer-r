@@ -12,21 +12,15 @@ SensorData.filter.bessel = function(sensorData, breaks, Fs, Fc, order){
   }else{
     sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
   }
-  result = ddply(sensorData,.(breaks), function(rows){
+  result = dlply(sensorData,.(breaks), function(rows){
     colFilter = colwise(.fun = function(x, filt){
       filtered = filter(filt, x)
       return(as.numeric(filtered))
     }, filt = armaCoeffs)
     filteredValue = colFilter(rows[,2:nCols])
+    filteredValue = cbind(rows[MHEALTH_CSV_TIMESTAMP_HEADER], filteredValue)
     return(filteredValue)
   })
-  names(result)[1] = MHEALTH_CSV_TIMESTAMP_HEADER
-  for(i in 2:nCols){
-    names(result)[i] = paste("BESSEL", names(result)[i],sep="_")
-  }
-  result[MHEALTH_CSV_TIMESTAMP_HEADER] = as.POSIXct(result[[MHEALTH_CSV_TIMESTAMP_HEADER]])
-  result$breaks = result[[MHEALTH_CSV_TIMESTAMP_HEADER]]
-  result[MHEALTH_CSV_TIMESTAMP_HEADER] = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER]
   return(result)
 }
 
@@ -44,21 +38,15 @@ SensorData.filter.butterworth = function(sensorData, breaks, Fs, Fc, order){
   }else{
     sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
   }
-  result = plyr::ddply(sensorData,.(breaks), function(rows){
+  result = dlply(sensorData,.(breaks), function(rows){
     colFilter = colwise(.fun = function(x, filt, a){
       filtered = filter(filt, a, x)
-      return(as.numeric(filtered))
+      result = as.numeric(filtered)
     }, filt = coeffs$b, a = coeffs$a)
     filteredValue = colFilter(rows[,2:nCols])
+    filteredValue = cbind(rows[MHEALTH_CSV_TIMESTAMP_HEADER], filteredValue)
     return(filteredValue)
   })
-  names(result)[1] = MHEALTH_CSV_TIMESTAMP_HEADER
-  for(i in 2:nCols){
-    names(result)[i] = paste("BUTTERWORTH", names(result)[i],sep="_")
-  }
-  result[MHEALTH_CSV_TIMESTAMP_HEADER] = as.POSIXct(result[[MHEALTH_CSV_TIMESTAMP_HEADER]])
-  result$breaks = result[[MHEALTH_CSV_TIMESTAMP_HEADER]]
-  result[MHEALTH_CSV_TIMESTAMP_HEADER] = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER]
   return(result)
 }
 
