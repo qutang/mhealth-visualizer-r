@@ -23,5 +23,7 @@ Imports: plyr,
     shinyBS,
     RColorBrewer,
     flux,
-    reshape2
+    reshape2,
+    matlab,
+    signal
 Suggests: testthat
