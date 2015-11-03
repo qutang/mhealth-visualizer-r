@@ -1,11 +1,15 @@
 #' @name SummaryData.simpleMean
 #' @title Calculate summary value (simple mean) over a certain break (e.g. hour, min)
 #' @export
-#' @import plyr lubridate
+#' @import plyr
 #' @param sensorData: should be compatible with the mhealth sensor data format, first column should be HEADER_TIME_STAMP, and the following arbitrary number of columns should be numeric
-SummaryData.simpleMean = function(sensorData, breaks = "min"){
+SummaryData.simpleMean = function(sensorData, breaks){
   nCols = ncol(sensorData)
-  sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
+  if(missing(breaks) || is.null(breaks)){
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER])
+  }else{
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
+  }
   result = plyr::ddply(sensorData,.(breaks), function(rows){
       meanValues = colMeans(rows[2:nCols], na.rm = TRUE)
       return(meanValues)
@@ -19,13 +23,18 @@ SummaryData.simpleMean = function(sensorData, breaks = "min"){
 }
 
 #' @name SummaryData.auc
-#' @title Calculate summary value (area under curve) over a certain break (e.g. hour, min)
+#' @title Calculate summary value (area under curve) over a certain break (e.g. hour, min).
+#' @description If certain break is not provided or missing, will use the entire sequence
 #' @export
 #' @import plyr flux
-SummaryData.auc = function(sensorData, breaks = "min"){
+SummaryData.auc = function(sensorData, breaks){
   nCols = ncol(sensorData)
   sensorData[,2:nCols] = abs(sensorData[,2:nCols])
-  sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
+  if(missing(breaks) || is.null(breaks)){
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER])
+  }else{
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
+  }
   result = plyr::ddply(sensorData,.(breaks), function(rows){
       rows[,1] = as.numeric(rows[,1])
       rows = na.omit(rows)
@@ -40,6 +49,30 @@ SummaryData.auc = function(sensorData, breaks = "min"){
   names(result)[1] = MHEALTH_CSV_TIMESTAMP_HEADER
   for(i in 2:nCols){
     names(result)[i] = paste("AUC", names(result)[i],sep="_")
+  }
+  result[MHEALTH_CSV_TIMESTAMP_HEADER] = as.POSIXct(result[[MHEALTH_CSV_TIMESTAMP_HEADER]])
+  return(result)
+}
+
+#' @name SummaryData.absoluteMean
+#' @title Calculate summary value (absolute mean value) over a certain break (e.g. hour, min).
+#' @description If certain break is not provided or missing, will use the entire sequence
+#' @export
+#' @import plyr
+SummaryData.absoluteMean = function(sensorData, breaks){
+  nCols = ncol(sensorData)
+  if(missing(breaks) || is.null(breaks)){
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER])
+  }else{
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
+  }
+  result = plyr::ddply(sensorData,.(breaks), function(rows){
+    meanValues = colMeans(abs(rows[2:nCols]), na.rm = TRUE)
+    return(meanValues)
+  })
+  names(result)[1] = MHEALTH_CSV_TIMESTAMP_HEADER
+  for(i in 2:nCols){
+    names(result)[i] = paste("ABSMEAN", names(result)[i],sep="_")
   }
   result[MHEALTH_CSV_TIMESTAMP_HEADER] = as.POSIXct(result[[MHEALTH_CSV_TIMESTAMP_HEADER]])
   return(result)
@@ -91,8 +124,12 @@ SummaryData.ggplot = function(summaryData){
   return(p)
 }
 
+#' @import lubridate
 .SummaryData.getBreaks = function(ts, breaks){
-  if(str_detect(breaks, "sec")){
+  if(missing(breaks) || is.null(breaks)){
+    br = ts[1]
+    return(br)
+  }else if(str_detect(breaks, "sec")){
     ts[1] = floor_date(ts[1], unit = c("second"))
   }else if(str_detect(breaks, "min")){
     ts[1] = floor_date(ts[1], unit = c("minute"))

@@ -2,11 +2,11 @@
 % Please edit documentation in R/SummaryData.R
 \name{SummaryData.auc}
 \alias{SummaryData.auc}
-\title{Calculate summary value (area under curve) over a certain break (e.g. hour, min)}
+\title{Calculate summary value (area under curve) over a certain break (e.g. hour, min).}
 \usage{
-SummaryData.auc(sensorData, breaks = "min")
+SummaryData.auc(sensorData, breaks)
 }
 \description{
-Calculate summary value (area under curve) over a certain break (e.g. hour, min)
+If certain break is not provided or missing, will use the entire sequence
 }
 
