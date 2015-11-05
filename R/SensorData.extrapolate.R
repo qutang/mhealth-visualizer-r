@@ -41,6 +41,9 @@ SensorData.extrapolate = function(sensorData,
   if(length(edgePairs) == 0){
     intersectPointsX = NULL
     intersectPointsY = NULL
+    allNeighbors = NULL
+    fittedResults = NULL
+
   }else{
     intersectPointsX = c()
     intersectPointsY = c()
