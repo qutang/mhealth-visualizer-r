@@ -130,6 +130,32 @@ SensorData.cleanup = function(sensorData, level = "year", gt = NULL){
   return(sensorData)
 }
 
+#' @name SensorData.interpolate
+#' @title Interpolate the missing points and unify sampling interval for the input sensor data
+#' @export
+#' @import akima plyr
+SensorData.interpolate = function(sensorData, method = "spline_natural", polyDegree = 3){
+    nRows = nrow(sensorData);
+    nCols = ncol(sensorData);
+    colLinearInterp = colwise(approx, x = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]], method = "linear", n = nRows)
+    colSplineFmmInterp = colwise(spline, x = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]], method = "fmm", n = nRows)
+    colSplineNaturalInterp = colwise(spline, x = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]], method = "natural", n = nRows)
+    colAsplineOriginalInterp = colwise(aspline, x = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]], method = "original", n = nRows)
+    colAsplineImprovedInterp = colwise(aspline, x = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]], method = "improved", n = nRows, degree = polyDegree)
+
+    output = switch(method,
+                    linear = colLinearInterp(y = sensorData[,2:nCols]),
+                    spline_fmm = colSplineFmmInterp(y = sensorData[,2:nCols]),
+                    spline_natural = colSplineNaturalInterp(y = sensorData[,2:nCols]),
+                    aspline_original = colAsplineOriginalInterp(y = sensorData[,2:nCols]),
+                    aspline_improved = colAsplineImprovedInterp(y = sensorData[,2:nCols]))
+
+    names(output)[1] = MHEALTH_CSV_TIMESTAMP_HEADER
+    output[,MHEALTH_CSV_TIMESTAMP_HEADER] = as.POSIXlt(output[,MHEALTH_CSV_TIMESTAMP_HEADER], origin = "1970-01-01")
+    output = as.data.frame(output)
+    return(output)
+}
+
 #' @name SensorData.clip
 #' @export
 #' @title Clip sensor data according to the start and end time
