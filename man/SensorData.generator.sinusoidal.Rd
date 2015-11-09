@@ -4,8 +4,8 @@
 \alias{SensorData.generator.sinusoidal}
 \title{Generate simulated sinusoidal signal in mhealth format}
 \usage{
-SensorData.generator.sinusoidal(startTime, endTime, Fs, range, f, amp, phase,
-  noiseStd, seed)
+SensorData.generator.sinusoidal(startTime, endTime, Fs, range, f, amp,
+  phase = 0, noiseStd, seed = 1)
 }
 \description{
 If the signal arguments are vector, multiple columns will be generated

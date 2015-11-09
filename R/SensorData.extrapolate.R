@@ -48,6 +48,8 @@ SensorData.extrapolate = function(sensorData,
     intersectPointsX = c()
     intersectPointsY = c()
     allNeighbors = .SensorData.extrapolate.getNeighors(t, originData, edgePairs, noise_sd = noiseStd)
+    print("=================All neighbors=====================")
+    print(allNeighbors)
     fittedResults = .SensorData.extrapolate.fitLines(x = t,
                                           input = originData,
                                           allNeighbors = allNeighbors,
@@ -105,13 +107,13 @@ SensorData.extrapolate = function(sensorData,
     maxedOutPoints = input;
 
     # maxed out criterion
-    maxedOutCriterion = input > uBound | input < lBound;
+    maxedOutCriterion = input >= uBound | input <= lBound;
 
     # make maxed out points NA
     withoutMaxedOutPoints[maxedOutCriterion] = NA;
 
     # not maxed out criterion
-    notMaxedOutCriterion = input <= uBound & input >= lBound;
+    notMaxedOutCriterion = input < uBound & input > lBound;
 
     # make not maxed out points NA
     maxedOutPoints[notMaxedOutCriterion] = NA;
@@ -411,22 +413,12 @@ SensorData.extrapolate = function(sensorData,
 
           posIndices = seq(1, posIndices[length(posIndices)])
           distances[posIndices] = seq(-length(posIndices), -1)
-
         }
-        #       lambda = min(length(posIndices), length(negIndices))*2 / length(normalIndices)
-        # lambda = 2.5 / min(length(posIndices), length(negIndices))
-        #       lambda = 1.5
-
       }
       distances[posIndices] = -input[posIndices] + (dynamic_range - 3*noise_sd)  # here uses the distance between max and point
       distances[negIndices] = input[negIndices] - (-dynamic_range + 3*noise_sd) # here uses the distance between min and point
       weights = exp(lambda*distances)
-      #       print(posIndices)
-      #       print(negIndices)
-      #       print(middleX)
-      #       print(distances)
     }else if(method == "only_noise"){
-      print(lambda)
       maxY = max(input)
       minY = min(input)
       middleY = (maxY + minY)/2

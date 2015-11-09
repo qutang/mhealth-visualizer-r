@@ -11,9 +11,9 @@ SensorData.generator.sinusoidal = function(startTime,
                                            range,
                                            f,
                                            amp,
-                                           phase,
+                                           phase = 0,
                                            noiseStd,
-                                           seed){
+                                           seed = 1){
 
   t = seq(from = startTime, to = endTime, by = 1/Fs);
   signalParams = as.data.frame(rbind(f, amp, phase, noiseStd, range))
