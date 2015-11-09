@@ -1,16 +1,16 @@
 require(reshape2)
 require(ggplot2)
 startTime = Sys.time()
-duration = 30
+duration = 120
 Fs = 40
 range = 6
 freqs = seq(1, 10, by = 0.5)
 freqs = 2
-amp = seq(3, 16, by = 1)
-amp = c(4,8)
+amp = seq(5, 16, by = 1)
+amp = seq(3,16)
 noiseStds = 0
-seed = 5
-lambda = 2
+seed = 1
+lambda = 1
 result = data.frame(freq = c(), noiseStd = c(), extrapolationError = c(), inputError = c())
 for(f in freqs){
   for(noiseStd in noiseStds){

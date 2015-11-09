@@ -236,9 +236,9 @@ SensorData.extrapolate = function(sensorData,
                   spline_fmm = spline(x, input, xout = xout, method="fmm"),
                   spline_natural = spline(x, input,xout = xout, method="natural"),
                   aspline_original = {aspline(x, input, xout = xout, method="original")},
-                  aspline_improved = {aspline(x, input,xout = xout, method="improved", degree=3)});
+                  aspline_improved = {aspline(x, input,xout = xout, method="improved", degree=3)})
 
-  return(output);
+  return(output)
 }
 
 
@@ -499,12 +499,23 @@ SensorData.extrapolate = function(sensorData,
   tryCatch({
     intersectPoint = c(solve(cbind(cm[,2],-1)) %*% -cm[,1])
     intersectPoint[1] = intersectPoint[1] + firstPoint
+
+    # Verify intersectPoint
+    # 1. x position should be between the maxed out region
+    # 2. y position should be beyond the dynamic range
+
+    leftBound = x_value[max(which(leftW == 1))]
+    rightBound = x_value[min(which(rightW == 1))]
+
+    if(leftBound > intersectPoint[1] || rightBound < intersectPoint[1] || abs(intersectPoint[2]) < dynamic_range){
+      warning("intersection point is invalid, set it to be NA")
+      intersectPoint = NA
+    }
     },
     error = function(e){
     intersectPoint = NA
     print(cm);
   });
-
   return(list(leftLine = leftlm, rightLine = rightlm, intersectPoint = intersectPoint))
 }
 
