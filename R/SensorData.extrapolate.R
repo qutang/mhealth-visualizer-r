@@ -394,7 +394,7 @@ SensorData.extrapolate = function(sensorData,
       normalIndices = which((abs(maxY - input) > 4*noise_sd & input >= 0) | (abs(minY - input) > 4*noise_sd & input < 0))
 
 
-      if(length(posIndices) > 0){
+      if(length(posIndices) > 0 && length(middleX) > 0){
         # edge points
         if(middleX < x[posIndices[1]]){
           posIndices = seq(posIndices[1], length(x))

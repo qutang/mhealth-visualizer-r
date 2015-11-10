@@ -9,7 +9,8 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 LazyData: TRUE
 Requirement: Java ( >= 1.8.45 )
-Imports: plyr,
+Imports:
+    plyr,
     lubridate,
     rJava,
     stringr,
@@ -26,4 +27,6 @@ Imports: plyr,
     reshape2,
     matlab,
     signal
-Suggests: testthat
+Suggests:
+    testthat
+RoxygenNote: 5.0.0

@@ -1,13 +1,13 @@
 require(reshape2)
 require(ggplot2)
 startTime = Sys.time()
-duration = 120
+duration = 600
 Fs = 40
 range = 6
 freqs = seq(1, 10, by = 0.5)
-freqs = 2
+freqs = seq(1,10)
 amp = seq(5, 16, by = 1)
-amp = seq(3,16)
+amp = seq(5,16)
 noiseStds = 0
 seed = 1
 lambda = 1
