@@ -9,8 +9,8 @@ freqs = seq(1,10)
 amp = seq(5, 16, by = 1)
 amp = seq(5,16)
 noiseStds = 0
-seed = 1
-lambda = 1
+seed = 5
+lambda = 3
 result = data.frame(freq = c(), noiseStd = c(), extrapolationError = c(), inputError = c())
 for(f in freqs){
   for(noiseStd in noiseStds){

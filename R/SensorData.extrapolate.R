@@ -66,10 +66,13 @@ SensorData.extrapolate = function(sensorData,
     if(class(t[1]) == "POSIXlt" || class(t[1]) == "POSIXct"){
       intersectPointsX = as.POSIXct(intersectPointsX, origin = "1970-01-01")
     }
+    outputY = c(withoutMaxedOutPoints, intersectPointsY[!is.na(intersectPointsY)])
+    outputX = c(t, intersectPointsX[!is.na(intersectPointsX)])
+  }else{
+    outputY = withoutMaxedOutPoints
+    outputX = t
   }
 
-  outputY = c(withoutMaxedOutPoints, intersectPointsY[!is.na(intersectPointsY)])
-  outputX = c(t, intersectPointsX[!is.na(intersectPointsX)])
   output = data.frame(outputX, outputY)
   # sort by time
   output = output[order(output[,1]),]
