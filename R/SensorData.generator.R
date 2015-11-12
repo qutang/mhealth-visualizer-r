@@ -22,8 +22,10 @@ SensorData.generator.sinusoidal = function(startTime,
     set.seed(seed)
   }
 
+  normalizedT = seq(from=0, to = length(t)/Fs, length.out = length(t))
+
   colGenerator = colwise(function(param){
-    stream = param[2] * sin(2*pi*param[1]*as.numeric(t) + param[3])
+    stream = param[2] * sin(2*pi*param[1]*normalizedT + param[3])
     stream[stream >= param[5]] = param[5]
     stream[stream <= -param[5]] = -param[5]
     stream = stream + rnorm(length(t), mean = 0, sd = param[4])
