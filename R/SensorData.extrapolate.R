@@ -362,7 +362,7 @@ SensorData.extrapolate = function(sensorData,
   }
 
   # return indices of left and right neighbors
-  result = list(leftNeighbors = leftNeighbors, rightNeighbors = rightNeighbors, positive = positive)
+  result = list(leftNeighbors = leftNeighbors, rightNeighbors = rightNeighbors, positive = positive, edgePair = edgePair)
   return(result)
 }
 
@@ -467,12 +467,17 @@ SensorData.extrapolate = function(sensorData,
   firstPoint = x_value[1]
   x_value0 = x_value - firstPoint
   y_value = input[neighbors$leftNeighbors]
+  positive = neighbors$positive
   leftW = .computeWeightsForLm(x_value,
                                y_value,
                                method = weight_method,
                                lambda = lambda,
                                noise_sd = noise_sd,
                                dynamic_range = dynamic_range)
+  
+  
+  leftBound = as.numeric(x[neighbors$edgePair[1]])
+  
 
   leftlm = NULL
   tryCatch({leftlm = lm(y_value~x_value0, weights = leftW)}, error = function(e){
@@ -489,6 +494,10 @@ SensorData.extrapolate = function(sensorData,
                                 lambda = lambda,
                                 noise_sd = noise_sd,
                                 dynamic_range = dynamic_range)
+  
+  
+  rightBound = as.numeric(x[neighbors$edgePair[2]])
+  
 
   rightlm = NULL
   tryCatch({rightlm = lm(y_value~x_value0, weights = rightW)}, error = function(e){
@@ -506,10 +515,6 @@ SensorData.extrapolate = function(sensorData,
     # Verify intersectPoint
     # 1. x position should be between the maxed out region
     # 2. y position should be beyond the dynamic range
-
-    leftBound = x_value[max(which(leftW == 1))]
-    rightBound = x_value[min(which(rightW == 1))]
-
     if(leftBound > intersectPoint[1] || rightBound < intersectPoint[1] || abs(intersectPoint[2]) < dynamic_range){
       warning("intersection point is invalid, set it to be NA")
       intersectPoint = NA
