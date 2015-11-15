@@ -5,7 +5,6 @@ title: mhealthformat-support-r
 description: ""
 analytics: UA-50546869-2
 baseurl: "/mhealthformat-support-r" #important: start with /
-home:"/"
 url: "http://qutang.github.io"
 
 # Build settings
