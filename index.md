@@ -28,11 +28,6 @@ See more detail in mhealth format document.
 
 ### SensorData
 
-First Header  | Second Header
-------------- | -------------
-Content Cell  | Content Cell
-Content Cell  | Content Cell
-
 ## Interactive data visualizer (shiny app)
 
 ``` r
