@@ -1,0 +1,33 @@
+#launch-content h1{
+	font-size:1.4em;
+}
+#launch-content h2{
+	font-size:1.3em;
+}
+
+#launch-content h3{
+	font-size:1.2em;
+}
+
+#launch-content h4{
+	font-size:1.1em;
+}
+
+#launch-content h5{
+	font-size:1em;
+}
+
+#launch-content h6{
+	font-size:1em;
+	font-weight:600;
+}
+
+#launch-content img{
+	display:block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#headerwrap ul{
+	list-style-type: none;
+}
