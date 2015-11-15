@@ -1,15 +1,14 @@
 ### GENERAL SETTINGS ###
 
 # Site settings
-title: QU.
-description: "Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description."
+title: mhealthformat-support-r
+description: ""
 analytics: UA-50546869-2
-baseurl: "" #important: start with /
+baseurl: "/mhealthformat-support-r" #important: start with /
 url: "http://qutang.github.io"
 
 # Build settings
 markdown: redcarpet
-permalink: /:categories/:title
 excerpt_separator: <!--more--> #use this in posts to define how long the excerpt of the post (that is shown on the Blog page) is
 
 redcarpet:
