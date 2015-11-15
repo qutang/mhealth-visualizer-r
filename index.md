@@ -12,13 +12,11 @@ doc-url:
 
 1. Make sure to have `R (>= 3.2.1)` and `Java 7 (JVM or JDK)` installed. (Recommand to use lastest version of `RStudio`)
 
-2. Install package `devtools` in `R`    
-
+2. Install package `devtools` in `R`
 ``` r
 install_package('devtools')
 ```
 3. Install `mhealthformat-support-r` through __github__
-
 ``` r
 devtools::install_github('qutang/mhealthformat-support-r')
 ```
