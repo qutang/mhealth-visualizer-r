@@ -436,3 +436,8 @@ csmall {
 #updatewrap .posts sub{
 	font-weight: normal;
 }
+
+[alt=center] {
+  display: block;
+  margin: auto;
+}
