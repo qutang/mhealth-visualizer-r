@@ -38,9 +38,7 @@ See more detail in mhealth format document.
     </tr>
     <tr>
         <th>CSV format</th>
-        <td><pre>HEADER_TIME_STAMP,CUSTOM_HEADER_1,CUSTOM_HEADER_2,...
-2015-11-13 13:11:43.231,0.3514,0.3262,0.5432,...
-...</pre></td>
+        <td><a href="{{ "/data/samples/ActigraphGT9X-AccelerationCalibrated-NA.TAS1E23150881.2015-11-02-15-00-00-000-M0500.sensor.csv" | prepend: site.baseurl }}">Sample sensor data csv file</a></td>
     </tr>
     <tr>
         <th>Directory convention</th>
@@ -61,9 +59,7 @@ See more detail in mhealth format document.
     </tr>
     <tr>
         <th>CSV format</th>
-        <td><pre>HEADER_TIME_STAMP,START_TIME,STOP_TIME,LABEL,RATING_TIMESTAMP,RATING,...
-2015-11-13 13:11:43.231,2015-11-13 13:11:43.231,2015-11-13 13:11:53.000,Walking,2015-11-13 13:11:43.231,,...
-...</pre></td>
+        <td><a href = "{{"/data/samples/SPADESInLab.al.2015-11-02-15-00-00-000-M0500.annotation.csv" | prepend: site.baseurl }}">Sample annotation data csv file</a></td>
     </tr>
     <tr>
         <th>Directory convention</th>
@@ -80,9 +76,7 @@ See more detail in mhealth format document.
     </tr>
     <tr>
         <th>CSV format</th>
-        <td><pre>HEADER_TIME_STAMP,START_TIME,STOP_TIME,DETAIL,CUSTOM_FIELDS,...
-2015-11-13 13:11:43.231,2015-11-13 13:11:43.231,,Wifi On,...
-...</pre>`DETAIL` column is optional, but the first three columns should be fixed.</td>
+        <td><a href = "{{"/data/samples/Battery.532929050178941.2015-11-02-15-00-26-737-M0500.event.csv" | prepend: site.baseurl }}">Sample event data csv file</a></td>
     </tr>
     <tr>
         <th>Directory convention</th>
