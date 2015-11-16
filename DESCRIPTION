@@ -1,10 +1,10 @@
 Package: mhealthformatsupportr
 Type: Package
 Title: mHealth Format Support Package for R
-Version: 0.13
+Version: 0.14
 Date: 2015-07-06
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Author: Qu Tang
+Maintainer: Qu Tang <tqshelly@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
 LazyData: TRUE
