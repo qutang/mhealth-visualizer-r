@@ -11,7 +11,7 @@
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
-vegnettes/gh-pages/
+vignettes/gh-pages/
 **/.DS_STORE
 .fromBinary/
 .fromGT3X/
