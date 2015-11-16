@@ -30,43 +30,65 @@ devtools::install_github('qutang/mhealthformat-support-r')
 See more detail in mhealth format document.
 
 ### `SensorData`
-* File name: `SensorType.SensorId.yyyy-mm-dd-hh-MM-ss-SSS.sensor.csv.(gz)`
-* CSV format
 
-```
-HEADER_TIME_STAMP,CUSTOM_HEADER_1,CUSTOM_HEADER_2,...
+<table class="table table-bordered table-responsive">
+    <tr>
+        <th>File name</th>
+        <td><code>SensorType.SensorId.yyyy-mm-dd-hh-MM-ss-SSS.sensor.csv.(gz)<code></td>
+    </tr>
+    <tr>
+        <th>CSV format</th>
+        <td><pre>HEADER_TIME_STAMP,CUSTOM_HEADER_1,CUSTOM_HEADER_2,...
 2015-11-13 13:11:43.231,0.3514,0.3262,0.5432,...
-...
-```
-
-* Directory convention: `MasterSynced/yyyy/mm/dd/hh/`. If storing in mhealth directory, sensor data should be split into hourly files.
-* `SummaryData` follows the same CSV format as `SensorData`.
+...</pre></td>
+    </tr>
+    <tr>
+        <th>Directory convention</th>
+        <td><code>MasterSynced/yyyy/mm/dd/hh/</code>. If storing in mhealth directory, sensor data should be split into hourly files.</td>
+    </tr>
+    <tr>
+		<th>Note</th>
+        <td colspan="3"><code>SummaryData</code> follows the same CSV format as <code>SensorData</code>.</td>
+    </tr>
+</table>
 
 ### `AnnotationData`
-* File name: `OntologyId.AnnotatorId.yyyy-mm-dd-hh-MM-ss-SSS.annotation.csv.(gz)`
-* CSV format
 
-```
-HEADER_TIME_STAMP,START_TIME,STOP_TIME,LABEL,RATING_TIMESTAMP,RATING,...
+<table class="table table-bordered table-responsive">
+    <tr>
+        <th>File name</th>
+        <td><code>OntologyId.AnnotatorId.yyyy-mm-dd-hh-MM-ss-SSS.annotation.csv.(gz)<code></td>
+    </tr>
+    <tr>
+        <th>CSV format</th>
+        <td><pre>HEADER_TIME_STAMP,START_TIME,STOP_TIME,LABEL,RATING_TIMESTAMP,RATING,...
 2015-11-13 13:11:43.231,2015-11-13 13:11:43.231,2015-11-13 13:11:53.000,Walking,2015-11-13 13:11:43.231,,...
-...
-```
-
-* Directory convention: `MasterSynced/yyyy/mm/dd/hh/`. If storing in mhealth directory, annotation data should be split into hourly files.
+...</pre></td>
+    </tr>
+    <tr>
+        <th>Directory convention</th>
+        <td><code>MasterSynced/yyyy/mm/dd/hh/</code>. If storing in mhealth directory, annotation data should be split into hourly files.</td>
+    </tr>
+</table>
 
 ### `EventData`
-* File name: `EventType.EventId.yyyy-mm-dd-hh-MM-ss-SSS.event.csv.(gz)`
-* CSV format
 
-```
-HEADER_TIME_STAMP,START_TIME,STOP_TIME,DETAIL,CUSTOM_FIELDS,...
+<table class="table table-bordered table-responsive">
+    <tr>
+        <th>File name</th>
+        <td><code>EventType.EventId.yyyy-mm-dd-hh-MM-ss-SSS.event.csv.(gz)<code></td>
+    </tr>
+    <tr>
+        <th>CSV format</th>
+        <td><pre>HEADER_TIME_STAMP,START_TIME,STOP_TIME,DETAIL,CUSTOM_FIELDS,...
 2015-11-13 13:11:43.231,2015-11-13 13:11:43.231,,Wifi On,...
-...
-```
-
-`DETAIL` column is optional, but the first three columns should be fixed.
-
-* Directory convention: `MasterSynced/yyyy/mm/dd/hh/`. If storing in mhealth directory, event data should be split into hourly files.
+...</pre>`DETAIL` column is optional, but the first three columns should be fixed.</td>
+    </tr>
+    <tr>
+        <th>Directory convention</th>
+        <td><code>MasterSynced/yyyy/mm/dd/hh/</code>. If storing in mhealth directory, event data should be split into hourly files.</td>
+    </tr>
+</table>
 
 ---
 # Quick start
@@ -111,3 +133,4 @@ annotationData = AnnotationData.importCsv(annotationFile)
 # Add annotation onto the summary data Plot
 AnnotationData.addToGgplot(p, annotationData)
 ```
+

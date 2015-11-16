@@ -31,3 +31,8 @@
 #headerwrap ul{
 	list-style-type: none;
 }
+
+.table pre{
+	background:none;
+	border:none;
+}

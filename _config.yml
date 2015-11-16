@@ -8,11 +8,11 @@ baseurl: "/mhealthformat-support-r" #important: start with /
 url: "http://qutang.github.io"
 
 # Build settings
-markdown: redcarpet
 excerpt_separator: <!--more--> #use this in posts to define how long the excerpt of the post (that is shown on the Blog page) is
 
+markdown: redcarpet
 redcarpet:
-  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript", "with_toc_data"]
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "strikethrough", "superscript", "with_toc_data"]
 
 colors:  #in hex code if not noted else
   primary: "#00b3fe" #"#F70031" 
