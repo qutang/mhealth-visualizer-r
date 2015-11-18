@@ -7,7 +7,7 @@ range = 6
 freqs = seq(1, 10, by = 0.5)
 freqs = 8
 amp = seq(5, 16, by = 1)
-amp = 16
+amp = 5
 noiseStds = 0
 seed = 5
 lambda = 3

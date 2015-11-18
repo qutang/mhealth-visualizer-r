@@ -248,6 +248,9 @@ SensorData.extrapolate = function(sensorData,
 
 .SensorData.extrapolate.sanityCheck = function(extrapolatedData, originData, edgePairs){
   output = extrapolatedData
+  if(length(edgePairs) == 0){
+    return(output)
+  }
   for(n in 1:nrow(edgePairs)){
     leftBound = edgePairs[n,][1]
     rightBound = edgePairs[n,][2]
