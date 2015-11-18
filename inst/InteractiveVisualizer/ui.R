@@ -4,7 +4,8 @@ library(shiny)
 library(shinydashboard)
 library(shinyFiles)
 library(shinyBS)
-source(file.path(getwd(),"uielements.R"))
+
+source(file.path(getwd(),"uielements.R"), local = TRUE)
 
 shinyUI(
   dashboardPage(

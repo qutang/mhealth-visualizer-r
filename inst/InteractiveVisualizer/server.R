@@ -6,6 +6,9 @@ library(lubridate)
 
 
 shinyServer(function(input, output, session) {
+
+  source(file.path(getwd(),"serverhandler.R"), local = TRUE)
+
   switch(Sys.info()[['sysname']],
          Windows= {root = "C:\\"},
          Linux  = {root = "~"},
@@ -15,7 +18,7 @@ shinyServer(function(input, output, session) {
     input, 'datasetFolder', roots = volumes, hidden = TRUE, session = session
   )
 
-  rValues <<- reactiveValues(xlim = NULL,
+  rValues <- reactiveValues(xlim = NULL,
                              currentAnnotations = NULL,
                              currentAnnotations2 = NULL,
                              masterFolder = NULL,
@@ -27,7 +30,7 @@ shinyServer(function(input, output, session) {
                              begin_xrange = NULL,
                              begin_xrange_raw = NULL,
                              raw_xlim = NULL)
-  source(file.path(getwd(),"serverhandler.R"))
+
   output$plot1 <- renderPlot({
     input$refreshPlot
     withProgress(message = "Generate summary plot", value = 0.1, {
