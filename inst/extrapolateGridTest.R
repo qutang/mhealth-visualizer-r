@@ -1,13 +1,13 @@
 require(reshape2)
 require(ggplot2)
 startTime = Sys.time()
-duration = 600
+duration = 60
 Fs = 40
 range = 6
 freqs = seq(1, 10, by = 0.5)
-freqs = seq(1,10)
+freqs = 8
 amp = seq(5, 16, by = 1)
-amp = seq(5,16)
+amp = 16
 noiseStds = 0
 seed = 5
 lambda = 3
@@ -23,7 +23,7 @@ for(f in freqs){
                                     amp = amp,
                                     phase = 0,
                                     noiseStd = noiseStd,
-                                    seed = 5
+                                    seed = seed
     )
     gtBatch = SensorData.generator.sinusoidal(startTime = startTime,
                                               endTime = startTime + duration,
@@ -33,16 +33,16 @@ for(f in freqs){
                                               amp = amp,
                                               phase = 0,
                                               noiseStd = noiseStd,
-                                              seed = 5
+                                              seed = seed
     )
     extrapolatedBatch = SensorData.extrapolate(inputBatch,
                            lambda = lambda,
                            interpolate = "spline_natural",
                            range = range,
                            noiseStd = noiseStd)
-    extrapolatedCounts = as.numeric(SummaryData.absoluteMean(extrapolatedBatch))
-    inputCounts = as.numeric(SummaryData.absoluteMean(inputBatch))
-    gtCounts = as.numeric(SummaryData.absoluteMean(gtBatch))
+    extrapolatedCounts = SummaryData.absoluteMean(extrapolatedBatch)[-1]
+    inputCounts = SummaryData.absoluteMean(inputBatch)[-1]
+    gtCounts = SummaryData.absoluteMean(gtBatch)[-1]
     extrapolationError = abs(extrapolatedCounts - gtCounts)/gtCounts
     inputError = abs(inputCounts- gtCounts)/gtCounts
     result = rbind(result, data.frame(freq = f, noiseStd = noiseStd, extrapolationError = extrapolationError, inputError = inputError))

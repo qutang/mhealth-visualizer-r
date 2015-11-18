@@ -3,3 +3,4 @@
 ^vignettes/gh-pages$
 ^\.fromBinary$
 ^\.fromGT3X$
+^devtools$

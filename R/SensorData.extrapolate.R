@@ -84,6 +84,9 @@ SensorData.extrapolate = function(sensorData,
     output$x = as.POSIXlt(output$x, origin = "1970-01-01")
   }
 
+  # sanity check
+  output = .SensorData.extrapolate.sanityCheck(output, sensorData, edgePairs)
+
   result = list(output = output, markedOriginal = markedOriginal, edgePairs = edgePairs, allNeighbors = allNeighbors, fittedResults = fittedResults)
   return(result)
 }
@@ -240,10 +243,25 @@ SensorData.extrapolate = function(sensorData,
                   spline_natural = spline(x, input,xout = xout, method="natural"),
                   aspline_original = {aspline(x, input, xout = xout, method="original")},
                   aspline_improved = {aspline(x, input,xout = xout, method="improved", degree=3)})
-
   return(output)
 }
 
+.SensorData.extrapolate.sanityCheck = function(extrapolatedData, originData, edgePairs){
+  output = extrapolatedData
+  for(n in 1:nrow(edgePairs)){
+    leftBound = edgePairs[n,][1]
+    rightBound = edgePairs[n,][2]
+    extrapolatedChunk = extrapolatedData[leftBound:rightBound,]
+    originChunk = originData[leftBound:rightBound,]
+    extrapolatedValue = sum(abs(extrapolatedChunk[,2]))
+    originValue = sum(abs(originChunk[,2]))
+    if(extrapolatedValue < originValue){
+      # reject extrapolation results
+      output[leftBound:rightBound,2] = originChunk[,2]
+    }
+  }
+  return(output)
+}
 
 .naiveAlgForNeighboring = function(leftIndex, rightIndex, include = FALSE){
   # naive algorithm is to just get one more neighbors at the edge of the maxed out regions
@@ -474,10 +492,10 @@ SensorData.extrapolate = function(sensorData,
                                lambda = lambda,
                                noise_sd = noise_sd,
                                dynamic_range = dynamic_range)
-  
-  
+
+
   leftBound = as.numeric(x[neighbors$edgePair[1]])
-  
+
 
   leftlm = NULL
   tryCatch({leftlm = lm(y_value~x_value0, weights = leftW)}, error = function(e){
@@ -494,10 +512,10 @@ SensorData.extrapolate = function(sensorData,
                                 lambda = lambda,
                                 noise_sd = noise_sd,
                                 dynamic_range = dynamic_range)
-  
-  
+
+
   rightBound = as.numeric(x[neighbors$edgePair[2]])
-  
+
 
   rightlm = NULL
   tryCatch({rightlm = lm(y_value~x_value0, weights = rightW)}, error = function(e){
