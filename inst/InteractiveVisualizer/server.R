@@ -4,16 +4,24 @@ library(ggplot2)
 library(shinyjs)
 library(lubridate)
 
-
-shinyServer(function(input, output, session) {
-
-  source(file.path(getwd(),"serverhandler.R"), local = TRUE)
+server = function(input, output, session) {
+  if(exists("appFolder")){
+    source(file.path(appFolder, "serverhandler.R"), local = TRUE)
+  }else{
+    source("serverhandler.R", local = TRUE)
+  }
 
   switch(Sys.info()[['sysname']],
          Windows= {root = "C:\\"},
          Linux  = {root = "~"},
          Darwin = {root = file.path("~", "Desktop")})
-  volumes <- c(root = file.path(root))
+  if(!exists("volumes") || is.null(volumes)){
+    warning(paste("No root folder is provided, using the default root:" , root))
+    volumes <- c(root = file.path(root))
+  }else{
+      volumes <- c(root = volumes)
+  }
+
   shinyDirChoose(
     input, 'datasetFolder', roots = volumes, hidden = TRUE, session = session
   )
@@ -127,4 +135,4 @@ shinyServer(function(input, output, session) {
   handleSaveSummaryDataAsCsv(input, output)
 
   handleShowRawPlot(input, session)
-})
+}

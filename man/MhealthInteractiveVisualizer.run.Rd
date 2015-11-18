@@ -4,6 +4,6 @@
 \alias{MhealthInteractiveVisualizer.run}
 \title{An interactive visualizer for mhealth format data based on shiny}
 \usage{
-MhealthInteractiveVisualizer.run()
+MhealthInteractiveVisualizer.run(volumes)
 }
 

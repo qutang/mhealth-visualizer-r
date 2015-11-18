@@ -5,10 +5,13 @@ library(shinydashboard)
 library(shinyFiles)
 library(shinyBS)
 
-source(file.path(getwd(),"uielements.R"), local = TRUE)
+if(exists("appFolder")){
+  source(file.path(appFolder, "uielements.R"), local = TRUE)
+}else{
+  source("uielements.R", local = TRUE)
+}
 
-shinyUI(
-  dashboardPage(
+ui = dashboardPage(
     useShinyjs(),
     header = dashboardHeader(title = TITLE,
                              titleWidth = "30%"),
@@ -26,4 +29,3 @@ shinyUI(
     ),
     verbatimTextOutput("info"))
   )
-)
