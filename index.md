@@ -10,7 +10,7 @@ doc-url:
 
 # Installation
 
-1. Make sure to have `R (>= 3.2.1)` and `Java 7 (JVM or JDK)` installed. (Recommand to use lastest version of `RStudio`)
+1. Make sure to have `R (>= 3.2.1)` and `Java 8 (JVM or JDK)` installed. (Recommand to use lastest version of `RStudio`)
 
 2. Install package `devtools` in `R`
 
@@ -91,8 +91,10 @@ See more detail in mhealth format document.
 
 ```r
 library(mhealthformatsupportr)
-MhealthInteractiveVisualizer.run()
+MhealthInteractiveVisualizer.run("path_to_your_desired_directory")
 ```
+
+The `path_to_your_desired_directory` will restrict the access to within the directory only. Often user will set this to the directory that contains all the mhealth data.
 
 ---
 # Code Examples
