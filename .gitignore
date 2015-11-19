@@ -11,6 +11,7 @@
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
+vignettes/*.R
 vignettes/gh-pages/
 **/.DS_STORE
 .fromBinary/
