@@ -5,7 +5,7 @@ subtitle: (mhealthformatsupportr in R repository)
 description: An R package that provides IO, preprocessing, manipulation, visualization functions and shiny apps to support data mining for mhealth data stored in mHealth data format.
 bug-url: 'https://github.com/qutang/mhealthformat-support-r/issues'
 code-url: 'https://github.com/qutang/mhealthformat-support-r'
-doc-url:
+doc-url: 'docs/'
 ---
 
 # Installation
