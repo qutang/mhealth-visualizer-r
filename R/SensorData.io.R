@@ -3,7 +3,7 @@
 #' @title Write sensor data into mhealth folder structure
 #' @export
 #' @import lubridate stringr
-SensorData.io.write = function(folder, sensorData, sensorType, sensorId, versionCode = "NA", tz, gzip = TRUE, flatDir = FALSE, splitHour = TRUE){
+SensorData.io.write = function(folder, sensorData, sensorType, dataType, sensorId, versionCode = "NA", tz, gzip = TRUE, flatDir = FALSE, splitHour = TRUE){
   # TODO: support split hour
   if(missing(tz)){
     warning("Use local time zone in the file name")
@@ -15,11 +15,12 @@ SensorData.io.write = function(folder, sensorData, sensorType, sensorId, version
   }else{
     tzStr = tz
   }
-  section2 = paste(sensorType, sensorId, versionCode, sep = "-")
   timeStamp = strftime(startTime, format = MHEALTH_FILE_TIMESTAMP_FORMAT, origin = origin)
   timeStamp = str_replace(timeStamp, pattern = "\\.", replacement = "-")
-  timeStampStr = paste0(timeStamp, tzStr)
-  sensorFilename = paste(sensorType, section2, timeStampStr, "sensor", "csv", sep = ".")
+  timeStampStr = paste(timeStamp, tzStr, sep="-")
+  section1 = paste(sensorType, dataType, versionCode, sep="-")
+  section2 = paste(sensorId, dataType,sep="-")
+  sensorFilename = paste(section1, section2, timeStampStr, "sensor", "csv", sep = ".")
 
   sensorData[,-1] = round(sensorData[,-1], digits = 4)
   if(!flatDir){
