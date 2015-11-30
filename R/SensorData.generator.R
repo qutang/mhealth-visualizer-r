@@ -11,6 +11,7 @@ SensorData.generator.sinusoidal = function(startTime,
                                            range,
                                            f,
                                            amp,
+                                           amp0 = 0,
                                            phase = 0,
                                            noiseStd,
                                            seed = 1){
@@ -40,4 +41,44 @@ SensorData.generator.sinusoidal = function(startTime,
                           MHEALTH_CSV_GENERATOR_SINUSOIDAL_SUFFIX, sep = "_"))
 
   return(result)
+}
+
+#' @name SensorData.generator.fourierSeries
+#' @title Generate simulated fourier series signal in mhealth format to simulate arbitrary periodical signal
+#' @description If the signal arguments are vector, multiple columns will be generated
+#' @export
+#' @import plyr
+SensorData.generator.fourierSeries = function(startTime,
+                                              endTime,
+                                              Fs,
+                                              range,
+                                              fbase,
+                                              fstep,
+                                              ampMin = 0,
+                                              ampMax = 1,
+                                              amp0 = 0,
+                                              phaseMin = 0,
+                                              phaseMax = 1,
+                                              order = 3,
+                                              noiseStd,
+                                              parallel = FALSE,
+                                              seed = 1){
+  seriesComponents = llply(seq(1, order), .parallel = parallel, function(n){
+    ampSeq = runif(max(length(ampMin), length(ampMax)), min = ampMin, max = ampMax)
+    phaseSeq = runif(max(length(phaseMin), length(phaseMax)), min = phaseMin, max = phaseMax)
+    data = SensorData.generator.sinusoidal(startTime = startTime,
+                                    endTime = endTime,
+                                    Fs = Fs,
+                                    range = ampSeq * 2,
+                                    f = n * fstep * fbase,
+                                    amp = ampSeq,
+                                    phase = phaseSeq,
+                                    noiseStd = noiseStd,
+                                    seed = seed)
+    data = melt(data, id=MHEALTH_CSV_TIMESTAMP_HEADER)
+    return(data)
+  })
+  combined = rbind.fill(seriesComponents)
+  summed = dcast(data=combined, formula = HEADER_TIME_STAMP ~ variable, sum)
+  return(summed)
 }

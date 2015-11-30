@@ -1,0 +1,29 @@
+---
+title: "`mhealthformat-support-r` Package Document"
+author: "Qu Tang"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+###### {.centered}
+
+[Doc home](./) • [Project home](../) • [Next Chapter (Overview)](overview.html)
+
+---
+
+######
+
+* ## [Overview](overview.html)
+* ## mHealthFormat data types and operations
+    * ### [`SensorData`](SensorData.html)
+    * ### [`AnnotationData`](AnnotationData.html)
+    * ### [`EventData`](EventData.html)
+    * ### [`FeatureData`](FeatureData.html)
+* ## [mHealthFormat data directory and operations](DataDirectory.html)
+* ## mHealthFormat data analysis __examples__
+    * ### Data cleaning, formatting and merging
+    * ### Data visualization
+    * ### Data quality validation
