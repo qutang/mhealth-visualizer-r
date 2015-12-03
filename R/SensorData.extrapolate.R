@@ -11,7 +11,7 @@ SensorData.extrapolate = function(sensorData,
 ){
   colExtrapolate = colwise(function(t, sensorData, param){
     sensorData = cbind(t, sensorData)
-    output = .SensorData.extrapolate.singleColumn(sensorData, param)
+    output = SensorData.extrapolate.singleColumn(sensorData, param)
     result = output$output[[2]]
     return(result)
   }, param = c(lambda, interpolate, range, noiseStd), t = sensorData[MHEALTH_CSV_TIMESTAMP_HEADER], .cols = is.numeric)
@@ -20,7 +20,13 @@ SensorData.extrapolate = function(sensorData,
   return(result)
 }
 
-.SensorData.extrapolate.singleColumn = function(sensorData,
+#' @name Sensor.extrapolate.singleColumn
+#' @title Apply extrapolate algorithm to a single stream of data. This is used as the inner function for SensorData.extrapolate.
+#' @description If wanting to obtain mediate results for plotting and debugging, please use this function
+#' @author Qu Tang
+#' @export
+#' @import MASS akima
+SensorData.extrapolate.singleColumn = function(sensorData,
                                                 param
                                                 ){
   originData = sensorData[,2]
@@ -57,8 +63,10 @@ SensorData.extrapolate = function(sensorData,
                                           noise_sd = noiseStd,
                                           lambda = lambda)
     for(fitted in fittedResults){
-      intersectPointsX = c(intersectPointsX, fitted$intersectPoint[1])
-      intersectPointsY = c(intersectPointsY, fitted$intersectPoint[2])
+      for(intersectPoint in fitted$intersectPoint){
+        intersectPointsX = c(intersectPointsX, intersectPoint[1])
+        intersectPointsY = c(intersectPointsY, intersectPoint[2])
+      }
     }
   }
 
@@ -72,6 +80,7 @@ SensorData.extrapolate = function(sensorData,
     outputY = withoutMaxedOutPoints
     outputX = t
   }
+  intersectPoints = data.frame(intersectPointsX, intersectPointsY)
 
   output = data.frame(outputX, outputY)
   # sort by time
@@ -85,9 +94,9 @@ SensorData.extrapolate = function(sensorData,
   }
 
   # sanity check
-  output = .SensorData.extrapolate.sanityCheck(output, sensorData, edgePairs)
+  # output = .SensorData.extrapolate.sanityCheck(output, sensorData, edgePairs)
 
-  result = list(output = output, markedOriginal = markedOriginal, edgePairs = edgePairs, allNeighbors = allNeighbors, fittedResults = fittedResults)
+  result = list(output = output, markedOriginal = markedOriginal, edgePairs = edgePairs, allNeighbors = allNeighbors, fittedResults = fittedResults, intersectPoints = intersectPoints)
   return(result)
 }
 
@@ -538,11 +547,13 @@ SensorData.extrapolate = function(sensorData,
     # 2. y position should be beyond the dynamic range
     if(leftBound > intersectPoint[1] || rightBound < intersectPoint[1] || abs(intersectPoint[2]) < dynamic_range){
       warning("intersection point is invalid, set it to be NA")
-      intersectPoint = NA
+      intersectPoint = list(c(leftBound, input[neighbors$edgePair[1]]), c(rightBound, input[neighbors$edgePair[2]]))
+    }else{
+      intersectPoint = list(intersectPoint)
     }
     },
     error = function(e){
-    intersectPoint = NA
+    intersectPoint = list(c(leftBound, input[neighbors$edgePair[1]]), c(rightBound, input[neighbors$edgePair[2]]))
     print(cm);
   });
   return(list(leftLine = leftlm, rightLine = rightlm, intersectPoint = intersectPoint))
