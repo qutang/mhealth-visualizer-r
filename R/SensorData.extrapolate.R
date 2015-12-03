@@ -94,7 +94,7 @@ SensorData.extrapolate.singleColumn = function(sensorData,
   }
 
   # sanity check
-  # output = .SensorData.extrapolate.sanityCheck(output, sensorData, edgePairs)
+  output = .SensorData.extrapolate.sanityCheck(output, sensorData, edgePairs)
 
   result = list(output = output, markedOriginal = markedOriginal, edgePairs = edgePairs, allNeighbors = allNeighbors, fittedResults = fittedResults, intersectPoints = intersectPoints)
   return(result)
