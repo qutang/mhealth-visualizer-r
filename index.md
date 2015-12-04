@@ -27,7 +27,7 @@ devtools::install_github('qutang/mhealthformat-support-r')
 ---
 # Recap of mhealth format
 
-See more detail in mhealth format document.
+See more detail in [mhealth format document](http://mhealth-specification.s3-website-us-east-1.amazonaws.com/).
 
 ### `SensorData`
 
