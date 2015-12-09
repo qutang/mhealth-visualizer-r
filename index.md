@@ -117,6 +117,7 @@ SummaryData.ggplot(summaryMean)
 
 The follow script will load sensor data, compute mean for each column every __minute__ and visualize the result nicely, and load corresponding annotation data and add annotations to the summary data plot.
 
+
 ```r
 library(mhealthformatsupportr)
 # Load sensor data
