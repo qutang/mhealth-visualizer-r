@@ -2,12 +2,33 @@
 % Please edit documentation in R/SensorData.generator.R
 \name{SensorData.generator.sinusoidal}
 \alias{SensorData.generator.sinusoidal}
-\title{Generate simulated sinusoidal signal in mhealth format}
+\title{Generate simulated sinusoidal signal in mhealth format.}
 \usage{
 SensorData.generator.sinusoidal(startTime, endTime, Fs, range, f, amp,
   amp0 = 0, phase = 0, noiseStd, seed = 1)
 }
-\description{
-If the signal arguments are vector, multiple columns will be generated
+\arguments{
+\item{startTime}{POSIXct date object for start timestamp.}
+
+\item{endTime}{POSIXct date object for end timestamp, often with format startTime + numeric duration.}
+
+\item{Fs}{sampling rate of the simulated device.}
+
+\item{range}{dynamic range of the simulated device.}
+
+\item{f}{simulated frequency of the generated signal.}
+
+\item{amp}{amplitude of the generated signal.}
+
+\item{amp0}{the DC component of the generated signal.}
+
+\item{phase}{the initial phase of the generated signal.}
+
+\item{noiseStd}{the standard deviation of the noise of the generated signal.}
+
+\item{seed}{the random seed to be used when adding noise.}
+}
+\note{
+If arguments (range, f, amp, phase, noiseStd) are vectors, multiple columns will be generated accordingly. But the vectors should have the same length. Values will be cut off if beyonding the dynamic range.
 }
 

@@ -1,3 +1,8 @@
+#' ---
+#' title: SensorData.extrapolate.visualize
+#' layout: launch
+#' ---
+
 #' @name SensorData.extrapolate.visualize
 #' @title visualizing function for viewing the mediate results of the extrapolation algorithm
 #' @export
@@ -70,8 +75,8 @@ if(showCenter && !is.null(maxedOutThreshold) && !is.null(maxedOutEdges)){
   xpos = (as.numeric(input[maxedOutEdges[,1],1]) + as.numeric(input[maxedOutEdges[,2],1]))/2
   xpos = as.POSIXct(xpos, origin = origin)
   regionData = data.frame(xpos, ystart, yend)
-  p = p + geom_segment(data = regionData, aes(x = xpos, xend = xpos, 
-                            yend = yend, y = ystart), 
+  p = p + geom_segment(data = regionData, aes(x = xpos, xend = xpos,
+                            yend = yend, y = ystart),
                        arrow = arrow(end = "last", length = unit(0.2, units = "lines")))
 }
 

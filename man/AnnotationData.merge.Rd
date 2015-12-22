@@ -6,4 +6,9 @@
 \usage{
 AnnotationData.merge(annotationDataList, ...)
 }
+\arguments{
+\item{annotationDataList}{list of annotation data frames}
+
+\item{...}{other optional annotation data frames}
+}
 

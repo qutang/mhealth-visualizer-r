@@ -2,8 +2,19 @@
 % Please edit documentation in R/FrequencyResponse.R
 \name{FrequencyResponse.fft}
 \alias{FrequencyResponse.fft}
-\title{Compute frequency response for input sensor data}
+\alias{FrequencyResponsed.fft}
+\title{Compute frequency response for input sensor data.}
 \usage{
-FrequencyResponse.fft(sensorData, Fs, type = "magnitude")
+FrequencyResponsed.fft(sensorData, Fs, type = "magnitude")
+}
+\arguments{
+\item{sensorData}{input dataframe that matches mhealth specification.}
+
+\item{Fs}{sampling rate of the input signal.}
+
+\item{type}{"magnitude" or "vector". "magnitude": magnitude value of fft results; "vector": vector of fft results.}
+}
+\value{
+frequency dataframe with HEADER `HEADER_FREQUENCY_STAMP,[FFTMAGNITUDE/FFTVECTOR]_[ORIGINAL_HEADER]`.
 }
 

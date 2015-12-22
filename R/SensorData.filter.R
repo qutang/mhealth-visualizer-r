@@ -1,7 +1,13 @@
 #' @name SensorData.filter.bessel
-#' @title Apply low pass bessel filter to the input sensor data frame
+#' @title Apply low pass bessel filter to the input sensor data frame each column over certain breaks (e.g. hour, sec, min and etc.)
 #' @export
 #' @import signal matlab plyr
+#' @param sensorData the input dataframe that matches mhealth specification.
+#' @param breaks "sec","min","hour","day","week","month","quarter" or "year"; or preceded by integer and space.
+#' @param Fs sampling rate of the input signal
+#' @param Fc cut off frequency of bessel filter
+#' @param order formula order of bessel filter
+#' @note If "breaks" is missing, filter will be applied on the whole sequence and return a list with a single dataframe.
 SensorData.filter.bessel = function(sensorData, breaks, Fs, Fc, order){
   # real bessel filter design based on the implementation of matlab
   armaCoeffs = .besself(Fs = Fs, Fc = Fc, order = order)
@@ -18,16 +24,26 @@ SensorData.filter.bessel = function(sensorData, breaks, Fs, Fc, order){
       return(as.numeric(filtered))
     }, filt = armaCoeffs)
     filteredValue = colFilter(rows[2:nCols])
+    colnames(filteredValue) = paste0("BESSEL_",colnames(filteredValue))
     filteredValue = cbind(rows[MHEALTH_CSV_TIMESTAMP_HEADER], filteredValue)
+
     return(filteredValue)
   })
+
   return(result)
 }
 
 #' @name SensorData.filter.butterworth
-#' @title Apply high pass butterworth filter to the input sensor data frame
+#' @title Apply high pass butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).
 #' @export
 #' @import signal matlab plyr
+#' @param sensorData the input dataframe that matches mhealth specification.
+#' @param breaks "sec","min","hour","day","week","month","quarter" or "year"; or preceded by integer and space.
+#' @param Fs sampling rate of the input signal
+#' @param Fc cut off frequency of butterworth filter
+#' @param order formula order of butterworth filter
+#' @return list of filtered dataframes.
+#' @note If "breaks" is missing, filter will be applied on the whole sequence and return a list with a single dataframe.
 SensorData.filter.butterworth = function(sensorData, breaks, Fs, Fc, order){
   nyquist=Fs/2;
   coeffs =butter(order,Fc/nyquist,'high');
@@ -44,6 +60,7 @@ SensorData.filter.butterworth = function(sensorData, breaks, Fs, Fc, order){
       result = as.numeric(filtered)
     }, filt = coeffs$b, a = coeffs$a)
     filteredValue = colFilter(rows[2:nCols])
+    colnames(filteredValue) = paste0("BUTTERWORTH_",colnames(filteredValue))
     filteredValue = cbind(rows[MHEALTH_CSV_TIMESTAMP_HEADER], filteredValue)
     return(filteredValue)
   })

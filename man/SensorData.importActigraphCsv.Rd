@@ -2,11 +2,17 @@
 % Please edit documentation in R/SensorData.R
 \name{SensorData.importActigraphCsv}
 \alias{SensorData.importActigraphCsv}
-\title{Import and convert actigraph raw csv files and load into data frame as in mhealth format}
+\title{Import and convert Actigraph raw csv files and load into data frame as in mhealth format.}
 \usage{
 SensorData.importActigraphCsv(filename)
 }
+\arguments{
+\item{filename}{full file path of input Actigraph raw csv file.}
+}
 \note{
-Please make sure the actigraph raw csv file has timestamp included
+Please make sure the Actigraph raw csv file has timestamp included. The Actigraph raw csv file is not IMU csv file supported by GT9X.
+}
+\seealso{
+[`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importBinary`](SensorData.importBinary.html)
 }
 

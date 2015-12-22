@@ -6,7 +6,14 @@
 \usage{
 AnnotationData.clip(annotationData, startTime, endTime)
 }
+\arguments{
+\item{annotationData}{annotation data frame that matches mhealth specification.}
+
+\item{startTime}{POSIXct date object for start timestamp.}
+
+\item{endTime}{POSIXct date object for start timestamp.}
+}
 \note{
-Make sure that the data frame is compatible with mhealth annotation data file format
+Make sure that the data frame is compatible with mhealth annotation data file format.
 }
 

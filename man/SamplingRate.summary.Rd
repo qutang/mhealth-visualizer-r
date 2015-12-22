@@ -2,8 +2,19 @@
 % Please edit documentation in R/SamplingRate.R
 \name{SamplingRate.summary}
 \alias{SamplingRate.summary}
-\title{Calculate sampling rate over a certain break (e.g. hour, min)}
+\title{Calculate sampling rate for each column over a certain break (e.g. hour, min).}
 \usage{
 SamplingRate.summary(sensorData, breaks = "min")
+}
+\arguments{
+\item{sensorData}{input dataframe that matches mhealth specification.}
+
+\item{breaks}{"sec","min","hour","day","week","month","quarter" or "year"; or preceded by integer and space.}
+}
+\value{
+Returned dataframe would have headers: `HEADER_TIME_STAMP, SAMPLING_RATE`.
+}
+\note{
+If "breaks" is missing, filter will be applied on the whole sequence and return a list with a single dataframe.
 }
 

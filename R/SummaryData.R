@@ -1,8 +1,11 @@
 #' @name SummaryData.simpleMean
-#' @title Calculate summary value (simple mean) over a certain break (e.g. hour, min)
+#' @title Calculate summary value (mean value) for each column over a certain time break (e.g. hour, min)
 #' @export
+#' @note If certain break is not provided or missing, will use the entire sequence. The column name (except for the first column) of output dataframe would be: [SUMMARY\_METHOD]\_INPUT\_HEADER\_NAME
 #' @import plyr
-#' @param sensorData: should be compatible with the mhealth sensor data format, first column should be HEADER_TIME_STAMP, and the following arbitrary number of columns should be numeric
+#' @note If certain break is not provided or missing, will use the entire sequence
+#' @param sensorData input dataframe that matches mhealth sensor data format.
+#' @param breaks could be "sec", "min", "hour", "day", "week", "month", "quarter" or "year"; or preceded by an interger and a space.
 SummaryData.simpleMean = function(sensorData, breaks){
   nCols = ncol(sensorData)
   if(missing(breaks) || is.null(breaks)){
@@ -23,10 +26,12 @@ SummaryData.simpleMean = function(sensorData, breaks){
 }
 
 #' @name SummaryData.auc
-#' @title Calculate summary value (area under curve) over a certain break (e.g. hour, min).
-#' @description If certain break is not provided or missing, will use the entire sequence
+#' @title Calculate summary value (area under curve) for each column over a certain break (e.g. hour, min).
+#' @note If certain break is not provided or missing, will use the entire sequence. The column name (except for the first column) of output dataframe would be: [SUMMARY\_METHOD]\_INPUT\_HEADER\_NAME.
 #' @export
 #' @import plyr flux
+#' @param sensorData input dataframe that matches mhealth sensor data format.
+#' @param breaks could be "sec", "min", "hour", "day", "week", "month", "quarter" or "year"; or preceded by an interger and a space.
 SummaryData.auc = function(sensorData, breaks){
   nCols = ncol(sensorData)
   sensorData[,2:nCols] = abs(sensorData[,2:nCols])
@@ -55,10 +60,12 @@ SummaryData.auc = function(sensorData, breaks){
 }
 
 #' @name SummaryData.absoluteMean
-#' @title Calculate summary value (absolute mean value) over a certain break (e.g. hour, min).
-#' @description If certain break is not provided or missing, will use the entire sequence
+#' @title Calculate summary value (absolute mean value) for each column over a certain break (e.g. hour, min).
+#' @note If certain break is not provided or missing, will use the entire sequence. The column name (except for the first column) of output dataframe would be: [SUMMARY\_METHOD]\_INPUT\_HEADER\_NAME.
 #' @export
 #' @import plyr
+#' @param sensorData input dataframe that matches mhealth sensor data format.
+#' @param breaks could be "sec", "min", "hour", "day", "week", "month", "quarter" or "year"; or preceded by an interger and a space.
 SummaryData.absoluteMean = function(sensorData, breaks){
   nCols = ncol(sensorData)
   if(missing(breaks) || is.null(breaks)){
@@ -80,9 +87,10 @@ SummaryData.absoluteMean = function(sensorData, breaks){
 
 #' @name SummaryData.ggplot
 #' @title Plot summary data using ggplot2
+#' @description All columns will be on the same graph with different colors.
 #' @export
 #' @import lubridate ggplot2 reshape2
-#' @param summaryData: should be compatible with the mhealth sensor data format, first column should be HEADER_TIME_STAMP, and the following arbitrary number of columns should be numeric
+#' @param summaryData input dataframe that matches mhealth sensor data format.
 SummaryData.ggplot = function(summaryData){
   data = summaryData
 

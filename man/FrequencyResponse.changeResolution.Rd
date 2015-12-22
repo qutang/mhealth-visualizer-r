@@ -7,11 +7,11 @@
 FrequencyResponse.changeResolution(frData, resolution = 0.01)
 }
 \arguments{
-\item{frData:}{should be compatible with frequency response data format, with the first column be the frequencies, following by numeric columns
-resolution: new resolution for frequencies. Default is 0.01Hz.}
+\item{frData}{should be compatible with frequency response data format, with the first column be the frequencies, following by numeric columns.}
+
+\item{resolution}{new resolution for frequencies. Default is 0.01Hz.}
 }
 \description{
-If resolution is higher than the actual data resolution, it will do nothing,
-if resolution is lower than the actual data, it will skip some of the data points evenly.
+If resolution is higher than the actual data resolution, it will do nothing, if resolution is lower than the actual data, it will down sample the frequency data by skipping some of the data points evenly.
 }
 

@@ -7,6 +7,9 @@
 SummaryData.ggplot(summaryData)
 }
 \arguments{
-\item{summaryData:}{should be compatible with the mhealth sensor data format, first column should be HEADER_TIME_STAMP, and the following arbitrary number of columns should be numeric}
+\item{summaryData}{input dataframe that matches mhealth sensor data format.}
+}
+\description{
+All columns will be on the same graph with different colors.
 }
 

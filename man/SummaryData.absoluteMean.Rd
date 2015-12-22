@@ -2,11 +2,16 @@
 % Please edit documentation in R/SummaryData.R
 \name{SummaryData.absoluteMean}
 \alias{SummaryData.absoluteMean}
-\title{Calculate summary value (absolute mean value) over a certain break (e.g. hour, min).}
+\title{Calculate summary value (absolute mean value) for each column over a certain break (e.g. hour, min).}
 \usage{
 SummaryData.absoluteMean(sensorData, breaks)
 }
-\description{
-If certain break is not provided or missing, will use the entire sequence
+\arguments{
+\item{sensorData}{input dataframe that matches mhealth sensor data format.}
+
+\item{breaks}{could be "sec", "min", "hour", "day", "week", "month", "quarter" or "year"; or preceded by an interger and a space.}
+}
+\note{
+If certain break is not provided or missing, will use the entire sequence. The column name (except for the first column) of output dataframe would be: [SUMMARY\_METHOD]\_INPUT\_HEADER\_NAME.
 }
 

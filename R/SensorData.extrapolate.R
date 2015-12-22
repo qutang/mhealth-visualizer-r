@@ -1,10 +1,15 @@
 #' @name SensorData.extrapolate
-#' @title Apply extrapolate algorithm to sensor data. Algorithm was developed for activity count by NU mhealth group
+#' @title Apply extrapolate algorithm to sensor data. Algorithm was developed for activity count by NU mhealth group.
 #' @author Qu Tang
 #' @export
 #' @import plyr MASS akima
+#' @param sensorData input dataframe that matches mhealth specification.
+#' @param lambda parameter to regularize extrapolation: 0.1-10; default is 1. (the smaller the more confidence on points close to edges).
+#' @param interpolate "linear", "spline_fmm", "spline_natural", "aspline_original", "aspline_improved".
+#' @param range dynamic range.
+#' @param noiseStd standard deviation of the white noise.
 SensorData.extrapolate = function(sensorData,
-                                  lambda,
+                                  lambda = 1,
                                   interpolate,
                                   range,
                                   noiseStd
@@ -21,11 +26,13 @@ SensorData.extrapolate = function(sensorData,
 }
 
 #' @name Sensor.extrapolate.singleColumn
-#' @title Apply extrapolate algorithm to a single stream of data. This is used as the inner function for SensorData.extrapolate.
-#' @description If wanting to obtain mediate results for plotting and debugging, please use this function
+#' @title Apply extrapolate algorithm to a single stream of data. This is used as the inner function for `SensorData.extrapolate`.
+#' @note If wanting to obtain mediate results for plotting and debugging, please use this function.
 #' @author Qu Tang
 #' @export
 #' @import MASS akima
+#' @param sensorData input dataframe that matches mhealth specification.
+#' @param param parameter list, should be: `[lambda, interpolate, range, noiseStd]`.
 SensorData.extrapolate.singleColumn = function(sensorData,
                                                 param
                                                 ){

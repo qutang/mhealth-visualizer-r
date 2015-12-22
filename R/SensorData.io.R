@@ -1,8 +1,17 @@
-
 #' @name SensorData.io.write
-#' @title Write sensor data into mhealth folder structure
+#' @title Write sensor data into mhealth folder structure and with mhealth filename convention.
 #' @export
 #' @import lubridate stringr
+#' @param folder the output folder
+#' @param sensorData the input dataframe that matches mhealth specification.
+#' @param sensorType the sensor type string used in filename.
+#' @param dataType the data type string used in filename.
+#' @param sensorId the sensor ID string used in filename.
+#' @param versionCode the version code string used in filename; default is "NA".
+#' @param tz the time zone string (P/MHHMM) used in filename.
+#' @param gzip whether to gzip the output csv file.
+#' @param flatDir whether to use mhealth folder structure or just use flat directory.
+#' @param splitHour whether to split input dataframe into hourly csv files.
 SensorData.io.write = function(folder, sensorData, sensorType, dataType, sensorId, versionCode = "NA", tz, gzip = TRUE, flatDir = FALSE, splitHour = TRUE){
   # TODO: support split hour
   if(missing(tz)){

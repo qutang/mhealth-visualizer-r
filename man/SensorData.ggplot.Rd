@@ -2,11 +2,14 @@
 % Please edit documentation in R/SensorData.R
 \name{SensorData.ggplot}
 \alias{SensorData.ggplot}
-\title{Plot sensor raw data using ggplot2}
+\title{Plot sensor raw data using ggplot2.}
 \usage{
 SensorData.ggplot(sensorData)
 }
 \arguments{
-\item{sensorData:}{should be compatible with the mhealth sensor data format, first column should be HEADER_TIME_STAMP, and the following arbitrary number of columns should be numeric}
+\item{sensorData}{input dataframe that matches mhealth specification.}
+}
+\description{
+All columns will be plotted on the same graph with different colors.
 }
 

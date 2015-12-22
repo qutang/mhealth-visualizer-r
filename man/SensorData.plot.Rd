@@ -2,8 +2,14 @@
 % Please edit documentation in R/SensorData.R
 \name{SensorData.plot}
 \alias{SensorData.plot}
-\title{Plot nicely the raw sensor data data frame}
+\title{Plot nicely the raw sensor data data frame.}
 \usage{
 SensorData.plot(sensorData)
+}
+\arguments{
+\item{sensorData}{input dataframe that matches mhealth specification.}
+}
+\description{
+All columns will be plotted on the same graph.
 }
 

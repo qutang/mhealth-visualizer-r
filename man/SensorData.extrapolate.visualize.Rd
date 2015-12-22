@@ -11,4 +11,10 @@ SensorData.extrapolate.visualize(extrapolated, input, groundtruth,
   showCenter = FALSE, showNeighbors = FALSE, showLines = FALSE,
   showPoints = FALSE)
 }
+\description{
+---
+title: SensorData.extrapolate.visualize
+layout: launch
+---
+}
 

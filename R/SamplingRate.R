@@ -1,10 +1,13 @@
 MHEALTH_CSV_SAMPLING_RATE_HEADER = "SAMPLING_RATE"
 
 #' @name SamplingRate.summary
-#' @title Calculate sampling rate over a certain break (e.g. hour, min)
+#' @title Calculate sampling rate for each column over a certain break (e.g. hour, min).
 #' @export
 #' @import plyr
-
+#' @param sensorData input dataframe that matches mhealth specification.
+#' @param breaks "sec","min","hour","day","week","month","quarter" or "year"; or preceded by integer and space.
+#' @note If "breaks" is missing, filter will be applied on the whole sequence and return a list with a single dataframe.
+#' @return Returned dataframe would have headers: `HEADER_TIME_STAMP, SAMPLING_RATE`.
 SamplingRate.summary = function(sensorData, breaks = "min"){
   result = plyr::ddply(sensorData,.(cut(HEADER_TIME_STAMP, breaks= breaks)),nrow)
   names(result)[1] = MHEALTH_CSV_TIMESTAMP_HEADER
@@ -14,14 +17,12 @@ SamplingRate.summary = function(sensorData, breaks = "min"){
 }
 
 #' @name SamplingRate.plot
-#' @title Plot sampling rate over certain breaks (e.g. min, hour)
+#' @title Plot sampling rate over certain breaks (e.g. min, hour).
 #' @export
 #' @import lubridate
-#' @param
-#' type: "Count" or "Hz" or "Dataloss".
-#' "Count" will display the sample counts;
-#' "Hz" will display the sampling rate in Hz (count divided by break time)
-#' "Dataloss" will display the sampling rate in data loss percentage (count divided by reference)
+#' @param sr_dat sampling rate dataframe from `SamplingRate.summary`.
+#' @param unit "Count" or "Hz" or "Dataloss": "Count" will display the sample counts; "Hz" will display the sampling rate in Hz (count divided by break time)"; Dataloss" will display the sampling rate in data loss percentage (count divided by reference).
+#' @param ref reference value to be plotted as dashed line if not missing; or used to calculate data loss percentage.
 SamplingRate.plot = function(sr_dat, unit = "Count", ref){
   ts = sr_dat[,1]
   value = sr_dat[,2]
@@ -60,14 +61,12 @@ SamplingRate.plot = function(sr_dat, unit = "Count", ref){
 }
 
 #' @name SamplingRate.ggplot
-#' @title Plot sampling rate over certain breaks (e.g. min, hour) using ggplot2
+#' @title Plot sampling rate over certain breaks (e.g. min, hour) using ggplot2.
 #' @export
 #' @import lubridate ggplot2
-#' @param
-#' type: "Count" or "Hz" or "Dataloss".
-#' "Count" will display the sample counts;
-#' "Hz" will display the sampling rate in Hz (count divided by break time)
-#' "Dataloss" will display the sampling rate in data loss percentage (count divided by reference)
+#' @param sr_dat sampling rate dataframe from `SamplingRate.summary`.
+#' @param unit "Count" or "Hz" or "Dataloss": "Count" will display the sample counts; "Hz" will display the sampling rate in Hz (count divided by break time); "Dataloss" will display the sampling rate in data loss percentage (count divided by reference)
+#' @param ref reference value to be plotted as dashed line if not missing; or used to calculate data loss percentage.
 SamplingRate.ggplot = function(sr_dat, unit = "Count", ref){
   data = sr_dat
   breaks = pretty_dates(sr_dat[,1], n = 6)

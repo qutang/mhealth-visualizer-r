@@ -1,10 +1,20 @@
 MHEALTH_CSV_GENERATOR_SINUSOIDAL_SUFFIX = "SINUSOIDAL_SIMULATED_VALUE"
 
 #' @name SensorData.generator.sinusoidal
-#' @title Generate simulated sinusoidal signal in mhealth format
-#' @description If the signal arguments are vector, multiple columns will be generated
+#' @title Generate simulated sinusoidal signal in mhealth format.
+#' @note If arguments (range, f, amp, phase, noiseStd) are vectors, multiple columns will be generated accordingly. But the vectors should have the same length. Values will be cut off if beyonding the dynamic range.
 #' @export
 #' @import plyr
+#' @param startTime POSIXct date object for start timestamp.
+#' @param endTime POSIXct date object for end timestamp, often with format startTime + numeric duration.
+#' @param Fs sampling rate of the simulated device.
+#' @param range dynamic range of the simulated device.
+#' @param f simulated frequency of the generated signal.
+#' @param amp amplitude of the generated signal.
+#' @param amp0 the DC component of the generated signal.
+#' @param phase the initial phase of the generated signal.
+#' @param noiseStd the standard deviation of the noise of the generated signal.
+#' @param seed the random seed to be used when adding noise.
 SensorData.generator.sinusoidal = function(startTime,
                                            endTime,
                                            Fs,
@@ -44,10 +54,26 @@ SensorData.generator.sinusoidal = function(startTime,
 }
 
 #' @name SensorData.generator.fourierSeries
-#' @title Generate simulated fourier series signal in mhealth format to simulate arbitrary periodical signal
-#' @description If the signal arguments are vector, multiple columns will be generated
+#' @title Generate simulated fourier series signal in mhealth format to simulate arbitrary periodical signal.
+#' @description frequency component will be generated with formula: `n * fstep * fbase`. `n` is nth order. Amplitude and phase will have uniform distribution between min and max values. Values will be cut off if beyonding the dynamic range.
 #' @export
 #' @import plyr
+#' @note If arguments (range, fbase, fstep, ampMin, ampMax, phaseMin, phaseMax, noiseStd) are vectors, multiple columns will be generated accordingly. But the vectors should have the same length.
+#' @param startTime POSIXct date object for start timestamp.
+#' @param endTime POSIXct date object for end timestamp, often with format startTime + numeric duration.
+#' @param Fs sampling rate of the simulated device.
+#' @param range dynamic range of the simulated device.
+#' @param fbase simulated base frequency of the generated signal.
+#' @param fstep simulated frequency step parameter of the generated signal.
+#' @param ampMin minimum value of generated amplitude.
+#' @param ampMax maximum value of generated amplitude.
+#' @param amp0 the DC component of the generated signal.
+#' @param phaseMin the minimum initial phase of the generated signal.
+#' @param phaseMax the maximum initial phase of the generated signal.
+#' @param order the order of frequency components of the generated signal.
+#' @param noiseStd the standard deviation of the noise of the generated signal.
+#' @param parallel whether to use parallel computing when generating signal.
+#' @param seed the random seed to be used when adding noise.
 SensorData.generator.fourierSeries = function(startTime,
                                               endTime,
                                               Fs,

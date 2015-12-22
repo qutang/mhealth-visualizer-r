@@ -6,4 +6,12 @@
 \usage{
 SensorData.split(sensorData, breaks = "hour")
 }
+\arguments{
+\item{sensorData}{input dataframe that matches mhealth specification.}
+
+\item{breaks}{"sec","min","hour","day","week","month","quarter" or "year"; or preceded by integer and space.}
+}
+\value{
+list of splitted dataframes
+}
 

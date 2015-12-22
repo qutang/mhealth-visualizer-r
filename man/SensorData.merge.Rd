@@ -2,11 +2,16 @@
 % Please edit documentation in R/SensorData.R
 \name{SensorData.merge}
 \alias{SensorData.merge}
-\title{Merge two or more mhealth data frames and sorted by timestamp, duplicated rows will be removed based on timestamp}
+\title{Merge two or more mhealth data frames by rows and sorted by timestamp, duplicated rows will be removed based on timestamp.}
 \usage{
 SensorData.merge(listOfData, ...)
 }
+\arguments{
+\item{listOfData}{list of input dataframes that matches mhealth specification.}
+
+\item{...}{other optional input dataframes that matches mhealth specification.}
+}
 \note{
-Make sure that the data frame is including timestamps
+Make sure that the data frame is including timestamps.
 }
 

@@ -2,8 +2,13 @@
 % Please edit documentation in R/AnnotationData.R
 \name{AnnotationData.addToGgplot}
 \alias{AnnotationData.addToGgplot}
-\title{add annotation bars to an existing ggplot (most likely a sensor data plot)}
+\title{add annotation bars to an existing ggplot (most likely a sensor data plot) or if no existing ggplot object is provided, create an annotation graph.}
 \usage{
 AnnotationData.addToGgplot(p, annotationData)
+}
+\arguments{
+\item{p}{an existing ggplot object. Often to be the one with sensor data.}
+
+\item{annotationData}{input annotation dataframe that matches mhealth specification.}
 }
 

@@ -2,8 +2,14 @@
 % Please edit documentation in R/AnnotationData.R
 \name{AnnotationData.importCsv}
 \alias{AnnotationData.importCsv}
-\title{Import mhealth annotation data file and load into memory as data frame in mhealth format}
+\title{Import mhealth annotation data file and load into memory as data frame in mhealth format.}
 \usage{
 AnnotationData.importCsv(filename)
+}
+\arguments{
+\item{filename}{full file path for input annotation data file.}
+}
+\note{
+Time zone is from local computer for now. But should be changed to use filename in the future.
 }
 

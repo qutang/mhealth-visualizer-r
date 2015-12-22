@@ -2,8 +2,17 @@
 % Please edit documentation in R/SensorData.R
 \name{SensorData.importCsv}
 \alias{SensorData.importCsv}
-\title{Import mhealth sensor data file and load into memory as data frame in mhealth format}
+\title{Import mhealth sensor data file and load into memory as data frame in mhealth format.}
 \usage{
 SensorData.importCsv(filename)
+}
+\arguments{
+\item{filename}{full file path of input sensor data file.}
+}
+\note{
+input file must match mhealth specification. Note that the time zone of timestamps will be based on local computer instead of the filename, this needs to be changed.
+}
+\seealso{
+[`SensorData.importBinary`](SensorData.importBinary.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html)
 }
 

@@ -1,6 +1,6 @@
 
 startTime = Sys.time()
-endTime = startTime + 60
+endTime = startTime + 10
 Fs = 40
 range = 6
 fbase = 1
@@ -28,4 +28,5 @@ result = SensorData.generator.fourierSeries(startTime = startTime,
                                    parallel = FALSE,
                                    seed = seed
                                    )
-SensorData.ggplot(result[1:500,])
+SensorData.ggplot(result)
+fftData = FrequencyResponse.fft(result, Fs = 40)

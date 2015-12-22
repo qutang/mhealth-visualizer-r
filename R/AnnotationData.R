@@ -3,8 +3,10 @@ MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER = "STOP_TIME"
 MHEALTH_CSV_ANNOTATION_LABEL_HEADER = "LABEL_NAME"
 
 #' @name AnnotationData.importCsv
-#' @title Import mhealth annotation data file and load into memory as data frame in mhealth format
+#' @title Import mhealth annotation data file and load into memory as data frame in mhealth format.
 #' @export
+#' @param filename full file path for input annotation data file.
+#' @note Time zone is from local computer for now. But should be changed to use filename in the future.
 AnnotationData.importCsv = function(filename) {
   op <- options(digits.secs = 3)
   # get the time zone from filename
@@ -28,6 +30,8 @@ AnnotationData.importCsv = function(filename) {
 #' @name AnnotationData.merge
 #' @title merge two or more annotation data frames and sort according to start time
 #' @export
+#' @param annotationDataList list of annotation data frames
+#' @param ... other optional annotation data frames
 AnnotationData.merge = function(annotationDataList, ...){
   if (!missing(annotationDataList)) {
     input = c(annotationDataList, list(...))
@@ -44,7 +48,10 @@ AnnotationData.merge = function(annotationDataList, ...){
 #' @name AnnotationData.clip
 #' @export
 #' @title Clip annotation data according to the start and end time
-#' @note Make sure that the data frame is compatible with mhealth annotation data file format
+#' @note Make sure that the data frame is compatible with mhealth annotation data file format.
+#' @param annotationData annotation data frame that matches mhealth specification.
+#' @param startTime POSIXct date object for start timestamp.
+#' @param endTime POSIXct date object for start timestamp.
 AnnotationData.clip = function(annotationData, startTime, endTime){
   clippedTs = annotationData[[MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER]] >= startTime & annotationData[[MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER]] <= endTime
   result = annotationData[clippedTs,]
@@ -54,8 +61,10 @@ AnnotationData.clip = function(annotationData, startTime, endTime){
 }
 
 #' @name AnnotationData.getLabelNames
-#' @title get all matched label names given a timestamp, return NULL if no match
+#' @title get all matched label names given a timestamp, return NULL if no match.
 #' @export
+#' @param annotationData input annotation dataframe that matches mhealth specification
+#' @param currentTime POSIXct date object of a timestamp to search for the corresponding labels.
 AnnotationData.getLabelNames = function(annotationData, currentTime) {
   if(is.null(currentTime)){
     return(NULL)
@@ -70,9 +79,11 @@ AnnotationData.getLabelNames = function(annotationData, currentTime) {
 }
 
 #' @name AnnotationData.addToGgplot
-#' @title add annotation bars to an existing ggplot (most likely a sensor data plot)
+#' @title add annotation bars to an existing ggplot (most likely a sensor data plot) or if no existing ggplot object is provided, create an annotation graph.
 #' @import foreach RColorBrewer
 #' @export
+#' @param p an existing ggplot object. Often to be the one with sensor data.
+#' @param annotationData input annotation dataframe that matches mhealth specification.
 AnnotationData.addToGgplot = function(p, annotationData) {
   categories = unique(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER])
   colors = brewer.pal(n = max(length(categories),3), name = "Paired")

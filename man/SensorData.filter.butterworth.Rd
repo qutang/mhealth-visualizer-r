@@ -2,8 +2,25 @@
 % Please edit documentation in R/SensorData.filter.R
 \name{SensorData.filter.butterworth}
 \alias{SensorData.filter.butterworth}
-\title{Apply high pass butterworth filter to the input sensor data frame}
+\title{Apply high pass butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).}
 \usage{
 SensorData.filter.butterworth(sensorData, breaks, Fs, Fc, order)
+}
+\arguments{
+\item{sensorData}{the input dataframe that matches mhealth specification.}
+
+\item{breaks}{"sec","min","hour","day","week","month","quarter" or "year"; or preceded by integer and space.}
+
+\item{Fs}{sampling rate of the input signal}
+
+\item{Fc}{cut off frequency of butterworth filter}
+
+\item{order}{formula order of butterworth filter}
+}
+\value{
+list of filtered dataframes.
+}
+\note{
+If "breaks" is missing, filter will be applied on the whole sequence and return a list with a single dataframe.
 }
 

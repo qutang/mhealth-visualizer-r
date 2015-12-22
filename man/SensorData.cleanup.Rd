@@ -2,11 +2,21 @@
 % Please edit documentation in R/SensorData.R
 \name{SensorData.cleanup}
 \alias{SensorData.cleanup}
-\title{Clean up sensor data by removing invalid timestamps, according to matched level (e.g. year, month, day, hour, min, sec)}
+\title{Clean up sensor dataframe by removing invalid timestamps, according to a certain time level.}
 \usage{
-SensorData.cleanup(sensorData, level = "year", gt = NULL)
+SensorData.cleanup(sensorData, level = "year", ref = NULL)
+}
+\arguments{
+\item{sensorData}{input dataframe that matches mhealth specification}
+
+\item{level}{"second", "minute", "hour", "day", "month", or "year"; used to trim data that doesn't match the reference value.}
+
+\item{ref}{the reference date string for the certain time "level". E.g. "2015-10", for level "month"; the string format should follow "%Y-%m-%d %H:%M:%S".}
+}
+\description{
+For example, if level is "year", sensor data will be trimmed according to the provided `ref` date's year; or if `gt` is not provided, the reference value of "year" level will be the most frequent year.
 }
 \note{
-Make sure that the data frame is including timestamps
+Make sure that the data frame is including timestamps.
 }
 

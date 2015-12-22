@@ -3,12 +3,17 @@
 \name{Sensor.extrapolate.singleColumn}
 \alias{Sensor.extrapolate.singleColumn}
 \alias{SensorData.extrapolate.singleColumn}
-\title{Apply extrapolate algorithm to a single stream of data. This is used as the inner function for SensorData.extrapolate.}
+\title{Apply extrapolate algorithm to a single stream of data. This is used as the inner function for `SensorData.extrapolate`.}
 \usage{
 SensorData.extrapolate.singleColumn(sensorData, param)
 }
-\description{
-If wanting to obtain mediate results for plotting and debugging, please use this function
+\arguments{
+\item{sensorData}{input dataframe that matches mhealth specification.}
+
+\item{param}{parameter list, should be: `[lambda, interpolate, range, noiseStd]`.}
+}
+\note{
+If wanting to obtain mediate results for plotting and debugging, please use this function.
 }
 \author{
 Qu Tang

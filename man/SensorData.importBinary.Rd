@@ -2,11 +2,19 @@
 % Please edit documentation in R/SensorData.R
 \name{SensorData.importBinary}
 \alias{SensorData.importBinary}
-\title{Import and decode binary file from the smart watch and load into dataframe as mhealth format}
+\title{Import and decode binary file from the smart watch and load into dataframe as mhealth format.}
 \usage{
 SensorData.importBinary(filename, dest = file.path(getwd(), ".fromBinary"))
 }
-\description{
-The default destination directory for the decoded file is stored in .fromBinary folder of current working directory
+\arguments{
+\item{filename}{full file path of input smart watch binary data file.}
+
+\item{dest}{full directory path of destination folder. Default is ".fromBinary" folder of current working directory.}
+}
+\note{
+It will call `SensorData.importCsv` after decoding.
+}
+\seealso{
+[`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html)
 }
 

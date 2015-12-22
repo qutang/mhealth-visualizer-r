@@ -2,8 +2,13 @@
 % Please edit documentation in R/AnnotationData.R
 \name{AnnotationData.getLabelNames}
 \alias{AnnotationData.getLabelNames}
-\title{get all matched label names given a timestamp, return NULL if no match}
+\title{get all matched label names given a timestamp, return NULL if no match.}
 \usage{
 AnnotationData.getLabelNames(annotationData, currentTime)
+}
+\arguments{
+\item{annotationData}{input annotation dataframe that matches mhealth specification}
+
+\item{currentTime}{POSIXct date object of a timestamp to search for the corresponding labels.}
 }
 

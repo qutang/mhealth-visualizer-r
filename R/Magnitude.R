@@ -1,8 +1,9 @@
 #' @name Magnitude.compute
-#' @title Compute the magnitude value of sensor data
+#' @title Compute the magnitude value of sensor data.
 #' @export
 #' @import plyr
-
+#' @param sensorData input dataframe that matches specification.
+#' @return dataframe with headers: `HEADER_CSV_TIMESTAMP,MAGNITUDE_[ORIGINAL_HEADER]`
 Magnitude.compute = function(sensorData){
   nCols = ncol(sensorData)
   magnitudeData = sensorData

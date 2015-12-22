@@ -2,14 +2,15 @@
 % Please edit documentation in R/SamplingRate.R
 \name{SamplingRate.ggplot}
 \alias{SamplingRate.ggplot}
-\title{Plot sampling rate over certain breaks (e.g. min, hour) using ggplot2}
+\title{Plot sampling rate over certain breaks (e.g. min, hour) using ggplot2.}
 \usage{
 SamplingRate.ggplot(sr_dat, unit = "Count", ref)
 }
 \arguments{
-\item{type:}{"Count" or "Hz" or "Dataloss".
-"Count" will display the sample counts;
-"Hz" will display the sampling rate in Hz (count divided by break time)
-"Dataloss" will display the sampling rate in data loss percentage (count divided by reference)}
+\item{sr_dat}{sampling rate dataframe from `SamplingRate.summary`.}
+
+\item{unit}{"Count" or "Hz" or "Dataloss": "Count" will display the sample counts; "Hz" will display the sampling rate in Hz (count divided by break time); "Dataloss" will display the sampling rate in data loss percentage (count divided by reference)}
+
+\item{ref}{reference value to be plotted as dashed line if not missing; or used to calculate data loss percentage.}
 }
 

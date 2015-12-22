@@ -2,8 +2,14 @@
 % Please edit documentation in R/Magnitude.R
 \name{Magnitude.compute}
 \alias{Magnitude.compute}
-\title{Compute the magnitude value of sensor data}
+\title{Compute the magnitude value of sensor data.}
 \usage{
 Magnitude.compute(sensorData)
+}
+\arguments{
+\item{sensorData}{input dataframe that matches specification.}
+}
+\value{
+dataframe with headers: `HEADER_CSV_TIMESTAMP,MAGNITUDE_[ORIGINAL_HEADER]`
 }
 

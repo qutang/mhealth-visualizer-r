@@ -2,12 +2,25 @@
 % Please edit documentation in R/SensorData.R
 \name{SensorData.importGT3X}
 \alias{SensorData.importGT3X}
-\title{Import and decode GT3X files and load into dataframe as mhealth format}
+\title{Import and decode GT3X files and load into dataframe as mhealth format.}
 \usage{
 SensorData.importGT3X(filename, dest = file.path(getwd(), ".fromGT3X"),
   split = FALSE)
 }
-\description{
-The default destination folder will be .fromGT3X in current working directory
+\arguments{
+\item{filename}{full file path of input gt3x binary data file, should have extension "gt3x".}
+
+\item{dest}{full directory path of destination folder. Default is ".fromGT3X" folder of current working directory.}
+
+\item{split}{Whether to split input data into hourly dataframe list.}
+}
+\value{
+list of dataframes storing decoded gt3x sensor data file.
+}
+\note{
+it will call `SensorData.importCsv` after decoding GT3X binary data.
+}
+\seealso{
+[`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importBinary`](SensorData.importBinary.html), [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html)
 }
 

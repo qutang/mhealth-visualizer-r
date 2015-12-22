@@ -2,11 +2,18 @@
 % Please edit documentation in R/SummaryData.R
 \name{SummaryData.simpleMean}
 \alias{SummaryData.simpleMean}
-\title{Calculate summary value (simple mean) over a certain break (e.g. hour, min)}
+\title{Calculate summary value (mean value) for each column over a certain time break (e.g. hour, min)}
 \usage{
 SummaryData.simpleMean(sensorData, breaks)
 }
 \arguments{
-\item{sensorData:}{should be compatible with the mhealth sensor data format, first column should be HEADER_TIME_STAMP, and the following arbitrary number of columns should be numeric}
+\item{sensorData}{input dataframe that matches mhealth sensor data format.}
+
+\item{breaks}{could be "sec", "min", "hour", "day", "week", "month", "quarter" or "year"; or preceded by an interger and a space.}
+}
+\note{
+If certain break is not provided or missing, will use the entire sequence. The column name (except for the first column) of output dataframe would be: [SUMMARY\_METHOD]\_INPUT\_HEADER\_NAME
+
+If certain break is not provided or missing, will use the entire sequence
 }
 

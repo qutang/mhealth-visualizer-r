@@ -2,10 +2,31 @@
 % Please edit documentation in R/SensorData.io.R
 \name{SensorData.io.write}
 \alias{SensorData.io.write}
-\title{Write sensor data into mhealth folder structure}
+\title{Write sensor data into mhealth folder structure and with mhealth filename convention.}
 \usage{
 SensorData.io.write(folder, sensorData, sensorType, dataType, sensorId,
   versionCode = "NA", tz, gzip = TRUE, flatDir = FALSE,
   splitHour = TRUE)
+}
+\arguments{
+\item{folder}{the output folder}
+
+\item{sensorData}{the input dataframe that matches mhealth specification.}
+
+\item{sensorType}{the sensor type string used in filename.}
+
+\item{dataType}{the data type string used in filename.}
+
+\item{sensorId}{the sensor ID string used in filename.}
+
+\item{versionCode}{the version code string used in filename; default is "NA".}
+
+\item{tz}{the time zone string (P/MHHMM) used in filename.}
+
+\item{gzip}{whether to gzip the output csv file.}
+
+\item{flatDir}{whether to use mhealth folder structure or just use flat directory.}
+
+\item{splitHour}{whether to split input dataframe into hourly csv files.}
 }
 

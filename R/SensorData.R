@@ -4,8 +4,12 @@ MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Y_HEADER = "Y_ACCELATION_METERS_PER_SECOND_
 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Z_HEADER = "Z_ACCELATION_METERS_PER_SECOND_SQUARED"
 
 #' @name SensorData.importCsv
-#' @title Import mhealth sensor data file and load into memory as data frame in mhealth format
+#' @title Import mhealth sensor data file and load into memory as data frame in mhealth format.
+#' @note input file must match mhealth specification. Note that the time zone of timestamps will be based on local computer instead of the filename, this needs to be changed.
+#' @param filename full file path of input sensor data file.
 #' @export
+#' @seealso [`SensorData.importBinary`](SensorData.importBinary.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html)
+
 SensorData.importCsv = function(filename) {
   op <- options(digits.secs = 3)
   # get the time zone from filename
@@ -25,10 +29,13 @@ SensorData.importCsv = function(filename) {
 }
 
 #' @name SensorData.importBinary
-#' @title Import and decode binary file from the smart watch and load into dataframe as mhealth format
-#' @description The default destination directory for the decoded file is stored in .fromBinary folder of current working directory
+#' @title Import and decode binary file from the smart watch and load into dataframe as mhealth format.
+#' @note It will call `SensorData.importCsv` after decoding.
 #' @export
 #' @import rJava
+#' @param filename full file path of input smart watch binary data file.
+#' @param dest full directory path of destination folder. Default is ".fromBinary" folder of current working directory.
+#' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html)
 SensorData.importBinary = function(filename, dest = file.path(getwd(), ".fromBinary")) {
   if (dir.exists(dest)) {
     unlink(dest, recursive = TRUE, force = TRUE)
@@ -42,10 +49,15 @@ SensorData.importBinary = function(filename, dest = file.path(getwd(), ".fromBin
 }
 
 #' @name SensorData.importGT3X
-#' @title Import and decode GT3X files and load into dataframe as mhealth format
+#' @title Import and decode GT3X files and load into dataframe as mhealth format.
 #' @export
 #' @import rJava
-#' @description The default destination folder will be .fromGT3X in current working directory
+#' @note it will call `SensorData.importCsv` after decoding GT3X binary data.
+#' @param filename full file path of input gt3x binary data file, should have extension "gt3x".
+#' @param dest full directory path of destination folder. Default is ".fromGT3X" folder of current working directory.
+#' @param split Whether to split input data into hourly dataframe list.
+#' @return list of dataframes storing decoded gt3x sensor data file.
+#' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importBinary`](SensorData.importBinary.html), [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html)
 SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"), split = FALSE) {
   dir.create(dest, recursive = TRUE)
   if (split) {
@@ -63,11 +75,12 @@ SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"
   })
 }
 
-
 #' @name SensorData.importActigraphCsv
-#' @title Import and convert actigraph raw csv files and load into data frame as in mhealth format
+#' @title Import and convert Actigraph raw csv files and load into data frame as in mhealth format.
 #' @export
-#' @note Please make sure the actigraph raw csv file has timestamp included
+#' @note Please make sure the Actigraph raw csv file has timestamp included. The Actigraph raw csv file is not IMU csv file supported by GT9X.
+#' @param filename full file path of input Actigraph raw csv file.
+#' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importBinary`](SensorData.importBinary.html)
 SensorData.importActigraphCsv = function(filename) {
   actigraphHeader = .SensorData.parseActigraphCsvHeader(filename)
   dat = read.table(
@@ -91,9 +104,10 @@ SensorData.importActigraphCsv = function(filename) {
 
 #' @name SensorData.merge
 #' @export
-#' @title Merge two or more mhealth data frames and sorted by timestamp, duplicated rows will be removed based on timestamp
-#' @note Make sure that the data frame is including timestamps
-
+#' @title Merge two or more mhealth data frames by rows and sorted by timestamp, duplicated rows will be removed based on timestamp.
+#' @note Make sure that the data frame is including timestamps.
+#' @param listOfData list of input dataframes that matches mhealth specification.
+#' @param ... other optional input dataframes that matches mhealth specification.
 SensorData.merge = function(listOfData, ...) {
   if (!missing(listOfData)) {
     input = c(listOfData, list(...))
@@ -108,9 +122,13 @@ SensorData.merge = function(listOfData, ...) {
 
 #' @name SensorData.cleanup
 #' @export
-#' @title Clean up sensor data by removing invalid timestamps, according to matched level (e.g. year, month, day, hour, min, sec)
-#' @note Make sure that the data frame is including timestamps
-SensorData.cleanup = function(sensorData, level = "year", gt = NULL){
+#' @title Clean up sensor dataframe by removing invalid timestamps, according to a certain time level.
+#' @description For example, if level is "year", sensor data will be trimmed according to the provided `ref` date's year; or if `gt` is not provided, the reference value of "year" level will be the most frequent year.
+#' @note Make sure that the data frame is including timestamps.
+#' @param sensorData input dataframe that matches mhealth specification
+#' @param level "second", "minute", "hour", "day", "month", or "year"; used to trim data that doesn't match the reference value.
+#' @param ref the reference date string for the certain time "level". E.g. "2015-10", for level "month"; the string format should follow "%Y-%m-%d %H:%M:%S".
+SensorData.cleanup = function(sensorData, level = "year", ref = NULL){
   # extract a valid date
   pattern = switch(level,
          year = "%Y",
@@ -120,11 +138,11 @@ SensorData.cleanup = function(sensorData, level = "year", gt = NULL){
          minute = "%Y-%m-%d %H:%M",
          second = "%Y-%m-%d %H:%M:%S")
   validDates = format(sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], pattern)
-  if(is.null(gt)){
+  if(is.null(ref)){
     countDates = as.data.frame(table(validDates))
     validDate = as.character(countDates$validDates[countDates$Freq == max(countDates$Freq)])
   }else{
-    validDate = as.character(gt)
+    validDate = as.character(ref)
   }
   sensorData = sensorData[validDates == validDate,]
   return(sensorData)
@@ -158,8 +176,11 @@ SensorData.interpolate = function(sensorData, method = "spline_natural", polyDeg
 
 #' @name SensorData.clip
 #' @export
-#' @title Clip sensor data according to the start and end time
-#' @note Make sure that the data frame is including timestamps
+#' @title Clip sensor data according to the start and end time.
+#' @note Make sure that the data frame is including timestamps.
+#' @param sensorData input dataframe that matches mhealth specification.
+#' @param startTime POSIct date object for start time.
+#' @param endTime POSIct date object for end time.
 SensorData.clip = function(sensorData, startTime, endTime){
   clippedTs = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]] >= startTime & sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]] <= endTime
   return(sensorData[clippedTs,])
@@ -168,16 +189,20 @@ SensorData.clip = function(sensorData, startTime, endTime){
 #' @name SensorData.split
 #' @title Split sensor data into list of smaller data frame with meaningful intervals (e.g. hourly, minutely, secondly or daily)
 #' @import plyr
+#' @param sensorData input dataframe that matches mhealth specification.
+#' @param breaks "sec","min","hour","day","week","month","quarter" or "year"; or preceded by integer and space.
 #' @export
+#' @return list of splitted dataframes
 SensorData.split = function(sensorData, breaks = "hour"){
   result = plyr::dlply(sensorData,.(cut(HEADER_TIME_STAMP, breaks= breaks)), function(x)return(x))
   return(result)
 }
 
 #' @name SensorData.plot
-#' @title Plot nicely the raw sensor data data frame
+#' @title Plot nicely the raw sensor data data frame.
+#' @description All columns will be plotted on the same graph.
 #' @export
-#' @import ggthemes
+#' @param sensorData input dataframe that matches mhealth specification.
 SensorData.plot = function(sensorData){
   par(mfrow=c(3,1), mai=c(0.5,0.5,0.5,0.5))
   ts = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]]
@@ -194,10 +219,11 @@ SensorData.plot = function(sensorData){
 }
 
 #' @name SensorData.ggplot
-#' @title Plot sensor raw data using ggplot2
+#' @title Plot sensor raw data using ggplot2.
+#' @description All columns will be plotted on the same graph with different colors.
 #' @export
 #' @import lubridate ggplot2 reshape2
-#' @param sensorData: should be compatible with the mhealth sensor data format, first column should be HEADER_TIME_STAMP, and the following arbitrary number of columns should be numeric
+#' @param sensorData input dataframe that matches mhealth specification.
 SensorData.ggplot = function(sensorData){
   data = sensorData
   nCols = ncol(data)
