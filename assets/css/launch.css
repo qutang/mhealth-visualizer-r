@@ -36,3 +36,8 @@
 	background:none;
 	border:none;
 }
+
+#toc ol{
+  margin: auto;
+  padding: 0 2.5em;
+}

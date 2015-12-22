@@ -21,8 +21,16 @@
 <script type="text/javascript" src="{{ "/assets/js/v2.like_button.js" | prepend: site.baseurl }}"></script>
 <script type="text/javascript" src="{{ "/assets/js/v2.wow.js" | prepend: site.baseurl }}"></script>
 
+<script type="text/javascript" src="{{ "/assets/js/toc.js" | prepend: site.baseurl  }}"></script>
+
 <!-- This should be in the last -->
  <!-- dynamic load js -->
 {% for js in page.javascript %}
  <script type="text/javascript" src="{{ js }}" charset="utf-8"></script>
 {% endfor %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#toc').toc();
+});
+</script>

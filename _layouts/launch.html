@@ -1,12 +1,12 @@
 ---
 layout: default
-css: 
+css:
 - /assets/css/launch.css
 ---
 <div id="headerwrap">
     <div class="container">
         <div class="row">
-            
+
             <div class="col-lg-12">
                 <h3>{{ page.title }}
                 </h3>
@@ -18,13 +18,13 @@ css:
                     {{ page.description }}
                 </p>
                 </div>
-                
+
                 <div class="row">
                 <h4 class="col-lg-offset-3 col-lg-2"><a href="{{ page.doc-url }}"><i class="fa fa-book fa-2x"></i><br><br>Docs</a></h4>
                 <h4 class="col-lg-2"><a href="{{ page.bug-url }}"><i class="fa fa-bug fa-2x"></i><br><br>Bugs and features</a></h4>
                 <h4 class="col-lg-2"><a href="{{ page.code-url }}"><i class="fa fa-file-code-o fa-2x"></i><br><br>Source codes</a></h4>
                 </div>
-                <p><a href="{{ "/" | prepend: site.baseurl }}">Back to project home</a> 
+                <p><a href="{{ "/" | prepend: site.baseurl }}">Back to project home</a>
                 &bull; <a href="/">Back to QU.</a>
                 &bull; <a href="{{ "/project/mhealthformat-support-r-update/" | prepend: site.url }}">Timeline</a></p>
             </div>
@@ -33,6 +33,9 @@ css:
 </div><!-- /headerwrap -->
 
 <div class="container">
+    <div class="row">
+      <div id="toc" class="col-lg-8 col-lg-offset-1"></div>
+    </div>
     <div class="row">
         <div class="col-lg-10 col-lg-offset-1" id="launch-content">
             <div class="spacing"></div>

@@ -1,0 +1,33 @@
+---
+layout: default
+css:
+- /assets/css/launch.css
+---
+<div id="headerwrap">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-12">
+                <h3>{{ page.title }}
+                </h3>
+                </div>
+
+                <div class="row">
+                <p><a href="{{ "/" | prepend: site.baseurl }}">Back to project home</a>
+                &bull; <a href="{{ "/docs/" | prepend: site.baseurl }}">Back to Document home</a>
+            </div>
+        </div><!-- /row -->
+    </div> <!-- /container -->
+</div><!-- /headerwrap -->
+
+<div class="container">
+    <div class="row">
+      <div id="toc" class="col-lg-8 col-lg-offset-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1" id="launch-content">
+            <div class="spacing"></div>
+            {{ content }}
+        </div>
+    </div>
+</div>
