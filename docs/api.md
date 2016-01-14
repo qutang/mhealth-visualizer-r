@@ -13,6 +13,8 @@ title: API Document
 
  * [`AnnotationData.merge`](AnnotationData.merge.html) merge two or more annotation data frames and sort according to start time
 
+ * [`AnnotationData.offset`](AnnotationData.offset.html) offset annotation data's start and stop timestamp by an offset value in seconds
+
  * [`FrequencyResponse.changeResolution`](FrequencyResponse.changeResolution.html) Change the frequency resolution of the input frequency response data
 
  * [`FrequencyResponse.spectrum.ggplot`](FrequencyResponse.spectrum.ggplot.html) Plot fft frequency response for input sensor data.
@@ -60,6 +62,8 @@ title: API Document
  * [`SensorData.io.write`](SensorData.io.write.html) Write sensor data into mhealth folder structure and with mhealth filename convention.
 
  * [`SensorData.merge`](SensorData.merge.html) Merge two or more mhealth data frames by rows and sorted by timestamp, duplicated rows will be removed based on timestamp.
+
+ * [`SensorData.offset`](SensorData.offset.html) offset sensor data's timestamp by an offset value in seconds
 
  * [`SensorData.plot`](SensorData.plot.html) Plot nicely the raw sensor data data frame.
 

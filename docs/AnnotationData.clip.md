@@ -18,6 +18,12 @@ AnnotationData.clip(annotationData, startTime, endTime)
 * `endTime`: POSIXct date object for start timestamp.
 
 
+#### Value ####
+
+
+ clipped annotation dataframe
+
+
 #### Note ####
 
 
