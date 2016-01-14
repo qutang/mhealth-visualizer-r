@@ -150,6 +150,7 @@ Check out [mhealth specification](http://mhealth-specification.s3-website-us-eas
 
 -   IO: [AnnotationData.importCsv](AnnotationData.importCsv.html)
 -   Split and merge: [AnnotationData.merge](AnnotationData.merge.html), [AnnotationData.clip](AnnotationData.clip.html)
+-   Time manipulation: [AnnotationData.offset](AnnotationData.offset.html)
 -   Process: [AnnotationData.getLabelNames](AnnotationData.getLabelNames.html)
 -   Visualization: [AnnotationData.addToGgplot](AnnotationData.addToGgplot.html)
 
