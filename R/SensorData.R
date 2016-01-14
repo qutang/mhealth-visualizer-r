@@ -198,6 +198,17 @@ SensorData.split = function(sensorData, breaks = "hour"){
   return(result)
 }
 
+#' @name SensorData.offset
+#' @title offset sensor data's timestamp by an offset value in seconds
+#' @param sensorData input dataframe that matches mhealth specification.
+#' @param offsetValue value in seconds specifies the offset time, could be negative, meaning go back to some time earlier. The default is 0, meaning no offset.
+#' @export
+#' @return dataframe after timestamps being offset
+SensorData.offset = function(sensorData, offsetValue = 0){
+  sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]] = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]] + offsetValue
+  return(sensorData)
+}
+
 #' @name SensorData.plot
 #' @title Plot nicely the raw sensor data data frame.
 #' @description All columns will be plotted on the same graph.

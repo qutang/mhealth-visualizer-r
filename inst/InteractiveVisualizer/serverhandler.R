@@ -269,6 +269,7 @@ handleComputeSummaryClicked = function(input, session) {
         incProgress(message = "Merge imported data")
         merged = SensorData.merge(dataList)
         merged = SensorData.cleanup(merged)
+        merged = SensorData.offset(merged, as.numeric(input$rawDataOffset))
         withProgress(message = "Compute summary data", value = 0.6, {
           method = input$summaryMethod
           valueType = input$summaryValue
@@ -352,6 +353,7 @@ handleSaveSummaryDataAsCsv = function(input, output){
 
     output$saveClippedRawData = downloadHandler(.getCsvFilename("raw_data"), content = function(filename){
       clipped = SensorData.clip(rValues$rawData, rValues$raw_xlim[1], rValues$raw_xlim[2])
+      clipped = SensorData.offset(clipped, offsetValue = as.numeric(input$rawDataOffset))
       write.csv(clipped, filename, sep = ",", quote = FALSE, row.names = FALSE)
     })
 }
@@ -381,6 +383,7 @@ handleShowRawPlot = function(input, session){
         incProgress(message = "Merge imported data")
         merged = SensorData.merge(dataList)
         merged = SensorData.cleanup(merged)
+        merged = SensorData.offset(merged, offsetValue = as.numeric(input$rawDataOffset))
         incProgress(message = "Clip merged data")
         cliped = SensorData.clip(merged, rValues$xlim[1], rValues$xlim[2])
         rValues$rawData = cliped

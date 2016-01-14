@@ -13,6 +13,9 @@ AnnotationData.clip(annotationData, startTime, endTime)
 
 \item{endTime}{POSIXct date object for start timestamp.}
 }
+\value{
+clipped annotation dataframe
+}
 \note{
 Make sure that the data frame is compatible with mhealth annotation data file format.
 }

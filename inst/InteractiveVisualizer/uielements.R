@@ -35,6 +35,7 @@ require("shinyjs")
                   selected = NULL, multiple = FALSE, width = "100%"),
       selectInput("summaryInterval", label = "Choose summary interval", choices = list("sec", "min"),
                   selected = NULL, multiple = FALSE , width = "100%"),
+      textInput("rawDataOffset", "Raw data offset (seconds)", value = "0", width = "100%"), 
       bsButton("computeSummary", label = "Compute summary data", style="primary"),
       width = 4, collapsible = TRUE, title = "Summary data control"
     )

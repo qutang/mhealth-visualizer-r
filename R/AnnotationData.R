@@ -52,12 +52,25 @@ AnnotationData.merge = function(annotationDataList, ...){
 #' @param annotationData annotation data frame that matches mhealth specification.
 #' @param startTime POSIXct date object for start timestamp.
 #' @param endTime POSIXct date object for start timestamp.
+#' @return clipped annotation dataframe
 AnnotationData.clip = function(annotationData, startTime, endTime){
   clippedTs = annotationData[[MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER]] >= startTime & annotationData[[MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER]] <= endTime
   result = annotationData[clippedTs,]
   result[1,MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER] = as.POSIXct(startTime)
   result[nrow(result), MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER] = as.POSIXct(endTime)
   return(result)
+}
+
+#' @name AnnotationData.offset
+#' @title offset annotation data's start and stop timestamp by an offset value in seconds
+#' @param annotationData annotation dataframe that matches mhealth specification.
+#' @param offsetValue value in seconds specifies the offset time, could be negative, meaning go back to some time earlier. The default is 0, meaning no offset.
+#' @export
+#' @return annotation dataframe after timestamps being offset.
+AnnotationData.offset = function(annotationData, offsetValue = 0){
+  annotationData[[MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER]] = annotationData[[MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER]] + offsetValue
+  annotationData[[MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER]] = annotationData[[MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER]] + offsetValue
+  return(annotationData)
 }
 
 #' @name AnnotationData.getLabelNames
