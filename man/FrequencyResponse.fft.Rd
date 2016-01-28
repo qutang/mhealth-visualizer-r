@@ -2,10 +2,9 @@
 % Please edit documentation in R/FrequencyResponse.R
 \name{FrequencyResponse.fft}
 \alias{FrequencyResponse.fft}
-\alias{FrequencyResponsed.fft}
 \title{Compute frequency response for input sensor data.}
 \usage{
-FrequencyResponsed.fft(sensorData, Fs, type = "magnitude")
+FrequencyResponse.fft(sensorData, Fs, type = "magnitude")
 }
 \arguments{
 \item{sensorData}{input dataframe that matches mhealth specification.}

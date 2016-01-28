@@ -4,10 +4,12 @@
 \alias{SensorData.importCsv}
 \title{Import mhealth sensor data file and load into memory as data frame in mhealth format.}
 \usage{
-SensorData.importCsv(filename)
+SensorData.importCsv(filename, violate = FALSE)
 }
 \arguments{
 \item{filename}{full file path of input sensor data file.}
+
+\item{violate}{violate file name convention, ignore time zones and other information in file name}
 }
 \note{
 input file must match mhealth specification. Note that the time zone of timestamps will be based on local computer instead of the filename, this needs to be changed.

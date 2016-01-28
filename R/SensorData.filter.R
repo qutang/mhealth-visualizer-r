@@ -40,13 +40,16 @@ SensorData.filter.bessel = function(sensorData, breaks, Fs, Fc, order){
 #' @param sensorData the input dataframe that matches mhealth specification.
 #' @param breaks "sec","min","hour","day","week","month","quarter" or "year"; or preceded by integer and space.
 #' @param Fs sampling rate of the input signal
-#' @param Fc cut off frequency of butterworth filter
+#' @param Fc cut off frequencies of butterworth filter, if more than one store as c(low, high)
 #' @param order formula order of butterworth filter
+#' @param type "low", "high", "stop", "pass"
 #' @return list of filtered dataframes.
 #' @note If "breaks" is missing, filter will be applied on the whole sequence and return a list with a single dataframe.
-SensorData.filter.butterworth = function(sensorData, breaks, Fs, Fc, order){
+SensorData.filter.butterworth = function(sensorData, breaks, Fs, Fc, order, type = "high"){
   nyquist=Fs/2;
-  coeffs =butter(order,Fc/nyquist,'high');
+
+  coeffs =butter(order,Fc/nyquist,type);
+
   nCols = ncol(sensorData)
 
   if(missing(breaks) || is.null(breaks)){

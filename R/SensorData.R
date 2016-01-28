@@ -7,18 +7,21 @@ MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Z_HEADER = "Z_ACCELATION_METERS_PER_SECOND_
 #' @title Import mhealth sensor data file and load into memory as data frame in mhealth format.
 #' @note input file must match mhealth specification. Note that the time zone of timestamps will be based on local computer instead of the filename, this needs to be changed.
 #' @param filename full file path of input sensor data file.
+#' @param violate violate file name convention, ignore time zones and other information in file name
 #' @export
 #' @seealso [`SensorData.importBinary`](SensorData.importBinary.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html)
 
-SensorData.importCsv = function(filename) {
+SensorData.importCsv = function(filename, violate = FALSE) {
   op <- options(digits.secs = 3)
   # get the time zone from filename
-  tz = gregexpr(pattern = MHEALTH_FILE_TIMESTAMP_TZ_PATTERN, text = filename, perl = TRUE)
-  tz = regmatches(filename, tz)[[1]]
-  tz = gsub(pattern = "M", replacement = "-", x = tz)
-  tz = gsub(pattern = "P", replace = "+", x = tz)
-  if (!grepl("csv", filename))
-    stop("Please make sure the raw data file is in csv or csv.gz format")
+  if(!violate){
+    tz = gregexpr(pattern = MHEALTH_FILE_TIMESTAMP_TZ_PATTERN, text = filename, perl = TRUE)
+    tz = regmatches(filename, tz)[[1]]
+    tz = gsub(pattern = "M", replacement = "-", x = tz)
+    tz = gsub(pattern = "P", replace = "+", x = tz)
+    if (!grepl("csv", filename))
+      stop("Please make sure the raw data file is in csv or csv.gz format")
+  }
   # read.table supports csv.gz directly
   dat = read.table(
     filename, header = TRUE, sep = MHEALTH_CSV_DELIMITER, quote = "\"", stringsAsFactors = FALSE

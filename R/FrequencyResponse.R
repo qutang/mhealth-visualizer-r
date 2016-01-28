@@ -10,7 +10,7 @@ MHEALTH_CSV_FFT_VECTOR_HEADER_PREFIX = "FFTVECTOR"
 #' @param Fs sampling rate of the input signal.
 #' @param type "magnitude" or "vector". "magnitude": magnitude value of fft results; "vector": vector of fft results.
 #' @return frequency dataframe with HEADER `HEADER_FREQUENCY_STAMP,[FFTMAGNITUDE/FFTVECTOR]_[ORIGINAL_HEADER]`.
-FrequencyResponsed.fft = function(sensorData, Fs, type = "magnitude"){
+FrequencyResponse.fft = function(sensorData, Fs, type = "magnitude"){
   # input frequency response
   nRows = nrow(sensorData)
   nCols = ncol(sensorData)

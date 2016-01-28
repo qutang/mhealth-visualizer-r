@@ -4,7 +4,8 @@
 \alias{SensorData.filter.butterworth}
 \title{Apply high pass butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).}
 \usage{
-SensorData.filter.butterworth(sensorData, breaks, Fs, Fc, order)
+SensorData.filter.butterworth(sensorData, breaks, Fs, Fc, order,
+  type = "high")
 }
 \arguments{
 \item{sensorData}{the input dataframe that matches mhealth specification.}
@@ -13,9 +14,11 @@ SensorData.filter.butterworth(sensorData, breaks, Fs, Fc, order)
 
 \item{Fs}{sampling rate of the input signal}
 
-\item{Fc}{cut off frequency of butterworth filter}
+\item{Fc}{cut off frequencies of butterworth filter, if more than one store as c(low, high)}
 
 \item{order}{formula order of butterworth filter}
+
+\item{type}{"low", "high", "stop", "pass"}
 }
 \value{
 list of filtered dataframes.
