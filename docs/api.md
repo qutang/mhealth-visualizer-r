@@ -17,6 +17,8 @@ title: API Document
 
  * [`FrequencyResponse.changeResolution`](FrequencyResponse.changeResolution.html) Change the frequency resolution of the input frequency response data
 
+ * [`FrequencyResponse.fft`](FrequencyResponse.fft.html) Compute frequency response for input sensor data.
+
  * [`FrequencyResponse.spectrum.ggplot`](FrequencyResponse.spectrum.ggplot.html) Plot fft frequency response for input sensor data.
 
  * [`Magnitude.compute`](Magnitude.compute.html) Compute the magnitude value of sensor data.

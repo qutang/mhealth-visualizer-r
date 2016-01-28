@@ -8,12 +8,13 @@ title: API Document
 #### Usage ####
 
 ```r
-SensorData.importCsv(filename)
+SensorData.importCsv(filename, violate = FALSE)
 ```
 
 #### Arguments ####
 
 * `filename`: full file path of input sensor data file.
+* `violate`: violate file name convention, ignore time zones and other information in file name
 
 
 #### Seealso ####

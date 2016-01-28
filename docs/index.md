@@ -2,7 +2,7 @@
 title: "<code>mhealthformat-support-r</code> Package Document"
 layout: doc
 author: "Qu Tang"
-date: "2016-01-14"
+date: "2016-01-28"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{}
@@ -122,7 +122,6 @@ Check out [mhealth specification](http://mhealth-specification.s3-website-us-eas
 
 -   IO: [SensorData.importCsv](SensorData.importCsv.html), [SensorData.importActigraphCsv](SensorData.importActigraphCsv.html), [SensorData.importBinary](SensorData.importBinary.html), [SensorData.importGT3X](SensorData.importGT3X.html), [SensorData.io.write](SensorData.io.write.html)
 -   Split and merge: [SensorData.split](SensorData.split.html), [SensorData.merge](SensorData.merge.html), [SensorData.clip](SensorData.clip.html)
--   Time manipulation: [SensorData.offset](SensorData.offset.html)
 -   Clean up: [SensorData.cleanup](SensorData.cleanup.html)
 -   Process: [SensorData.filter.bessel](SensorData.filter.bessel.html), [SensorData.filter.butterworth](SensorData.filter.butterworth.html), [SensorData.extrapolate](SensorData.extrapolate.html)
 -   Generator: [SensorData.generator.sinusoidal](SensorData.generator.sinusoidal.html), [SensorData.generator.fourierSeries](SensorData.generator.fourierSeries.html)
@@ -150,7 +149,6 @@ Check out [mhealth specification](http://mhealth-specification.s3-website-us-eas
 
 -   IO: [AnnotationData.importCsv](AnnotationData.importCsv.html)
 -   Split and merge: [AnnotationData.merge](AnnotationData.merge.html), [AnnotationData.clip](AnnotationData.clip.html)
--   Time manipulation: [AnnotationData.offset](AnnotationData.offset.html)
 -   Process: [AnnotationData.getLabelNames](AnnotationData.getLabelNames.html)
 -   Visualization: [AnnotationData.addToGgplot](AnnotationData.addToGgplot.html)
 

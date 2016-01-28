@@ -8,7 +8,8 @@ title: API Document
 #### Usage ####
 
 ```r
-SensorData.filter.butterworth(sensorData, breaks, Fs, Fc, order)
+SensorData.filter.butterworth(sensorData, breaks, Fs, Fc, order,
+type = "high")
 ```
 
 #### Arguments ####
@@ -16,8 +17,9 @@ SensorData.filter.butterworth(sensorData, breaks, Fs, Fc, order)
 * `sensorData`: the input dataframe that matches mhealth specification.
 * `breaks`: "sec","min","hour","day","week","month","quarter" or "year"; or preceded by integer and space.
 * `Fs`: sampling rate of the input signal
-* `Fc`: cut off frequency of butterworth filter
+* `Fc`: cut off frequencies of butterworth filter, if more than one store as c(low, high)
 * `order`: formula order of butterworth filter
+* `type`: "low", "high", "stop", "pass"
 
 
 #### Value ####
