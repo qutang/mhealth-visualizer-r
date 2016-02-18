@@ -52,10 +52,10 @@ if(!is.null(maxedOutMarkers)){
 p = ggplot(data = plotData, aes_string(x = MHEALTH_CSV_TIMESTAMP_HEADER))
 
 if(showInput){
-  p = p + geom_line(aes_string(y = colInput), linetype = "dashed", colour = colorList2[3], size = 1.2) + geom_point(aes_string(y = colInput), shape = 16, colour = colorList2[3], size = 3)
+  p = p + geom_line(aes_string(y = colInput), linetype = "dashed", colour = colorList2[4], size = 1.2) + geom_point(aes_string(y = colInput), shape = 16, colour = colorList2[3], size = 3)
 }
 if(showGroundTruth){
-  p = p + geom_line(aes_string(y = colTruth), linetype = "dashed")
+  p = p + geom_line(aes_string(y = colTruth), linetype = "dotted", colour = "gray", size = 1)
 }
 if(showOutput){
   p = p + geom_line(aes_string(y = colExtra), linetype = "solid", colour = colorList[1]) + geom_point(aes_string(y = colExtra), shape = 16, colour = colorList[1])

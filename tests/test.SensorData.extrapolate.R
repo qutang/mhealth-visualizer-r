@@ -36,24 +36,24 @@ regressionResults$regressionNeighbors = result$allNeighbors
 regressionResults$regressionLines = result$fittedResults
 
 #' STEP 1: Find the rough maxed out region and its middle points
-# SensorData.extrapolate.visualize(extra, input, gt, maxedOutRegion=maxedOutRegion,
-#                                  regressionResults = regressionResults,
-#                                  showInput = TRUE, showGroundTruth = FALSE,
-#                                 showOutput = FALSE, showMarker = TRUE, showThreshold = TRUE,
-#                                 showCenter = TRUE, showPoints = FALSE)
-#
-# #' STEP 2: Track from the middle point to find the neighbor points on both sides
-# SensorData.extrapolate.visualize(extra, input, gt, maxedOutRegion=maxedOutRegion,
-#                                  regressionResults = regressionResults,
-#                                  showInput = TRUE, showGroundTruth = FALSE,
-#                                  showOutput = FALSE, showMarker = FALSE, showThreshold = TRUE,
-#                                  showCenter = TRUE, showPoints = FALSE, showNeighbors = c(5, 7))
+SensorData.extrapolate.visualize(extra, input, gt, maxedOutRegion=maxedOutRegion,
+                                 regressionResults = regressionResults,
+                                 showInput = TRUE, showGroundTruth = FALSE,
+                                showOutput = FALSE, showMarker = TRUE, showThreshold = TRUE,
+                                showCenter = TRUE, showPoints = FALSE)
+
+#' STEP 2: Track from the middle point to find the neighbor points on both sides
+SensorData.extrapolate.visualize(extra, input, gt, maxedOutRegion=maxedOutRegion,
+                                 regressionResults = regressionResults,
+                                 showInput = TRUE, showGroundTruth = FALSE,
+                                 showOutput = FALSE, showMarker = FALSE, showThreshold = TRUE,
+                                 showCenter = TRUE, showPoints = FALSE, showNeighbors = c(5, 7))
 
 #' STEP 3: Weighing neighbor points
 #' STEP 4: Do weighted linear regression on neighbor points on each side
 SensorData.extrapolate.visualize(extra, input, gt, maxedOutRegion=maxedOutRegion,
                                  regressionResults = regressionResults,
-                                 showInput = TRUE, showGroundTruth = FALSE,
+                                 showInput = TRUE, showGroundTruth = TRUE,
                                  showOutput = FALSE, showMarker = FALSE, showThreshold = TRUE,
                                  showCenter = TRUE, showPoints = TRUE, showNeighbors = c(15), showLines = c(15))
 
