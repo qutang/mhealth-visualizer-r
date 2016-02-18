@@ -283,7 +283,7 @@ SensorData.ggplot = function(sensorData){
 #' @export
 #' @import lubridate ggplot2 reshape2 rbokeh
 #' @param sensorData input dataframe that matches mhealth specification.
-SensorData.bokeh = function(sensorData){
+SensorData.bokehplot = function(sensorData){
   data = sensorData
   nCols = ncol(data)
   labelNames = names(data[2:nCols])
