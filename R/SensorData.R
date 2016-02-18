@@ -276,6 +276,47 @@ SensorData.ggplot = function(sensorData){
   return(p)
 }
 
+
+#' @name SensorData.bokehplot
+#' @title Plot sensor raw data using rbokeh interatively
+#' @description All columns will be plotted on the same graph with different colors.
+#' @export
+#' @import lubridate ggplot2 reshape2 rbokeh
+#' @param sensorData input dataframe that matches mhealth specification.
+SensorData.bokeh = function(sensorData){
+  data = sensorData
+  nCols = ncol(data)
+  labelNames = names(data[2:nCols])
+  labelNames = c(str_match(labelNames, "[A-Za-z0-9]+_[A-Za-z0-9]+"))
+  xlab = "time"
+  ylab = "value"
+
+  if(is.null(range)){
+    maxy = max(abs(data[,2:nCols]))
+    range = c(-maxy, maxy)*1.1
+  }
+
+  breaks = pretty_dates(data[,MHEALTH_CSV_TIMESTAMP_HEADER], n = 6)
+  minor_breaks = pretty_dates(data[,MHEALTH_CSV_TIMESTAMP_HEADER], n = 30)
+  st = breaks[1]
+  et = tail(breaks, 1)
+  titleText = paste("Raw data plot",
+                    paste("\n", st,
+                          "\n", et,
+                          sep=""))
+
+  data = melt(data, id = c(MHEALTH_CSV_TIMESTAMP_HEADER))
+
+  p = figure(data = data, title = titleText, xlim = c(st, et), xlabel = xlab, ylabel = ylab)
+
+  p = p %>% ly_lines(x = HEADER_TIME_STAMP, y = value, color = variable, width = 1.2) %>%
+    theme_plot(title_text_font_size = "10pt")
+
+  p
+
+  return(p)
+}
+
 #' @import stringr
 .SensorData.parseActigraphCsvHeader = function(filename) {
   headlines = readLines(filename, n = 10, encoding = "UTF-8");
