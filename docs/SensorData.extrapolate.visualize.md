@@ -21,7 +21,7 @@ SensorData.extrapolate.visualize(extrapolated, input, groundtruth,
 dynamicRange = NULL, maxedOutRegion = NULL, regressionResults = NULL,
 showInput = TRUE, showGroundTruth = TRUE, showOutput = TRUE,
 showMarker = FALSE, showThreshold = FALSE, showEdges = FALSE,
-showCenter = FALSE, showNeighbors = FALSE, showLines = FALSE,
-showPoints = FALSE)
+showCenter = FALSE, showNeighbors = NULL, showLines = NULL,
+showPoints = NULL)
 ```
 

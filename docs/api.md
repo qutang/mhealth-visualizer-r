@@ -33,6 +33,8 @@ title: API Document
 
  * [`SamplingRate.summary`](SamplingRate.summary.html) Calculate sampling rate for each column over a certain break (e.g. hour, min).
 
+ * [`SensorData.bokehplot`](SensorData.bokehplot.html) Plot sensor raw data using rbokeh interatively
+
  * [`SensorData.cleanup`](SensorData.cleanup.html) Clean up sensor dataframe by removing invalid timestamps, according to a certain time level.
 
  * [`SensorData.clip`](SensorData.clip.html) Clip sensor data according to the start and end time.

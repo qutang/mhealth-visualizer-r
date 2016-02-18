@@ -2,7 +2,7 @@
 title: "<code>mhealthformat-support-r</code> Package Document"
 layout: doc
 author: "Qu Tang"
-date: "2016-01-28"
+date: "2016-02-17"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{}
