@@ -4,7 +4,7 @@ set.seed(5)
 duration = 2
 Fs = 100
 range = 3
-freqs = 5
+freqs = 4
 amp = 10
 noiseStds = 0
 phase = runif(1,min=0,max = 10)
@@ -54,6 +54,6 @@ SensorData.extrapolate.visualize(extra, input, gt, maxedOutRegion=maxedOutRegion
 SensorData.extrapolate.visualize(extra, input, gt, maxedOutRegion=maxedOutRegion,
                                  regressionResults = regressionResults,
                                  showInput = TRUE, showGroundTruth = TRUE,
-                                 showOutput = FALSE, showMarker = FALSE, showThreshold = TRUE,
-                                 showCenter = TRUE, showPoints = TRUE, showNeighbors = c(15), showLines = c(15))
+                                 showOutput = TRUE, showMarker = FALSE, showThreshold = TRUE,
+                                 showCenter = TRUE, showPoints = TRUE, showNeighbors = c(10), showLines = c(10))
 
