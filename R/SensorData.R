@@ -34,7 +34,6 @@ SensorData.importCsv = function(filename, violate = FALSE) {
 #' @name SensorData.importBinary
 #' @title Import and decode binary file from the smart watch and load into dataframe as mhealth format.
 #' @note It will call `SensorData.importCsv` after decoding.
-#' @export
 #' @import rJava
 #' @param filename full file path of input smart watch binary data file.
 #' @param dest full directory path of destination folder. Default is ".fromBinary" folder of current working directory.
@@ -53,7 +52,6 @@ SensorData.importBinary = function(filename, dest = file.path(getwd(), ".fromBin
 
 #' @name SensorData.importGT3X
 #' @title Import and decode GT3X files and load into dataframe as mhealth format.
-#' @export
 #' @import rJava
 #' @note it will call `SensorData.importCsv` after decoding GT3X binary data.
 #' @param filename full file path of input gt3x binary data file, should have extension "gt3x".
