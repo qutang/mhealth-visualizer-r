@@ -10,9 +10,7 @@ doc-url: 'docs/'
 
 # Installation
 
-1. Make sure to have `R (>= 3.2.1)` and `Java 8 (JVM or JDK)` installed. (Recommand to use lastest version of `RStudio`)
-
-    **Note that for Mac, please install the [Java 6 legacy for Mac](https://support.apple.com/kb/dl1572?locale=en_US) provided by Apple support and run `sudo R CMD javareconf` before progressing to the next steps.**
+1. Make sure to have `R (>= 3.2.1)` installed. (Recommand to use lastest version of `RStudio`)
 
 2. Install package `devtools` in `R`
 
