@@ -55,11 +55,7 @@ title: API Document
 
  * [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html) Import and convert Actigraph raw csv files and load into data frame as in mhealth format.
 
- * [`SensorData.importBinary`](SensorData.importBinary.html) Import and decode binary file from the smart watch and load into dataframe as mhealth format.
-
  * [`SensorData.importCsv`](SensorData.importCsv.html) Import mhealth sensor data file and load into memory as data frame in mhealth format.
-
- * [`SensorData.importGT3X`](SensorData.importGT3X.html) Import and decode GT3X files and load into dataframe as mhealth format.
 
  * [`SensorData.interpolate`](SensorData.interpolate.html) Interpolate the missing points and unify sampling interval for the input sensor data
 

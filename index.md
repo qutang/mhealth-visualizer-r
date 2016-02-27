@@ -12,17 +12,24 @@ doc-url: 'docs/'
 
 1. Make sure to have `R (>= 3.2.1)` and `Java 8 (JVM or JDK)` installed. (Recommand to use lastest version of `RStudio`)
 
+    **Note that for Mac, please install the [Java 6 legacy for Mac](https://support.apple.com/kb/dl1572?locale=en_US) provided by Apple support and run `sudo R CMD javareconf` before progressing to the next steps.**
+
 2. Install package `devtools` in `R`
 
-``` r
+    
+    ``` r
 install_package('devtools')
-```
-
+    ```
+   
 3. Install `mhealthformat-support-r` through __github__
-
-``` r
+    
+    ``` r
+# Install rbokeh as prerequisite
+devtools::install_github("ramnathv/htmlwidgets")
+devtools::install_github("bokeh/rbokeh")
+# Install the actually mhealthformat toolkit
 devtools::install_github('qutang/mhealthformat-support-r')
-```
+    ```
 
 ---
 # Recap of mhealth format
