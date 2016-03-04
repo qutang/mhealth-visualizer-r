@@ -4,9 +4,9 @@
 \alias{SensorData.io.write}
 \title{Write sensor data into mhealth folder structure and with mhealth filename convention.}
 \usage{
-SensorData.io.write(folder, sensorData, sensorType, dataType, sensorId,
-  versionCode = "NA", tz, gzip = TRUE, flatDir = FALSE,
-  splitHour = TRUE)
+SensorData.io.write(folder, sensorData, sensorType = NA, dataType = NA,
+  sensorId = NA, versionCode = "NA", tz, gzip = TRUE, flatDir = FALSE,
+  splitHour = TRUE, custom_name)
 }
 \arguments{
 \item{folder}{the output folder}

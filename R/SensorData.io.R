@@ -12,24 +12,28 @@
 #' @param gzip whether to gzip the output csv file.
 #' @param flatDir whether to use mhealth folder structure or just use flat directory.
 #' @param splitHour whether to split input dataframe into hourly csv files.
-SensorData.io.write = function(folder, sensorData, sensorType, dataType, sensorId, versionCode = "NA", tz, gzip = TRUE, flatDir = FALSE, splitHour = TRUE){
-  # TODO: support split hour
-  if(missing(tz)){
-    warning("Use local time zone in the file name")
-    startTime = sensorData[1,1]
-    utcTime = ymd_hms(startTime)
-    localTime = startTime
-    hourDiff = round(utcTime - localTime, digits = 2)
-    tzStr = .SensorData.io.formatTimezone(hourDiff)
+SensorData.io.write = function(folder, sensorData, sensorType = NA, dataType = NA, sensorId = NA, versionCode = "NA", tz, gzip = TRUE, flatDir = FALSE, splitHour = TRUE, custom_name){
+  if(missing(custom_name)){
+    # TODO: support split hour
+    if(missing(tz)){
+      warning("Use local time zone in the file name")
+      startTime = sensorData[1,1]
+      utcTime = ymd_hms(startTime)
+      localTime = startTime
+      hourDiff = round(utcTime - localTime, digits = 2)
+      tzStr = .SensorData.io.formatTimezone(hourDiff)
+    }else{
+      tzStr = tz
+    }
+    timeStamp = strftime(startTime, format = MHEALTH_FILE_TIMESTAMP_FORMAT, origin = origin)
+    timeStamp = str_replace(timeStamp, pattern = "\\.", replacement = "-")
+    timeStampStr = paste(timeStamp, tzStr, sep="-")
+    section1 = paste(sensorType, dataType, versionCode, sep="-")
+    section2 = paste(sensorId, dataType,sep="-")
+    sensorFilename = paste(section1, section2, timeStampStr, "sensor", "csv", sep = ".")
   }else{
-    tzStr = tz
+    sensorFilename = custom_name;
   }
-  timeStamp = strftime(startTime, format = MHEALTH_FILE_TIMESTAMP_FORMAT, origin = origin)
-  timeStamp = str_replace(timeStamp, pattern = "\\.", replacement = "-")
-  timeStampStr = paste(timeStamp, tzStr, sep="-")
-  section1 = paste(sensorType, dataType, versionCode, sep="-")
-  section2 = paste(sensorId, dataType,sep="-")
-  sensorFilename = paste(section1, section2, timeStampStr, "sensor", "csv", sep = ".")
 
   sensorData[,-1] = round(sensorData[,-1], digits = 4)
   if(!flatDir){
