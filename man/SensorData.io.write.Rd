@@ -6,7 +6,7 @@
 \usage{
 SensorData.io.write(folder, sensorData, sensorType = NA, dataType = NA,
   sensorId = NA, versionCode = "NA", tz, gzip = TRUE, flatDir = FALSE,
-  splitHour = TRUE, custom_name)
+  splitHour = TRUE, custom_name, append = FALSE, header = TRUE)
 }
 \arguments{
 \item{folder}{the output folder}
@@ -28,5 +28,11 @@ SensorData.io.write(folder, sensorData, sensorType = NA, dataType = NA,
 \item{flatDir}{whether to use mhealth folder structure or just use flat directory.}
 
 \item{splitHour}{whether to split input dataframe into hourly csv files.}
+
+\item{custom_name}{if provided, the file name will be custom_name and all other file name preset parameters such as sensorType will be discarded.}
+
+\item{append}{whether to append to a file if the file exists}
+
+\item{header}{whether to add column header or not}
 }
 

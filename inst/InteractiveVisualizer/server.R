@@ -125,6 +125,8 @@ server = function(input, output, session) {
   handleDaySelection(input, session)
 
   handleHourSelection(input, session)
+  
+  handleRawDataOffsetSaveClicked(input, session)
 
   handleComputeSummaryClicked(input, session)
 

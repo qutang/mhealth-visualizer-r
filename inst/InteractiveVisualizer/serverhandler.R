@@ -86,7 +86,7 @@ handleDatasetFolderChosen = function(input, session, volumes) {
       shinyjs::hide("subjectId")
     }else if (dir.exists(rValues$masterFolder)) {
       # mhealth subject directory
-      shinyjs::text("subjectId", paste0("Subject ID:", basename(folder)))
+      shinyjs::html("subjectId", paste0("Subject ID:", basename(folder)))
       shinyjs::show("subjectId")
       years = list.dirs(rValues$masterFolder, full.names = FALSE, recursive = FALSE)
       updateSelectInput(session = session, inputId = "yearSelect", choices = years)
@@ -232,6 +232,59 @@ handleHourSelection = function(input, session) {
       print(input$yearSelect)
       print(input$monthSelect)
       print(input$hourSelect)
+    }
+  })
+}
+
+library("stringr")
+handleRawDataOffsetSaveClicked = function(input, session) {
+  observeEvent(input$rawDataOffsetSave, {
+    if (is.null(input$sensorSelect)) {
+      createAlert(
+        session, "alert", alertId = "no sensor selected",
+        title = "No sensor data selected",
+        content = "Please select at least one sensor data file", style = "warning"
+      )
+    }else{
+      if (input$hourSelect != "All") {
+        hourFolder = file.path(
+          rValues$masterFolder, input$yearSelect, input$monthSelect, input$daySelect, input$hourSelect
+        )
+        recursive = FALSE
+      }else{
+        hourFolder = file.path(
+          rValues$masterFolder, input$yearSelect, input$monthSelect, input$daySelect
+        )
+        recursive = TRUE
+      }
+      
+      sensorFiles = list.files(path = hourFolder, full.names = TRUE, recursive = recursive)
+      
+      selectedFiles = sensorFiles[str_detect(sensorFiles, input$sensorSelect)]
+      withProgress(message = "Offset sensor data", value = 0.1, {
+        foreach(filename = selectedFiles, .export = "incProgress") %do% {
+          incProgress(message = paste("Importing", basename(filename)))
+          data = SensorData.importCsv(filename)
+          offsetted = SensorData.offset(data, as.numeric(input$rawDataOffset))
+          incProgress(message = "Save raw sensor data after offset")
+          if(str_detect(basename(filename), "\\.gz")){
+            custom_name = substr(basename(filename), 1, str_length(basename(filename))-3)
+          }else{
+            custom_name = basename(filename)
+          }
+          
+          SensorData.io.write(folder = dirname(filename), sensorData = offsetted,
+                                gzip = TRUE, flatDir = TRUE, splitHour = FALSE, 
+                                custom_name = custom_name
+                                )
+          if(!str_detect(basename(filename), "\\.gz")){
+            file.remove(filename)
+            incProgress(message = paste0("Remove the original file:", basename(filename)))
+          }
+        }
+        setProgress(value = 1, message = "Raw data has been offsetted and saved")
+        createAlert(session, "alert", "summaryData", title = "Raw Data has been overwritten, please recompute the summary data", style = "info")
+      })
     }
   })
 }
