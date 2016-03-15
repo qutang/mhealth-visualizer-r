@@ -73,7 +73,7 @@ AnnotationData.offset = function(annotationData, offsetValue = 0){
   return(annotationData)
 }
 
-#' @name Annotation.filter
+#' @name AnnotationData.filter
 #' @title filter out/only include labels/categories presented in the input list
 #' @import stringr
 #' @export
