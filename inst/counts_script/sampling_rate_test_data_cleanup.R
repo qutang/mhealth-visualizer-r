@@ -1,4 +1,4 @@
-#Sampling rate test, convert raw into ready data
+#Sampling rate test, convert raw into ready data (from Actigraph csv to mhealth)
 
 require(stringr)
 

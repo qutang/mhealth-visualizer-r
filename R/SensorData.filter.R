@@ -1,3 +1,38 @@
+#' @name SensorData.filter.averageRemovalFIR
+#' @title Apply average removal FIR filter to the input sensor data frame each column over certain breaks (e.g. hour, sec, min and etc.)
+#' @export
+#' @import signal matlab plyr
+#' @param sensorData the input dataframe that matches mhealth specification.
+#' @param breaks "sec","min","hour","day","week","month","quarter" or "year"; or preceded by integer and space.
+#' @param Fs sampling rate of the input signal
+#' @param order window size (in seconds) of filter
+#' @note If "breaks" is missing, filter will be applied on the whole sequence and return a list with a single dataframe.
+SensorData.filter.averageRemovalFIR = function(sensorData, breaks, Fs, order){
+  nCols = ncol(sensorData)
+  
+  window = round(order * Fs);
+  
+  b = c((window - 1)/window, -ones(1, window - 1)/window);
+  a = 1;
+  
+  if(missing(breaks) || is.null(breaks)){
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER])
+  }else{
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
+  }
+  result = dlply(sensorData,.(breaks), function(rows){
+    colFilter = colwise(.fun = function(x, filt, a){
+      filtered = filter(filt, a, x)
+      result = as.numeric(filtered)
+    }, filt = b, a = a)
+    filteredValue = colFilter(rows[2:nCols])
+    colnames(filteredValue) = paste0("AVERAGEREMOVALFIR_",colnames(filteredValue))
+    filteredValue = cbind(rows[MHEALTH_CSV_TIMESTAMP_HEADER], filteredValue)
+    return(filteredValue)
+  })
+  return(result)
+}
+
 #' @name SensorData.filter.bessel
 #' @title Apply low pass bessel filter to the input sensor data frame each column over certain breaks (e.g. hour, sec, min and etc.)
 #' @export
@@ -34,7 +69,7 @@ SensorData.filter.bessel = function(sensorData, breaks, Fs, Fc, order){
 }
 
 #' @name SensorData.filter.butterworth
-#' @title Apply high pass butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).
+#' @title Apply butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).
 #' @export
 #' @import signal matlab plyr
 #' @param sensorData the input dataframe that matches mhealth specification.

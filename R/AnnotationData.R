@@ -73,6 +73,40 @@ AnnotationData.offset = function(annotationData, offsetValue = 0){
   return(annotationData)
 }
 
+#' @name Annotation.filter
+#' @title filter out/only include labels/categories presented in the input list
+#' @import stringr
+#' @export
+AnnotationData.filter = function(annotationData, ontologyData, labels = NULL, categories = NULL, include.labels = FALSE, include.categories = FALSE){
+  if(is.null(labels) && is.null(categories)){
+    warning("labels and categories are null, return the original annotation data frame")
+    return(annotationData)
+  }else{
+    filter_condition = logical(length = length(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER]))
+    if(!is.null(labels)){
+      
+      label_filter_list = lapply(labels, function(label){
+        return(str_detect(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER], pattern = label))
+      })
+      label_filter_condition = Reduce(f = "|", label_filter_list)
+      filter_condition = label_filter_condition
+      if(!include.labels) filter_condition = !filter_condition;
+    }
+    
+    if(!is.null(categories) && !missing(ontologyData)){
+      category_labels = ontologyData[str_to_lower(ontologyData[,2]) %in% str_to_lower(categories), 1]
+      category_filter_list = lapply(category_labels, function(label){
+        return(str_detect(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER], pattern = label))
+      })
+      category_filter_condition = Reduce(f = "|", category_filter_list)
+      if(!include.categories) category_filter_condition = !category_filter_condition;
+      filter_condition = filter_condition | category_filter_condition
+    }
+
+    return(annotationData[filter_condition,])
+  }
+}
+
 #' @name AnnotationData.getLabelNames
 #' @title get all matched label names given a timestamp, return NULL if no match.
 #' @export

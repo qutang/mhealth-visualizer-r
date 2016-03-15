@@ -1,5 +1,6 @@
 # Walking to Running Consistency test data clean up
-#
+# Clip into 30 seconds segments
+# Save as mhealth and actigraph csv file
 #
 require(stringr);
 require(ggplot2);
