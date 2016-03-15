@@ -2,7 +2,7 @@
 % Please edit documentation in R/SensorData.filter.R
 \name{SensorData.filter.butterworth}
 \alias{SensorData.filter.butterworth}
-\title{Apply high pass butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).}
+\title{Apply butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).}
 \usage{
 SensorData.filter.butterworth(sensorData, breaks, Fs, Fc, order,
   type = "high")

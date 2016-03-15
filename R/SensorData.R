@@ -83,7 +83,7 @@ SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"
 #' @param filename full file path of input Actigraph raw csv file.
 #' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importBinary`](SensorData.importBinary.html)
 SensorData.importActigraphCsv = function(filename) {
-  actigraphHeader = .SensorData.parseActigraphCsvHeader(filename)
+  actigraphHeader = SensorData.parseActigraphCsvHeader(filename)
   dat = read.table(
     filename, header = FALSE, sep = ",", strip.white = TRUE, skip = 11, stringsAsFactors = FALSE
   );
@@ -101,6 +101,29 @@ SensorData.importActigraphCsv = function(filename) {
                                                  format = timeFormat) + 0.0005
   options(digits.secs = 3);
   return(dat)
+}
+
+#' @name SensorData.createActigraphCsvHeader
+#' @title create a character vector representing each line of the actigraph csv header
+#' @export
+#' @import stringr
+SensorData.createActigraphCsvHeader = function(startTime, downloadTime, samplingRate, sensorId, firmVersion, softVersion){
+  line = c("------------ Data File Created By ActiGraph GT3X+ ActiLife vSOFT_VERSION Firmware vFIRM_VERSION date format M/d/yyyy at SAMPLING_RATE Hz  Filter Normal -----------")
+  line = str_replace(line, "SOFT_VERSION", softVersion)
+  line = str_replace(line, "FIRM_VERSION", firmVersion)
+  line = str_replace(line, "SAMPLING_RATE", samplingRate)
+  
+  line = c(line, str_replace("Serial Number: ID", "ID", sensorId))
+  line = c(line, str_replace("Start Time START_TIME", "START_TIME", format(startTime, "%H:%M:%S")))
+  line = c(line, str_replace("Start Date START_DATE", "START_DATE", format(startTime, "%m/%d/%Y")))
+  line = c(line, "Epoch Period (hh:mm:ss) 00:00:00")
+  line = c(line, str_replace("Download Time DOWNLOAD_TIME", "DOWNLOAD_TIME", format(downloadTime, "%H:%M:%S")))
+  line = c(line, str_replace("Download Date DOWNLOAD_DATE", "DOWNLOAD_DATE", format(downloadTime, "%m/%d/%Y")))
+  line = c(line, "Current Memory Address: 0")
+  line = c(line, "Current Battery Voltage: 4.19     Mode = 12")
+  line = c(line, "--------------------------------------------------")
+  line = c(line, ACTIGRAPH_HEADER_COLUMNS)
+  return(line) 
 }
 
 #' @name SensorData.merge
@@ -315,8 +338,39 @@ SensorData.bokehplot = function(sensorData){
   return(p)
 }
 
+#' @name SensorData.getFilenameParts
+#' @export
 #' @import stringr
-.SensorData.parseActigraphCsvHeader = function(filename) {
+#' @title Get the mhealth filename parts out of a mhealth sensor data file name
+SensorData.getFilenameParts = function(filename){
+  if(!str_detect(filename, MHEALTH_FILE_NAME_REGEX_PATTERN)){
+    stop(paste0("Not a valid mhealth file name: " + filename))
+    return
+  }
+  tokens = str_split(filename, "\\.")
+  section1_tokens = str_split(tokens[[1]], "-")
+  section2_tokens = str_split(tokens[[2]], "-")
+  sensorType = section1_tokens[[1]]
+  dataType = section1_tokens[[2]]
+  versionCode = section1_tokens[[3]]
+  sensorId = section2_tokens[[1]]
+  startTime = as.POSIXct(substr(tokens[[3]], 1, length(tokens[[3]]) - 6), format = MHEALTH_FILE_TIMESTAMP_FORMAT)
+  timeZone = substr(tokens[[3]], length(tokens[[3]]) - 5, length(tokens[[3]]))
+  return(list(
+    sensorType = sensorType,
+    dataType = dataType,
+    versionCode = versionCode,
+    sensorId = sensorId,
+    startTime = startTime,
+    timeZone = timeZone
+  ))
+}
+
+#' @name SensorData.parseActigraphCsvHeader
+#' @title parse actigraph csv header to get related version and sampling rate information
+#' @export
+#' @import stringr
+SensorData.parseActigraphCsvHeader = function(filename) {
   headlines = readLines(filename, n = 10, encoding = "UTF-8");
 
   # Sampling rate
