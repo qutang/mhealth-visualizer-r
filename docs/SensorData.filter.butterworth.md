@@ -3,7 +3,7 @@ layout: doc
 title: API Document
 ---
 
-#### `SensorData.filter.butterworth`: Apply high pass butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.). ####
+#### `SensorData.filter.butterworth`: Apply butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.). ####
 
 #### Usage ####
 

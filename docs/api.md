@@ -7,9 +7,17 @@ title: API Document
 
  * [`AnnotationData.clip`](AnnotationData.clip.html) Clip annotation data according to the start and end time
 
+ * [`AnnotationData.filter`](AnnotationData.filter.html) filter out/only include labels/categories presented in the input list
+
  * [`AnnotationData.getLabelNames`](AnnotationData.getLabelNames.html) get all matched label names given a timestamp, return NULL if no match.
 
  * [`AnnotationData.importCsv`](AnnotationData.importCsv.html) Import mhealth annotation data file and load into memory as data frame in mhealth format.
+
+ * [`AnnotationData.io.getAnnotatorId`](AnnotationData.io.getAnnotatorId.html) Get annotator Id from annotation file name
+
+ * [`AnnotationData.io.getOntologyId`](AnnotationData.io.getOntologyId.html) Get ontology Id from annotation file name
+
+ * [`AnnotationData.io.write`](AnnotationData.io.write.html) Write annotation data into mhealth folder structure and with mhealth filename convention.
 
  * [`AnnotationData.merge`](AnnotationData.merge.html) merge two or more annotation data frames and sort according to start time
 
@@ -39,17 +47,23 @@ title: API Document
 
  * [`SensorData.clip`](SensorData.clip.html) Clip sensor data according to the start and end time.
 
+ * [`SensorData.createActigraphCsvHeader`](SensorData.createActigraphCsvHeader.html) create a character vector representing each line of the actigraph csv header
+
  * [`SensorData.extrapolate`](SensorData.extrapolate.html) Apply extrapolate algorithm to sensor data. Algorithm was developed for activity count by NU mhealth group.
 
  * [`SensorData.extrapolate.visualize`](SensorData.extrapolate.visualize.html) visualizing function for viewing the mediate results of the extrapolation algorithm
 
+ * [`SensorData.filter.averageRemovalFIR`](SensorData.filter.averageRemovalFIR.html) Apply average removal FIR filter to the input sensor data frame each column over certain breaks (e.g. hour, sec, min and etc.)
+
  * [`SensorData.filter.bessel`](SensorData.filter.bessel.html) Apply low pass bessel filter to the input sensor data frame each column over certain breaks (e.g. hour, sec, min and etc.)
 
- * [`SensorData.filter.butterworth`](SensorData.filter.butterworth.html) Apply high pass butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).
+ * [`SensorData.filter.butterworth`](SensorData.filter.butterworth.html) Apply butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).
 
  * [`SensorData.generator.fourierSeries`](SensorData.generator.fourierSeries.html) Generate simulated fourier series signal in mhealth format to simulate arbitrary periodical signal.
 
  * [`SensorData.generator.sinusoidal`](SensorData.generator.sinusoidal.html) Generate simulated sinusoidal signal in mhealth format.
+
+ * [`SensorData.getFilenameParts`](SensorData.getFilenameParts.html) Get the mhealth filename parts out of a mhealth sensor data file name
 
  * [`SensorData.ggplot`](SensorData.ggplot.html) Plot sensor raw data using ggplot2.
 
@@ -61,9 +75,13 @@ title: API Document
 
  * [`SensorData.io.write`](SensorData.io.write.html) Write sensor data into mhealth folder structure and with mhealth filename convention.
 
+ * [`SensorData.io.writeAsActigraphRaw`](SensorData.io.writeAsActigraphRaw.html) write sensor data frame into actigraph raw
+
  * [`SensorData.merge`](SensorData.merge.html) Merge two or more mhealth data frames by rows and sorted by timestamp, duplicated rows will be removed based on timestamp.
 
  * [`SensorData.offset`](SensorData.offset.html) offset sensor data's timestamp by an offset value in seconds
+
+ * [`SensorData.parseActigraphCsvHeader`](SensorData.parseActigraphCsvHeader.html) parse actigraph csv header to get related version and sampling rate information
 
  * [`SensorData.plot`](SensorData.plot.html) Plot nicely the raw sensor data data frame.
 
