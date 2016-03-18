@@ -2,6 +2,9 @@ MHEALTH_CSV_TIMESTAMP_HEADER = "HEADER_TIME_STAMP"
 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_X_HEADER = "X_ACCELATION_METERS_PER_SECOND_SQUARED"
 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Y_HEADER = "Y_ACCELATION_METERS_PER_SECOND_SQUARED"
 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Z_HEADER = "Z_ACCELATION_METERS_PER_SECOND_SQUARED"
+MHEALTH_CSV_COUNT_X_HEADER = "X_ACTIVITY_COUNT"
+MHEALTH_CSV_COUNT_Y_HEADER = "Y_ACTIVITY_COUNT"
+MHEALTH_CSV_COUNT_Z_HEADER = "Z_ACTIVITY_COUNT"
 
 #' @name SensorData.importCsv
 #' @title Import mhealth sensor data file and load into memory as data frame in mhealth format.
@@ -102,6 +105,24 @@ SensorData.importActigraphCsv = function(filename) {
   dat[[MHEALTH_CSV_TIMESTAMP_HEADER]] = strptime(x = dat[[MHEALTH_CSV_TIMESTAMP_HEADER]],
                                                  format = timeFormat) + 0.0005
   options(digits.secs = 3);
+  return(dat)
+}
+
+#' @name SensorData.importActigraphCountCsv
+#' @title Import and convert Actigraph count csv files and load into data frame as in mhealth format.
+#' @export
+#' @param filename full file path of input Actigraph raw csv file.
+#' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importBinary`](SensorData.importBinary.html)
+SensorData.importActigraphCountCsv = function(filename) {
+  dat = read.table(
+    filename, header = FALSE, sep = ",", strip.white = TRUE, skip = 11, stringsAsFactors = FALSE
+  );
+  dat = dat[,1:3]
+  names(dat) = c(
+    MHEALTH_CSV_COUNT_X_HEADER,
+    MHEALTH_CSV_COUNT_Y_HEADER,
+    MHEALTH_CSV_COUNT_Z_HEADER
+  )
   return(dat)
 }
 
@@ -287,7 +308,9 @@ SensorData.ggplot = function(sensorData){
 
   p = ggplot(data = data, aes_string(x = MHEALTH_CSV_TIMESTAMP_HEADER, y = "value", colour = "variable"))
 
-  p = p + geom_line(lwd = 1.2) +
+  p = p + geom_line(lwd = 1.2)
+  
+  p = p +
     labs(title = titleText, x = xlab, y = ylab, colour = "axes") + xlim(c(st, et))
 
   p = p + scale_x_datetime(breaks = breaks)
@@ -338,6 +361,15 @@ SensorData.bokehplot = function(sensorData){
   p
 
   return(p)
+}
+
+#' @name SensorData.getSamplingRate
+#' @title Get sensor data's sampling rate from the time difference of adjacent samples
+#' @export
+SensorData.getSamplingRate = function(sensorData){
+  interval = as.numeric(sensorData[2,MHEALTH_CSV_TIMESTAMP_HEADER] - sensorData[1,MHEALTH_CSV_TIMESTAMP_HEADER])
+  sr = round(1/interval)
+  return(sr)
 }
 
 #' @name SensorData.getFilenameParts

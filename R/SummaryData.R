@@ -29,7 +29,7 @@ SummaryData.simpleMean = function(sensorData, breaks){
 #' @title Calculate summary value (area under curve) for each column over a certain break (e.g. hour, min).
 #' @note If certain break is not provided or missing, will use the entire sequence. The column name (except for the first column) of output dataframe would be: [SUMMARY\_METHOD]\_INPUT\_HEADER\_NAME.
 #' @export
-#' @import plyr flux
+#' @import plyr caTools
 #' @param sensorData input dataframe that matches mhealth sensor data format.
 #' @param breaks could be "sec", "min", "hour", "day", "week", "month", "quarter" or "year"; or preceded by an interger and a space.
 SummaryData.auc = function(sensorData, breaks){
@@ -44,7 +44,7 @@ SummaryData.auc = function(sensorData, breaks){
       rows[,1] = as.numeric(rows[,1])
       rows = na.omit(rows)
       if(nrow(rows) > 1){
-        aucValues = numcolwise(auc, x = rows[,1])(rows[2:nCols])
+        aucValues = numcolwise(trapz, x = rows[,1])(rows[2:nCols])
       }else{
         aucValues = as.data.frame(lapply(rows, function(x) rep.int(NA, 1)))
         aucValues = aucValues[2:nCols]
@@ -91,7 +91,8 @@ SummaryData.absoluteMean = function(sensorData, breaks){
 #' @export
 #' @import lubridate ggplot2 reshape2
 #' @param summaryData input dataframe that matches mhealth sensor data format.
-SummaryData.ggplot = function(summaryData){
+#' @param plotType type of plot: "line" or "step"
+SummaryData.ggplot = function(summaryData, plotType = "line"){
   data = summaryData
 
   nCols = ncol(data)
@@ -119,8 +120,12 @@ SummaryData.ggplot = function(summaryData){
   data = melt(data, id = c(MHEALTH_CSV_TIMESTAMP_HEADER))
 
   p = ggplot(data = data, aes_string(x = MHEALTH_CSV_TIMESTAMP_HEADER, y = "value", colour = "variable"))
-
-  p = p + geom_line() + geom_point() +
+  if(plotType == "line"){
+    p = p + geom_line() + geom_point()
+  }else if(plotType == "step"){
+    p = p + geom_step(direction = "hv")
+  }
+  p = p +
     labs(title = titleText, x = xlab, y = ylab, colour = "axes") + xlim(c(st, et))
 
   p = p + scale_x_datetime(breaks = breaks)
