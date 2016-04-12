@@ -4,7 +4,8 @@
 \alias{FrequencyResponse.fft}
 \title{Compute frequency response for input sensor data.}
 \usage{
-FrequencyResponse.fft(sensorData, Fs, type = "magnitude")
+FrequencyResponse.fft(sensorData, Fs, type = "magnitude",
+  normalize = "normalized")
 }
 \arguments{
 \item{sensorData}{input dataframe that matches mhealth specification.}
@@ -12,6 +13,8 @@ FrequencyResponse.fft(sensorData, Fs, type = "magnitude")
 \item{Fs}{sampling rate of the input signal.}
 
 \item{type}{"magnitude" or "vector". "magnitude": magnitude value of fft results; "vector": vector of fft results.}
+
+\item{normalize}{"summed", "average", "normalized", "unnormalized".}
 }
 \value{
 frequency dataframe with HEADER `HEADER_FREQUENCY_STAMP,[FFTMAGNITUDE/FFTVECTOR]_[ORIGINAL_HEADER]`.

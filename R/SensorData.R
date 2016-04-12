@@ -113,16 +113,16 @@ SensorData.importActigraphCsv = function(filename) {
 #' @export
 #' @param filename full file path of input Actigraph raw csv file.
 #' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importBinary`](SensorData.importBinary.html)
-SensorData.importActigraphCountCsv = function(filename) {
+SensorData.importActigraphCountCsv = function(filename, columns, column_names) {
   dat = read.table(
-    filename, header = FALSE, sep = ",", strip.white = TRUE, skip = 11, stringsAsFactors = FALSE
+    filename, header = TRUE, sep = ",", strip.white = TRUE, skip = 10, stringsAsFactors = FALSE, as.is = TRUE
   );
-  dat = dat[,1:3]
-  names(dat) = c(
-    MHEALTH_CSV_COUNT_X_HEADER,
-    MHEALTH_CSV_COUNT_Y_HEADER,
-    MHEALTH_CSV_COUNT_Z_HEADER
-  )
+  dat = dat[,c(1, columns)]
+  dat[,1] = as.POSIXct(dat[,1], format = MHEALTH_TIMESTAMP_FORMAT)
+  if(missing(column_names)){
+    column_names = colnames(dat)[-1];
+  }
+  colnames(dat) = c(MHEALTH_CSV_TIMESTAMP_HEADER, column_names);
   return(dat)
 }
 

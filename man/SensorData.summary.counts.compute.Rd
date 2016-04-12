@@ -4,7 +4,8 @@
 \alias{SensorData.summary.counts.compute}
 \title{Compute activity counts using [citation] algorithm}
 \usage{
-SensorData.summary.counts.compute(sensorData, breaks, filterType = "butter")
+SensorData.summary.counts.compute(sensorData, breaks, filterType = "butter",
+  cutoffs = c(0.6, 10))
 }
 \arguments{
 \item{sensorData}{input sensor data frame that fits the mhealth specification}
@@ -12,5 +13,7 @@ SensorData.summary.counts.compute(sensorData, breaks, filterType = "butter")
 \item{breaks}{epoch to compute counts on}
 
 \item{filterType}{"butter", "bessel"}
+
+\item{cutoffs}{cut off frequencies to be used in filtering, default is 0.6Hz and 10Hz. If choosing bessel, the low pass cut off would be multipled by 2 when being used.}
 }
 

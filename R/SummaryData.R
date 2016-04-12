@@ -121,9 +121,9 @@ SummaryData.ggplot = function(summaryData, plotType = "line"){
 
   p = ggplot(data = data, aes_string(x = MHEALTH_CSV_TIMESTAMP_HEADER, y = "value", colour = "variable"))
   if(plotType == "line"){
-    p = p + geom_line() + geom_point()
+    p = p + geom_line(alpha = 0.7) + geom_point(alpha = 0.7)
   }else if(plotType == "step"){
-    p = p + geom_step(direction = "hv")
+    p = p + geom_step(direction = "hv", alpha = 0.7)
   }
   p = p +
     labs(title = titleText, x = xlab, y = ylab, colour = "axes") + xlim(c(st, et))

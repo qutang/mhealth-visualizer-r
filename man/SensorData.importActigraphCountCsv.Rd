@@ -4,7 +4,7 @@
 \alias{SensorData.importActigraphCountCsv}
 \title{Import and convert Actigraph count csv files and load into data frame as in mhealth format.}
 \usage{
-SensorData.importActigraphCountCsv(filename)
+SensorData.importActigraphCountCsv(filename, columns, column_names)
 }
 \arguments{
 \item{filename}{full file path of input Actigraph raw csv file.}

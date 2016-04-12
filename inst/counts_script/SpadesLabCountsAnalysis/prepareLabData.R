@@ -60,10 +60,10 @@ for(subj in subjects){
     dir.create(file.path(folder, subj, actigraph_folder))
     headStr = SensorData.createActigraphCsvHeader(startTime = mergedData[1,1], 
                                         downloadTime = mergedData[nrow(mergedData),1],
-                                        samplingRate = round(1/as.numeric(mergedData[2,1] - mergedData[1,1])),
+                                        samplingRate = round(SensorData.getSamplingRate(mergedData)/10)*10,
                                         sensorId = id, 
                                         firmVersion = "1.5.0", 
-                                        softVersion = "9.23.0")
+                                        softVersion = "6.13.2")
     SensorData.io.writeAsActigraphRaw(file.path(folder, subj, actigraph_folder),sensorData = mergedData, headerStr = headStr, custom_name = paste(id, location, "merged.actigraph.csv", sep = "_"))
     
     # save merged data to ready folder
@@ -102,7 +102,6 @@ for(subj in subjects){
   
   # merge annotation files
   mergedAnnotation = AnnotationData.merge(listOfAnnotations)
-  
   
   # save merged annotation to ready folder
   AnnotationData.io.write(file.path(folder, subj, ready_folder),

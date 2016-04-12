@@ -9,17 +9,27 @@ MHEALTH_CSV_FFT_VECTOR_HEADER_PREFIX = "FFTVECTOR"
 #' @param sensorData input dataframe that matches mhealth specification.
 #' @param Fs sampling rate of the input signal.
 #' @param type "magnitude" or "vector". "magnitude": magnitude value of fft results; "vector": vector of fft results.
+#' @param normalize "summed", "average", "normalized", "unnormalized".
 #' @return frequency dataframe with HEADER `HEADER_FREQUENCY_STAMP,[FFTMAGNITUDE/FFTVECTOR]_[ORIGINAL_HEADER]`.
-FrequencyResponse.fft = function(sensorData, Fs, type = "magnitude"){
+FrequencyResponse.fft = function(sensorData, Fs, type = "magnitude", normalize = "normalized"){
   # input frequency response
   nRows = nrow(sensorData)
   nCols = ncol(sensorData)
   NFFT = 2^nextpow2(nRows);
   f = Fs/2*seq(0,1,length.out = NFFT/2+1);
-  fftData = mvfft(as.matrix(sensorData[,2:nCols]))/nRows;
+  if(normalize == "summed"){
+    fftData = mvfft(as.matrix(sensorData[,2:nCols]))/nRows;
+  }else if(normalize == "average"){
+    fftData = mvfft(as.matrix(sensorData[,2:nCols]))/nRows/nRows;
+  }else if(normalize == "normalized"){
+    fftData = mvfft(as.matrix(sensorData[,2:nCols]))/nRows*1/Fs / diff(f)[1];
+  }else if(normalize == "unnormalized"){
+    fftData = mvfft(as.matrix(sensorData[,2:nCols]));
+  }
+  
   switch(type,
          magnitude = {
-           magfftData = 2*abs(fftData[1:(NFFT/2+1),])
+           magfftData = abs(fftData[1:(NFFT/2+1),])
            result = data.frame(f, magfftData)
            for(i in 2:nCols){
              names(result)[i] = paste(MHEALTH_CSV_FFT_MAGNITUDE_HEADER_PREFIX, names(sensorData)[i],sep="_")
