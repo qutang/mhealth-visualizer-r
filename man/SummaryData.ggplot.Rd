@@ -4,10 +4,12 @@
 \alias{SummaryData.ggplot}
 \title{Plot summary data using ggplot2}
 \usage{
-SummaryData.ggplot(summaryData)
+SummaryData.ggplot(summaryData, plotType = "line")
 }
 \arguments{
 \item{summaryData}{input dataframe that matches mhealth sensor data format.}
+
+\item{plotType}{type of plot: "line" or "step"}
 }
 \description{
 All columns will be on the same graph with different colors.

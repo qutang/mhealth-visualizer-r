@@ -10,6 +10,7 @@ require(plyr)
 
 folder = "../../SPADES_labdata_used/"
 ready_folder = "ready"
+actigraph_folder = "actigraph_ready"
 summary_folder = "summary"
 subjects = paste("SPADES", seq(1,2), sep = "_")
 sensorLocationFile = "Sensor_location_Lab.csv";
@@ -55,6 +56,16 @@ for(subj in subjects){
     
     mergedData = SensorData.merge(listOfData)
     
+    # save merged data to actigraph format csv
+    dir.create(file.path(folder, subj, actigraph_folder))
+    headStr = SensorData.createActigraphCsvHeader(startTime = mergedData[1,1], 
+                                        downloadTime = mergedData[nrow(mergedData),1],
+                                        samplingRate = round(SensorData.getSamplingRate(mergedData)/10)*10,
+                                        sensorId = id, 
+                                        firmVersion = "1.5.0", 
+                                        softVersion = "6.13.2")
+    SensorData.io.writeAsActigraphRaw(file.path(folder, subj, actigraph_folder),sensorData = mergedData, headerStr = headStr, custom_name = paste(id, location, "merged.actigraph.csv", sep = "_"))
+    
     # save merged data to ready folder
     dir.create(file.path(folder, subj, ready_folder))
     SensorData.io.write(file.path(folder, subj, ready_folder),
@@ -91,7 +102,6 @@ for(subj in subjects){
   
   # merge annotation files
   mergedAnnotation = AnnotationData.merge(listOfAnnotations)
-  
   
   # save merged annotation to ready folder
   AnnotationData.io.write(file.path(folder, subj, ready_folder),

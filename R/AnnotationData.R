@@ -18,7 +18,7 @@ AnnotationData.importCsv = function(filename) {
     stop("Please make sure the raw data file is in annotaiton.csv or annotation.csv.gz format")
   # read.table supports csv.gz directly
   dat = read.table(
-    filename, header = TRUE, sep = MHEALTH_CSV_DELIMITER, quote = "\"", stringsAsFactors = FALSE
+    filename, header = TRUE, sep = MHEALTH_CSV_DELIMITER, stringsAsFactors = FALSE, fill = TRUE,row.names = NULL
   )
   # TODO: use the time zone specified in the filename
   dat[,MHEALTH_CSV_TIMESTAMP_HEADER] = as.POSIXct(strptime(dat[,MHEALTH_CSV_TIMESTAMP_HEADER], format = MHEALTH_TIMESTAMP_FORMAT))
@@ -73,11 +73,11 @@ AnnotationData.offset = function(annotationData, offsetValue = 0){
   return(annotationData)
 }
 
-#' @name AnnotationData.filter
+#' @name AnnotationData.filter.original
 #' @title filter out/only include labels/categories presented in the input list
 #' @import stringr
 #' @export
-AnnotationData.filter = function(annotationData, ontologyData, labels = NULL, categories = NULL, include.labels = FALSE, include.categories = FALSE){
+AnnotationData.filter.original = function(annotationData, ontologyData, labels = NULL, categories = NULL, include.labels = FALSE, include.categories = FALSE){
   if(is.null(labels) && is.null(categories)){
     warning("labels and categories are null, return the original annotation data frame")
     return(annotationData)
@@ -99,6 +99,7 @@ AnnotationData.filter = function(annotationData, ontologyData, labels = NULL, ca
         return(str_detect(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER], pattern = label))
       })
       category_filter_condition = Reduce(f = "|", category_filter_list)
+
       if(!include.categories) category_filter_condition = !category_filter_condition;
       filter_condition = filter_condition | category_filter_condition
     }
@@ -116,13 +117,55 @@ AnnotationData.getLabelNames = function(annotationData, currentTime) {
   if(is.null(currentTime)){
     return(NULL)
   }
-  if(sum(class(currentTime) == class(annotationData[1, MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER])) == 0){
+  if(sum(class(currentTime) == class(annotationData[1, MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER])) == 0 && sum(class(currentTime) == class(as.numeric(annotationData[1, MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER]))) == 0){
     stop("The class type of the timestamp should match the annotation data set")
   }
-  criteria = annotationData[,MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER] <= currentTime &
-    annotationData[,MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER] >= currentTime
+  criteria = floor(as.numeric(annotationData[,MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER])) < as.numeric(currentTime) &
+    floor(as.numeric(annotationData[,MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER])) >= as.numeric(currentTime)
   labelNames = unique(annotationData[criteria, MHEALTH_CSV_ANNOTATION_LABEL_HEADER])
   return(labelNames)
+}
+
+#' @name AnnotationData.simplify
+#' @title simplify all annotations so that concurrent activities will be concatnated and timestamps will be connected
+#' @import stringr
+#' @export
+AnnotationData.simplify = function(annotationData) {
+  sts = annotationData[,MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER]
+  ets = annotationData[,MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER]
+  ts = sort(unique(floor(as.numeric(c(sts, ets)))), decreasing = FALSE)
+  simplified = ldply(1:(length(ts)-1), function(index){
+    chunk = mean(c(ts[index], ts[index + 1]))
+    labels = AnnotationData.getLabelNames(annotationData, chunk)
+    if(length(labels) > 0){
+      result = data.frame(ts = ts[index], st = ts[index], et = ts[index+1], label = paste(labels, collapse = ","))
+    }else{
+      result = data.frame(ts = ts[index], st = ts[index], et = ts[index+1], label = "Unlabeled")
+    }
+    return(result)
+  })
+  simplified[,"ts"] = as.POSIXct(simplified[,"ts"], origin = "1970-01-01")
+  simplified[,"st"] = as.POSIXct(simplified[,"st"], origin = "1970-01-01")
+  simplified[,"et"] = as.POSIXct(simplified[,"et"], origin = "1970-01-01")
+  colnames(simplified) = c(MHEALTH_CSV_TIMESTAMP_HEADER, MHEALTH_CSV_ANNOTATION_STARTTIME_HEADER, MHEALTH_CSV_ANNOTATION_STOPTIME_HEADER, MHEALTH_CSV_ANNOTATION_LABEL_HEADER)
+  return(simplified)
+}
+
+#' @name AnnotationData.simplify.filter
+#' @title filter out/include only simplified annotation data frame with the presented labels
+#' @export
+#' @import stringr
+AnnotationData.simplify.filter = function(annotationData, labels, include.labels = TRUE){
+  if(missing(labels)){
+    return(annotationData)
+  }else{
+    annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER] = tolower(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER])
+    criteria = logical(nrow(annotationData))
+    for(label in labels){
+      criteria = criteria | str_detect(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER], label)
+    }
+    return(annotationData[criteria,])
+  }
 }
 
 #' @name AnnotationData.addToGgplot
