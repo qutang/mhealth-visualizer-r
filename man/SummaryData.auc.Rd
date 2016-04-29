@@ -4,12 +4,14 @@
 \alias{SummaryData.auc}
 \title{Calculate summary value (area under curve) for each column over a certain break (e.g. hour, min).}
 \usage{
-SummaryData.auc(sensorData, breaks)
+SummaryData.auc(sensorData, breaks, type = "trapz")
 }
 \arguments{
 \item{sensorData}{input dataframe that matches mhealth sensor data format.}
 
 \item{breaks}{could be "sec", "min", "hour", "day", "week", "month", "quarter" or "year"; or preceded by an interger and a space.}
+
+\item{type}{"trapz", "power", "sum", "meanBySecond", "meanBySize"}
 }
 \note{
 If certain break is not provided or missing, will use the entire sequence. The column name (except for the first column) of output dataframe would be: [SUMMARY\_METHOD]\_INPUT\_HEADER\_NAME.

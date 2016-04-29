@@ -32,7 +32,8 @@ SummaryData.simpleMean = function(sensorData, breaks){
 #' @import plyr caTools
 #' @param sensorData input dataframe that matches mhealth sensor data format.
 #' @param breaks could be "sec", "min", "hour", "day", "week", "month", "quarter" or "year"; or preceded by an interger and a space.
-SummaryData.auc = function(sensorData, breaks){
+#' @param type "trapz", "power", "sum", "meanBySecond", "meanBySize"
+SummaryData.auc = function(sensorData, breaks, type = "trapz"){
   nCols = ncol(sensorData)
   sensorData[,2:nCols] = abs(sensorData[,2:nCols])
   if(missing(breaks) || is.null(breaks)){
@@ -40,11 +41,23 @@ SummaryData.auc = function(sensorData, breaks){
   }else{
     sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
   }
+  
+  nThreshold = .SummaryData.getBreakSampleSize(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks, sr = SensorData.getSamplingRate(sensorData))
   result = plyr::ddply(sensorData,.(breaks), function(rows){
       rows[,1] = as.numeric(rows[,1])
       rows = na.omit(rows)
-      if(nrow(rows) > 1){
-        aucValues = numcolwise(trapz, x = rows[,1])(rows[2:nCols])
+      if(nrow(rows) >= 0.9 * nThreshold){
+        if(type == "trapz"){
+          aucValues = numcolwise(trapz, x = rows[,1])(rows[2:nCols])
+        }else if(type == "power"){
+          aucValues = numcolwise(trapz, x = rows[,1])(as.data.frame(rows[2:nCols]^2))
+        }else if(type == "meanBySecond"){
+          aucValues = numcolwise(sum)(rows[2:nCols])/(max(rows[,1]) - min(rows[,1]))
+        }else if(type == "meanBySize"){
+          aucValues = numcolwise(sum)(rows[2:nCols])/length(rows[,1])
+        }else if(type == "sum"){
+          aucValues = numcolwise(sum)(rows[2:nCols])
+        }
       }else{
         aucValues = as.data.frame(lapply(rows, function(x) rep.int(NA, 1)))
         aucValues = aucValues[2:nCols]
@@ -153,5 +166,25 @@ SummaryData.ggplot = function(summaryData, plotType = "line"){
   }
   br = cut(ts, breaks= breaks)
   return(br)
+}
+
+.SummaryData.getBreakSampleSize = function(ts, breaks, sr){
+  if(missing(breaks) || is.null(breaks)){
+    n = length(ts)
+    return(n)
+  }else if(str_detect(breaks, "sec")){
+    tokens = str_split(breaks, pattern = " ")[[1]]
+    n = as.numeric(tokens[1]) * sr
+  }else if(str_detect(breaks, "min")){
+    tokens = str_split(breaks, pattern = " ")[[1]]
+    n = as.numeric(tokens[1]) * sr * 60
+  }else if(str_detect(breaks, "hour")){
+    tokens = str_split(breaks, pattern = " ")[[1]]
+    n = as.numeric(tokens[1]) * sr * 3600
+  }else if(str_detect(breaks, "day")){
+    tokens = str_split(breaks, pattern = " ")[[1]]
+    n = as.numeric(tokens[1]) * sr * 3600 * 24
+  }
+  return(n)
 }
 

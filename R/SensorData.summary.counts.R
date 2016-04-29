@@ -4,8 +4,9 @@
 #' @param filterType "butter", "bessel"
 #' @param breaks epoch to compute counts on
 #' @param cutoffs cut off frequencies to be used in filtering, default is 0.6Hz and 10Hz. If choosing bessel, the low pass cut off would be multipled by 2 when being used.
+#' @param integrationType the integration method to be used: "trapz", "power", "sum", "meanBySecond", "meanBySize"
 #' @export
-SensorData.summary.counts.compute = function(sensorData, breaks, filterType = "butter", cutoffs = c(0.6, 10)){
+SensorData.summary.counts.compute = function(sensorData, breaks, filterType = "butter", cutoffs = c(0.6, 10), integrationType = "trapz"){
   # TODO: validate sensorData format
   # TODO: deal with inconsistent sampling rate
   sr = SensorData.getSamplingRate(sensorData)
@@ -21,8 +22,9 @@ SensorData.summary.counts.compute = function(sensorData, breaks, filterType = "b
     filteredData = filteredData[[1]]
   }
   # Compute the AUC
-  trapzData = SummaryData.auc(sensorData = filteredData, breaks = breaks)
+  integratedData = SummaryData.auc(sensorData = filteredData, breaks = breaks, type = integrationType)
+  
   # Compute vector magnitude
-  countsData = Magnitude.compute(trapzData)
+  countsData = Magnitude.compute(integratedData)
   return(countsData)
 }

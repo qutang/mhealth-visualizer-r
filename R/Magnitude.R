@@ -10,7 +10,7 @@ Magnitude.compute = function(sensorData){
   stampName = colnames(sensorData)[1]
   tokens = str_split(names(sensorData)[2], "_")[[1]]
   labelName = paste(c("MAGNITUDE",tokens[2:length(tokens)]),collapse="_")
-  magnitudeData[labelName] = rowSums(sensorData[,2:nCols]^2,na.rm = TRUE)
+  magnitudeData[labelName] = rowSums(sensorData[,2:nCols]^2)
   magnitudeData[,labelName] = sqrt(magnitudeData[,labelName])
   magnitudeData = magnitudeData[, c(stampName, labelName)]
   return(magnitudeData)

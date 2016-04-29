@@ -12,6 +12,7 @@ MHEALTH_CSV_COUNT_Z_HEADER = "Z_ACTIVITY_COUNT"
 #' @param filename full file path of input sensor data file.
 #' @param violate violate file name convention, ignore time zones and other information in file name
 #' @export
+#' @import readr
 #' @seealso [`SensorData.importBinary`](SensorData.importBinary.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html)
 
 SensorData.importCsv = function(filename, violate = FALSE) {
@@ -26,11 +27,13 @@ SensorData.importCsv = function(filename, violate = FALSE) {
       stop("Please make sure the raw data file is in csv or csv.gz format")
   }
   # read.table supports csv.gz directly
-  dat = read.table(
-    filename, header = TRUE, sep = MHEALTH_CSV_DELIMITER, quote = "\"", stringsAsFactors = FALSE
-  )
+  ncols = count_fields(filename, tokenizer_csv(), n_max = 1)
+  colTypes = paste(c("c", rep("d", ncols - 1)),collapse = "")
+  dat = read_csv(
+    filename, col_names = TRUE, trim_ws = TRUE, col_types = colTypes)
   # TODO: use the time zone specified in the filename
   dat$HEADER_TIME_STAMP = as.POSIXct(strptime(dat$HEADER_TIME_STAMP, format = MHEALTH_TIMESTAMP_FORMAT))
+  dat = as.data.frame(dat)
   return(dat)
 }
 
@@ -84,14 +87,14 @@ SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"
 #' @name SensorData.importActigraphCsv
 #' @title Import and convert Actigraph raw csv files and load into data frame as in mhealth format.
 #' @export
+#' @import readr
 #' @note Please make sure the Actigraph raw csv file has timestamp included. The Actigraph raw csv file is not IMU csv file supported by GT9X.
 #' @param filename full file path of input Actigraph raw csv file.
 #' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importBinary`](SensorData.importBinary.html)
 SensorData.importActigraphCsv = function(filename) {
   actigraphHeader = SensorData.parseActigraphCsvHeader(filename)
-  dat = read.table(
-    filename, header = FALSE, sep = ",", strip.white = TRUE, skip = 11, stringsAsFactors = FALSE
-  );
+  dat = read_csv(
+    filename, col_names = FALSE, skip = 11);
   dat = dat[,1:4]
   names(dat) = c(
     MHEALTH_CSV_TIMESTAMP_HEADER,
@@ -105,24 +108,27 @@ SensorData.importActigraphCsv = function(filename) {
   dat[[MHEALTH_CSV_TIMESTAMP_HEADER]] = strptime(x = dat[[MHEALTH_CSV_TIMESTAMP_HEADER]],
                                                  format = timeFormat) + 0.0005
   options(digits.secs = 3);
+  dat = as.data.frame(dat);
   return(dat)
 }
 
 #' @name SensorData.importActigraphCountCsv
 #' @title Import and convert Actigraph count csv files and load into data frame as in mhealth format.
 #' @export
-#' @param filename full file path of input Actigraph raw csv file.
+#' @import readr
+#' @param filename full file path of input Actigraph count csv file.
 #' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importBinary`](SensorData.importBinary.html)
-SensorData.importActigraphCountCsv = function(filename, columns, column_names) {
-  dat = read.table(
-    filename, header = TRUE, sep = ",", strip.white = TRUE, skip = 10, stringsAsFactors = FALSE, as.is = TRUE
+SensorData.importActigraphCountCsv = function(filename, count_col, count_col_name) {
+  dat = read_csv(
+    filename, col_names = TRUE, skip = 10, col_types = cols(timestamp = col_character(), vectormagnitude = col_double())
   );
-  dat = dat[,c(1, columns)]
+  dat = as.data.frame(dat[,c(1, count_col)])
+  
   dat[,1] = as.POSIXct(dat[,1], format = MHEALTH_TIMESTAMP_FORMAT)
-  if(missing(column_names)){
-    column_names = colnames(dat)[-1];
+  if(missing(count_col_name)){
+    count_col_name = colnames(dat)[-1];
   }
-  colnames(dat) = c(MHEALTH_CSV_TIMESTAMP_HEADER, column_names);
+  colnames(dat) = c(MHEALTH_CSV_TIMESTAMP_HEADER, count_col_name);
   return(dat)
 }
 
@@ -367,8 +373,8 @@ SensorData.bokehplot = function(sensorData){
 #' @title Get sensor data's sampling rate from the time difference of adjacent samples
 #' @export
 SensorData.getSamplingRate = function(sensorData){
-  interval = as.numeric(sensorData[2,MHEALTH_CSV_TIMESTAMP_HEADER] - sensorData[1,MHEALTH_CSV_TIMESTAMP_HEADER])
-  sr = round(1/interval)
+  interval = which(sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER] == sensorData[1,MHEALTH_CSV_TIMESTAMP_HEADER] + 1)
+  sr = round(interval/10)*10
   return(sr)
 }
 
