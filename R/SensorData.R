@@ -90,25 +90,54 @@ SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"
 #' @import readr
 #' @note Please make sure the Actigraph raw csv file has timestamp included. The Actigraph raw csv file is not IMU csv file supported by GT9X.
 #' @param filename full file path of input Actigraph raw csv file.
+#' @param ad_convert set as TRUE only when the input Actigraph csv file is in analog quantized format and need to be converted into g value
+#' @param ts_provided set as TRUE only when timestamp is provided as the first column
+#' @param header_provided set as TRUE only when column header is provided
 #' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importBinary`](SensorData.importBinary.html)
-SensorData.importActigraphCsv = function(filename) {
+SensorData.importActigraphCsv = function(filename, ad_convert = FALSE, ts_provided = TRUE, header_provided = TRUE) {
   actigraphHeader = SensorData.parseActigraphCsvHeader(filename)
-  dat = read_csv(
-    filename, col_names = FALSE, skip = 11);
+  if(header_provided){
+    dat = read_csv(
+      filename, col_names = FALSE, skip = 11);
+  }else{
+    dat = read_csv(
+      filename, col_names = FALSE, skip = 10);
+  }
+  if(!ts_provided){
+    ts_col = seq(from = actigraphHeader$st, to = actigraphHeader$dt, length.out = nrow(dat))
+    dat = cbind(ts_col, dat)
+  }
+  
   dat = dat[,1:4]
+  
   names(dat) = c(
     MHEALTH_CSV_TIMESTAMP_HEADER,
     MHEALTH_CSV_ACCELEROMETER_CALIBRATED_X_HEADER,
     MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Y_HEADER,
     MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Z_HEADER
   )
-  timeFormat = ifelse(test = actigraphHeader$imu,
-                      yes = ACTIGRAPH_IMU_TIMESTAMP,
-                      no = ACTIGRAPH_TIMESTAMP)
-  dat[[MHEALTH_CSV_TIMESTAMP_HEADER]] = strptime(x = dat[[MHEALTH_CSV_TIMESTAMP_HEADER]],
-                                                 format = timeFormat) + 0.0005
+  
+  if(ts_provided){
+    timeFormat = ifelse(test = actigraphHeader$imu,
+                        yes = ACTIGRAPH_IMU_TIMESTAMP,
+                        no = ACTIGRAPH_TIMESTAMP)
+    dat[[MHEALTH_CSV_TIMESTAMP_HEADER]] = strptime(x = dat[[MHEALTH_CSV_TIMESTAMP_HEADER]],
+                                                   format = timeFormat) + 0.0005
+  }
+  
   options(digits.secs = 3);
   dat = as.data.frame(dat);
+  
+  if(ad_convert){
+    vs = actigraphHeader$vs
+    res = actigraphHeader$res
+    
+    dat[,2:ncol(dat)] = (dat[,2:ncol(dat)] * vs / (2^res) - vs/2)/(vs/10)
+    dat[,2:ncol(dat)] = as.data.frame(apply(dat[,2:ncol(dat)], 2, function(col){
+      col[col == -5] = 0
+      return(as.numeric(col))
+    }))
+  }
   return(dat)
 }
 
@@ -409,8 +438,8 @@ SensorData.getFilenameParts = function(filename){
 #' @name SensorData.parseActigraphCsvHeader
 #' @title parse actigraph csv header to get related version and sampling rate information
 #' @export
-#' @import stringr
-SensorData.parseActigraphCsvHeader = function(filename) {
+#' @import stringr R.utils
+SensorData.parseActigraphCsvHeader = function(filename, header = TRUE) {
   headlines = readLines(filename, n = 10, encoding = "UTF-8");
 
   # Sampling rate
@@ -463,13 +492,35 @@ SensorData.parseActigraphCsvHeader = function(filename) {
   dt = headlines[[6]]
   dd = headlines[[7]]
   timeReg = "[0-9]{2}(:[0-9]{2}){1,2}+";
-  dateReg = "[0-9]{2}/[0-9]{2}/[0-9]{4}";
+  dateReg = "[0-9]+/[0-9]+/[0-9]{4}";
   dt = regmatches(dt, regexpr(timeReg, dt, perl = TRUE))
   dd = regmatches(dd, regexpr(dateReg, dd, perl = TRUE))
   dt = paste(dd, dt, sep = ' ')
   timeFormat = ACTIGRAPH_TIMESTAMP
   dt = strptime(dt, timeFormat) + 0.0005
   options(digits.secs = 3);
+  
+  if(is.na(sr)){
+    # determine sr by start and download time
+    # options(digits = 13)
+    duration = as.numeric(dt - st, units = "secs")
+    if(header){
+      nlines = countLines(filename) - 11
+    }else{
+      nlines = countLines(filename) - 10
+    }
+    sr = as.numeric(ceiling(nlines / duration))
+  }
+  
+  # input voltage
+  vs = headlines[[9]]
+  vsReg = ": ([0-9](\\.[0-9]+)*)"
+  vs = as.numeric(str_match(vs, vsReg)[2])
+  
+  # input resolution
+  resolution = headlines[[9]]
+  resReg = "= ([0-9]+)"
+  resolution = as.numeric(str_match(resolution, resReg)[2])
 
   # header object as output
   header = {
@@ -482,6 +533,8 @@ SensorData.parseActigraphCsvHeader = function(filename) {
   header$dt = dt
   header$at = at
   header$imu = imu
+  header$vs = vs
+  header$res = resolution
 
   return(header)
 }

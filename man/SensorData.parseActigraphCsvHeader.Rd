@@ -4,6 +4,6 @@
 \alias{SensorData.parseActigraphCsvHeader}
 \title{parse actigraph csv header to get related version and sampling rate information}
 \usage{
-SensorData.parseActigraphCsvHeader(filename)
+SensorData.parseActigraphCsvHeader(filename, header = TRUE)
 }
 

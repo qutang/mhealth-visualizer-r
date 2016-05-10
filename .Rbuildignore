@@ -4,3 +4,4 @@
 ^\.fromBinary$
 ^\.fromGT3X$
 ^devtools$
+^offline_data$

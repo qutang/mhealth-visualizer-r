@@ -1,7 +1,7 @@
 Package: mhealthformatsupportr
 Type: Package
 Title: mHealth Format Support Package for R
-Version: 0.17
+Version: 0.18
 Date: 2015-07-06
 Author: Qu Tang
 Maintainer: Qu Tang <tqshelly@gmail.com>
@@ -27,7 +27,9 @@ Imports:
     reshape2,
     matlab,
     signal,
-    rbokeh
+    rbokeh,
+    readr,
+    R.utils
 Suggests:
     testthat,
     knitr,
