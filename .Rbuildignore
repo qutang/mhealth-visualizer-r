@@ -5,3 +5,4 @@
 ^\.fromGT3X$
 ^devtools$
 ^offline_data$
+^data-raw$
