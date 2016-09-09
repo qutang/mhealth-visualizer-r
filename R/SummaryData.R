@@ -33,9 +33,9 @@ SummaryData.simpleMean = function(sensorData, breaks){
 #' @param sensorData input dataframe that matches mhealth sensor data format.
 #' @param breaks could be "sec", "min", "hour", "day", "week", "month", "quarter" or "year"; or preceded by an interger and a space.
 #' @param type "trapz", "power", "sum", "meanBySecond", "meanBySize"
-SummaryData.auc = function(sensorData, breaks, type = "trapz"){
+#' @param rectify whether rectify the values before computing AUC, default is TRUE
+SummaryData.auc = function(sensorData, breaks, type = "trapz", rectify = TRUE){
   nCols = ncol(sensorData)
-  sensorData[,2:nCols] = abs(sensorData[,2:nCols])
   if(missing(breaks) || is.null(breaks)){
     sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER])
   }else{
@@ -47,6 +47,9 @@ SummaryData.auc = function(sensorData, breaks, type = "trapz"){
       rows[,1] = as.numeric(rows[,1])
       rows = na.omit(rows)
       if(nrow(rows) >= 0.9 * nThreshold){
+        if(rectify){
+          rows[2:nCols] = abs(rows[2:nCols])
+        }
         if(type == "trapz"){
           aucValues = numcolwise(trapz, x = rows[,1])(rows[2:nCols])
         }else if(type == "power"){
