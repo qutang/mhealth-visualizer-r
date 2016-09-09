@@ -58,7 +58,8 @@ AnnotationData.io.write = function(folder, annotationData, ontologyId = NA, anno
 #' @export
 AnnotationData.io.getAnnotatorId = function(filename){
   tokens = str_split(filename, "\\.")
-  return(tokens[[1]][2])
+  tokens = str_split(tokens[[1]][2], "-")
+  return(tokens[[1]][1])
 }
 
 #' @name AnnotationData.io.getOntologyId

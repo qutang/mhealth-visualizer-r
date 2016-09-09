@@ -155,15 +155,30 @@ AnnotationData.simplify = function(annotationData) {
 #' @title filter out/include only simplified annotation data frame with the presented labels
 #' @export
 #' @import stringr
-AnnotationData.simplify.filter = function(annotationData, labels, include.labels = TRUE){
+AnnotationData.simplify.filter = function(annotationData, labels, include.labels = TRUE, and.logic = TRUE){
   if(missing(labels)){
     return(annotationData)
   }else{
     annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER] = tolower(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER])
     criteria = logical(nrow(annotationData))
-    for(label in labels){
-      criteria = criteria | str_detect(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER], label)
+    if(and.logic){
+      criteria = !criteria
+      for(label in labels){
+        label = tolower(label)
+        if(!include.labels) {
+          criteria = criteria & !str_detect(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER], label)
+        }else{
+          criteria = criteria & str_detect(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER], label)
+        }
+        
+      }
+    }else{
+      for(label in labels){
+        label = tolower(label)
+        criteria = criteria | str_detect(annotationData[,MHEALTH_CSV_ANNOTATION_LABEL_HEADER], label)
+      }
     }
+    
     return(annotationData[criteria,])
   }
 }
