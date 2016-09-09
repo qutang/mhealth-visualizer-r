@@ -72,7 +72,7 @@ SamplingRate.ggplot = function(sr_dat, unit = "Count", ref){
   breaks = pretty_dates(sr_dat[,1], n = 6)
   st = breaks[1]
   et = tail(breaks, 1)
-  interval = as.period(new_interval(sr_dat[1,1], sr_dat[2,1]))
+  interval = as.period(interval(sr_dat[1,1], sr_dat[2,1]))
   ylab = "value"
   xlab = "time"
   titleText = paste("Sampling Rate in", unit,"per",interval,
