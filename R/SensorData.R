@@ -2,9 +2,22 @@ MHEALTH_CSV_TIMESTAMP_HEADER = "HEADER_TIME_STAMP"
 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_X_HEADER = "X_ACCELATION_METERS_PER_SECOND_SQUARED"
 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Y_HEADER = "Y_ACCELATION_METERS_PER_SECOND_SQUARED"
 MHEALTH_CSV_ACCELEROMETER_CALIBRATED_Z_HEADER = "Z_ACCELATION_METERS_PER_SECOND_SQUARED"
+MHEALTH_CALIBRATED_ACCELERATION_DATA_TYPE = "ACCELATION_METERS_PER_SECOND_SQUARED"
 MHEALTH_CSV_COUNT_X_HEADER = "X_ACTIVITY_COUNT"
 MHEALTH_CSV_COUNT_Y_HEADER = "Y_ACTIVITY_COUNT"
 MHEALTH_CSV_COUNT_Z_HEADER = "Z_ACTIVITY_COUNT"
+
+#' @name SensorData.as
+#' @title convert arbitrary dataframe to mhealth sensor data style
+#' @export
+SensorData.as = function(df, type = "ACCELEROMETER"){
+  if(type == "ACCELEROMETER"){
+    n = min(ncol(df), 4)
+    result = df[,1:n]
+    names(result) = c(MHEALTH_CSV_TIMESTAMP_HEADER, paste(toupper(letters[1:(n-1)]), MHEALTH_CALIBRATED_ACCELERATION_DATA_TYPE, sep = "_"))
+  }
+  return(result)
+}
 
 #' @name SensorData.importCsv
 #' @title Import mhealth sensor data file and load into memory as data frame in mhealth format.
@@ -96,13 +109,23 @@ SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"
 #' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importBinary`](SensorData.importBinary.html)
 SensorData.importActigraphCsv = function(filename, ad_convert = FALSE, ts_provided = TRUE, header_provided = TRUE) {
   actigraphHeader = SensorData.parseActigraphCsvHeader(filename)
+  
+  ncols = count_fields(filename, tokenizer_csv(), n_max = 1, skip = 11)
+  if (ts_provided) {
+    colTypes = paste(c("c", rep("d", ncols - 1)),collapse = "")
+  }else{
+    colTypes = paste(rep("d", ncols), collapse = "")
+  }
+  
+  
   if(header_provided){
     dat = read_csv(
-      filename, col_names = FALSE, skip = 11);
+      filename, col_names = FALSE, skip = 11, trim_ws = TRUE, col_types = colTypes);
   }else{
     dat = read_csv(
-      filename, col_names = FALSE, skip = 10);
+      filename, col_names = FALSE, skip = 10, trim_ws = TRUE, col_types = colTypes);
   }
+  
   if(!ts_provided){
     ts_col = seq(from = actigraphHeader$st, to = actigraphHeader$dt, length.out = nrow(dat))
     dat = cbind(ts_col, dat)
@@ -264,7 +287,7 @@ SensorData.interpolate = function(sensorData, method = "spline_natural", polyDeg
 #' @param startTime POSIct date object for start time.
 #' @param endTime POSIct date object for end time.
 SensorData.clip = function(sensorData, startTime, endTime){
-  clippedTs = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]] >= startTime & sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]] <= endTime
+  clippedTs = sensorData[[1]] >= startTime & sensorData[[1]] <= endTime
   return(sensorData[clippedTs,])
 }
 
@@ -288,6 +311,27 @@ SensorData.split = function(sensorData, breaks = "hour"){
 #' @return dataframe after timestamps being offset
 SensorData.offset = function(sensorData, offsetValue = 0){
   sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]] = sensorData[[MHEALTH_CSV_TIMESTAMP_HEADER]] + offsetValue
+  return(sensorData)
+}
+
+#' @name SensorData.crop
+#' @title crop sensor data's y axis to a specific range
+#' @param sensorData input dataframe that matches mhealth specification.
+#' @param range two values in vector specify upper and lower bound
+#' @export
+#' @import plyr
+#' @return dataframe after being cropped
+SensorData.crop = function(sensorData, range = NULL){
+  if(!is.null(range)){
+    upper = range[2]
+    lower = range[1]
+    cropFun = colwise(function(colData){
+      colData[colData > upper] = upper + rnorm(sum(colData > upper), 0, 0.05)
+      colData[colData < lower] = lower + rnorm(sum(colData < lower), 0, 0.05)
+      return(colData)
+    })
+    sensorData[,2:ncol(sensorData)] = cropFun(sensorData[,2:ncol(sensorData)])
+  }
   return(sensorData)
 }
 
@@ -402,29 +446,30 @@ SensorData.bokehplot = function(sensorData){
 #' @title Get sensor data's sampling rate from the time difference of adjacent samples
 #' @export
 SensorData.getSamplingRate = function(sensorData){
-  interval = which(sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER] == sensorData[1,MHEALTH_CSV_TIMESTAMP_HEADER] + 1)
-  sr = round(interval/10)*10
+  duration = as.numeric(sensorData[,1] %>% last - sensorData[,1] %>% first, units = "secs")
+  sr = round(nrow(sensorData)/duration/10)*10
   return(sr)
 }
 
 #' @name SensorData.getFilenameParts
 #' @export
-#' @import stringr
+#' @import stringr dplyr
 #' @title Get the mhealth filename parts out of a mhealth sensor data file name
 SensorData.getFilenameParts = function(filename){
+  filename = filename %>% basename
   if(!str_detect(filename, MHEALTH_FILE_NAME_REGEX_PATTERN)){
     stop(paste0("Not a valid mhealth file name: " + filename))
     return
   }
-  tokens = str_split(filename, "\\.")
-  section1_tokens = str_split(tokens[[1]], "-")
-  section2_tokens = str_split(tokens[[2]], "-")
-  sensorType = section1_tokens[[1]]
-  dataType = section1_tokens[[2]]
-  versionCode = section1_tokens[[3]]
-  sensorId = section2_tokens[[1]]
-  startTime = as.POSIXct(substr(tokens[[3]], 1, length(tokens[[3]]) - 6), format = MHEALTH_FILE_TIMESTAMP_FORMAT)
-  timeZone = substr(tokens[[3]], length(tokens[[3]]) - 5, length(tokens[[3]]))
+  tokens = unlist(str_split(filename, "\\."))
+  section1_tokens = unlist(str_split(tokens[1], "-"))
+  section2_tokens = unlist(str_split(tokens[2], "-"))
+  sensorType = section1_tokens[1]
+  dataType = section1_tokens[2]
+  versionCode = section1_tokens[3]
+  sensorId = section2_tokens[1]
+  startTime = as.POSIXct(substr(tokens[3], 1, nchar(tokens[3]) - 6), format = MHEALTH_FILE_TIMESTAMP_FORMAT)
+  timeZone = substr(tokens[3], nchar(tokens[3]) - 4, nchar(tokens[3]))
   return(list(
     sensorType = sensorType,
     dataType = dataType,
@@ -468,12 +513,23 @@ SensorData.parseActigraphCsvHeader = function(filename, header = TRUE) {
 
   # actigraph type
   at = substr(sn, 1, 3)
+  
+  # g range
+  gr = switch(at, 
+              MAT = "3",
+              CLE = "6",
+              MOS = "8",
+              TAS = "8")
 
   # IMU or not
   if (str_detect(headlines[[1]], "IMU")) {
     imu = TRUE
   }else{
     imu = FALSE
+  }
+  
+  if(imu){
+    gr = "16"
   }
 
   # Session start time
@@ -533,6 +589,7 @@ SensorData.parseActigraphCsvHeader = function(filename, header = TRUE) {
   header$dt = dt
   header$at = at
   header$imu = imu
+  header$gr = gr
   header$vs = vs
   header$res = resolution
 
