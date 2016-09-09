@@ -29,7 +29,9 @@ Imports:
     signal,
     rbokeh,
     readr,
-    R.utils
+    R.utils,
+    Cairo,
+    akima
 Suggests:
     testthat,
     knitr,

@@ -17,3 +17,6 @@ vignettes/gh-pages/
 .fromBinary/
 .fromGT3X/
 inst/doc
+inst/counts_script/
+offline_data/
+*temp*
