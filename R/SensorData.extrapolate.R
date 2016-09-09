@@ -2,7 +2,7 @@
 #' @title Apply extrapolate algorithm to sensor data. Algorithm was developed for activity count by NU mhealth group.
 #' @author Qu Tang
 #' @export
-#' @import plyr MASS akima
+#' @import plyr MASS akima dplyr
 #' @param sensorData input dataframe that matches mhealth specification.
 #' @param lambda parameter to regularize extrapolation: 0.1-10; default is 1. (the smaller the more confidence on points close to edges).
 #' @param interpolate "linear", "spline_fmm", "spline_natural", "aspline_original", "aspline_improved".
