@@ -1,5 +1,5 @@
 MHEALTH_CSV_DELIMITER = ","
 MHEALTH_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%OS"
-MHEALTH_FILE_TIMESTAMP_FORMAT = "%Y-%m-%d-%H-%M-%OS3"
+MHEALTH_FILE_TIMESTAMP_FORMAT = "%Y-%m-%d-%H-%M-%OS"
 MHEALTH_FILE_TIMESTAMP_TZ_PATTERN = "[MP]+[0-9]{4}"
-MHEALTH_FILE_NAME_REGEX_PATTERN = "^[a-zA-Z0-9]+-([A-Z][a-z]+)+-[A-Za-z0-9]+\\.[A-Za-z0-9]+\\.[0-9]{4}(-[0-9]{2}){5}-[0-9]{3}-[PM]([0-9]{2}){2}\\.[a-z]+\\.csv(\\.gz)*$"
+MHEALTH_FILE_NAME_REGEX_PATTERN = "^[a-zA-Z0-9]+-([A-Z][a-z0-9]+)+-[A-Za-z0-9]+\\.[A-Za-z0-9]+-([A-Z][a-z0-9]+)+\\.[0-9]{4}(-[0-9]{2}){5}-[0-9]{3}-[PM]([0-9]{2}){2}\\.[a-z]+\\.csv(\\.gz)*$"
