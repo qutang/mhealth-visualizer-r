@@ -68,8 +68,8 @@ SensorData.filter.bessel = function(sensorData, breaks, Fs, Fc, order){
   return(result)
 }
 
-#' @name SensorData.filter.butterworth
-#' @title Apply butterworth filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).
+#' @name SensorData.filter.iir
+#' @title Apply iir filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).
 #' @export
 #' @import signal matlab plyr
 #' @param sensorData the input dataframe that matches mhealth specification.
@@ -78,12 +78,18 @@ SensorData.filter.bessel = function(sensorData, breaks, Fs, Fc, order){
 #' @param Fc cut off frequencies of butterworth filter, if more than one store as c(low, high)
 #' @param order formula order of butterworth filter
 #' @param type "low", "high", "stop", "pass"
+#' @param filter "butter", "chebyI", "chebyII", "ellip"
 #' @return list of filtered dataframes.
 #' @note If "breaks" is missing, filter will be applied on the whole sequence and return a list with a single dataframe.
-SensorData.filter.butterworth = function(sensorData, breaks, Fs, Fc, order, type = "high"){
+SensorData.filter.iir = function(sensorData, breaks, Fs, Fc, order, type = "high", filter = "butter"){
   nyquist=Fs/2;
 
-  coeffs =butter(order,Fc/nyquist,type);
+  coeffs = switch(filter, 
+         butter = butter(order,Fc/nyquist,type),
+         chebyI = cheby1(order, 0.05, W = Fc/nyquist, type, plane = "z"),
+         chebyII = cheby2(order, 0.05, W = Fc/nyquist, type, plane = "z"),
+         ellip = signal::ellip(order, 0.05, 50, W = Fc/nyquist, type, plane = "z")
+        )
 
   nCols = ncol(sensorData)
 
@@ -98,10 +104,40 @@ SensorData.filter.butterworth = function(sensorData, breaks, Fs, Fc, order, type
       result = as.numeric(filtered)
     }, filt = coeffs$b, a = coeffs$a)
     filteredValue = colFilter(rows[2:nCols])
-    colnames(filteredValue) = paste0("BUTTERWORTH_",colnames(filteredValue))
+    colnames(filteredValue) = paste0("IIR_",colnames(filteredValue))
     filteredValue = cbind(rows[MHEALTH_CSV_TIMESTAMP_HEADER], filteredValue)
     return(filteredValue)
   })
+  return(result)
+}
+
+#' @name SensorData.filter.resample
+#' @title Apply bandlimited interpolation filter to the input sensor data frame each column over a certain break (e.g. hour, sec, min and etc.).
+#' @export
+#' @import signal plyr dplyr
+#' @param sensorData the input dataframe that matches mhealth specification.
+#' @param breaks "sec","min","hour","day","week","month","quarter" or "year"; or preceded by integer and space.
+#' @param origSr original sampling rate of each column
+#' @param newSr the desired sampling rate for each column
+#' @return list of filtered dataframes.
+#' @note If "breaks" is missing, filter will be applied on the whole sequence and return a list with a single dataframe.
+SensorData.filter.resample = function(sensorData, breaks, origSr, newSr){
+  nCols = ncol(sensorData)
+  if(missing(breaks) || is.null(breaks)){
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER])
+  }else{
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
+  }
+  result = sensorData %>% dlply(.(breaks), function(rows){
+    colFilter = colwise(.fun = function(x){
+      resampled = x %>% signal::resample(p = newSr, q = origSr) %>% as.numeric
+    })
+    resampledValue = colFilter(rows[2:nCols])
+    resampledTs = seq(from = rows[1, MHEALTH_CSV_TIMESTAMP_HEADER], to = rows[, MHEALTH_CSV_TIMESTAMP_HEADER] %>% last, length = nrow(resampledValue))
+    resampledValue = cbind(resampledTs, resampledValue)
+    colnames(resampledValue)[1] = MHEALTH_CSV_TIMESTAMP_HEADER
+    return(resampledValue)
+  }, .progress = "none", .inform = TRUE)
   return(result)
 }
 
