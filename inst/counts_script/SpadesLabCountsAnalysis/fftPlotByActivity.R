@@ -14,7 +14,6 @@ actigraph_folder = "actigraph_ready/csv"
 summary_folder = "summary"
 plot_folder = "plot"
 subjects = paste("SPADES", 1, sep = "_")
-epochs = c(10)
 
 # load mets values
 mets = read.csv(file.path(folder, "mets.SpadesInLab.csv"), as.is = TRUE)
@@ -60,15 +59,19 @@ for(subj in subjects){
     p = ggplot()
     for(fftData in fftDataByActivity){
       col_names = colnames(fftData$data)
+      scaledData = fftData$data[fftData$data[,1]>0.05,]
+      scaledData[,2] = scaledData[,2]/max(scaledData[,2])*maxOffset + (fftData$index - 1) * maxOffset
       fftData$data[,2] = fftData$data[,2] + (fftData$index - 1) * maxOffset
       fftData$data = fftData$data[fftData$data[,1]>0.05,]
-      p = p + geom_line(data = fftData$data, aes_string(x = col_names[1], y = col_names[2]))
+      
+      p = p + geom_line(data = fftData$data, aes_string(x = col_names[1], y = col_names[2])) + 
+          geom_line(data = scaledData, aes_string(x = col_names[1], y = col_names[2]), color = "gray", alpha = 0.5)
     }
 
     breaks= seq(from = 0, to = (length(fftDataByActivity) -1) * maxOffset, by = maxOffset)
     x_breaks = c(seq(from = 0, to = 1, by = 0.1), seq(from = 1, to = 5, by = 0.5), 10, 0.25, 2.5)
     p = p + scale_y_continuous(breaks = breaks, labels = labels, name = element_blank())
-    p = p + scale_x_log10(breaks = x_breaks, labels = x_breaks, name = "Hz", limits = c(0.05, 40))
+    p = p + scale_x_log10(breaks = x_breaks, labels = x_breaks, name = "Hz", limits = c(0.1, 40))
     p = p + geom_vline(xintercept = c(0.25, 0.6, 2.5, 5, 10), linetype = "dashed")
     p = p + theme_bw()
     p = p + ggtitle(paste(id, location, sep = "_"))

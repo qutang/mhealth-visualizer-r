@@ -17,12 +17,17 @@ subjects = paste("SPADES", 1, sep = "_")
 epochs = c(10)
 
 # load mets values
-mets = read.csv(file.path(folder, "mets.SpadesInLab.csv"), as.is = TRUE)
-mets[,2] = as.numeric(mets[,2])
+mets = read.csv(file.path(folder, "mets.SpadesInLab.csv"), stringsAsFactors = FALSE)
 mets[,1] = tolower(mets[,1])
 mets = with(mets, mets[order(METS),])
 
+# load scaling factor values
+scalingFactors = read.csv(file.path(folder, "scalingFactors.SpadesInLab.csv"), stringsAsFactors = FALSE)
+
 for(subj in subjects){
+  
+  listOfData = listOfSubjects[[subj]]$data
+  annotationData = listOfSubjects[[subj]]$annotation
   
   labels = tolower(unique(annotationData[,4]))
   
@@ -41,22 +46,49 @@ for(subj in subjects){
   listOfData = llply(listOfData, function(dataChunk){
     location = dataChunk$sensorLocation
     id = dataChunk$sensorId
-    ourCount = dataChunk$ourCount
-    simulatedActigraphCount = dataChunk$simulatedActigraphCount
+    count1 = dataChunk$count1
+    count2 = dataChunk$count2
+    count3 = dataChunk$count3
+    count4 = dataChunk$count4
     actigraphCount = dataChunk$actigraphCountData
     for(epoch in epochs){
+      selectedSF = scalingFactors[scalingFactors["epoch"] == epoch,]
       countByActivities = ldply(labels, function(label){
         clips = annotationData[annotationData[,4] == label,c(2,3)]
         
-        countByActivity = adply(clips, 1, function(clip){
-          countValue = SensorData.clip(ourCount[[epoch]], clip[1], clip[2])
+        countByActivity1 = adply(clips, 1, function(clip){
+          countValue = SensorData.clip(count1[[epoch]], clip[1], clip[2])
           countValue = countValue[c(-1,-nrow(countValue)),]
+          # scale
+          countValue[,2] = countValue[,2] * selectedSF[1, "slope"] + selectedSF[1, "intercept"]
+          countValue[countValue[,2] < 0, 2] = 0
           return(countValue)
         })
         
-        simulatedActigraphCountByActivity = adply(clips, 1, function(clip){
-          countValue = SensorData.clip(simulatedActigraphCount[[epoch]], clip[1], clip[2])
+        countByActivity2 = adply(clips, 1, function(clip){
+          countValue = SensorData.clip(count2[[epoch]], clip[1], clip[2])
           countValue = countValue[c(-1,-nrow(countValue)),]
+          # scale
+          countValue[,2] = countValue[,2] * selectedSF[1, "slope"] + selectedSF[1, "intercept"]
+          countValue[countValue[,2] < 0, 2] = 0
+          return(countValue)
+        })
+        
+        countByActivity3 = adply(clips, 1, function(clip){
+          countValue = SensorData.clip(count3[[epoch]], clip[1], clip[2])
+          countValue = countValue[c(-1,-nrow(countValue)),]
+          # scale
+          countValue[,2] = countValue[,2] * selectedSF[1, "slope"] + selectedSF[1, "intercept"]
+          countValue[countValue[,2] < 0, 2] = 0
+          return(countValue)
+        })
+        
+        countByActivity4 = adply(clips, 1, function(clip){
+          countValue = SensorData.clip(count4[[epoch]], clip[1], clip[2])
+          countValue = countValue[c(-1,-nrow(countValue)),]
+          # scale
+          countValue[,2] = countValue[,2] * selectedSF[1, "slope"] + selectedSF[1, "intercept"]
+          countValue[countValue[,2] < 0, 2] = 0
           return(countValue)
         })
         
@@ -66,40 +98,56 @@ for(subj in subjects){
           return(countValue)
         })
 
-        meanValue = mean(countByActivity[,4]) * 200
-        stdValue = sd(countByActivity[,4]) * 200
-        boxValue = boxplot.stats(countByActivity[,4])
-        boxValue$stats = boxValue$stats * 200
+        meanValue1 = mean(countByActivity1[,4])
+        stdValue1 = sd(countByActivity1[,4])
+        boxValue1 = boxplot.stats(countByActivity1[,4])
+        boxValue1$stats = boxValue1$stats
         
-        sim_acti_meanValue = mean(simulatedActigraphCountByActivity[,4]) * 200
-        sim_acti_stdValue = sd(simulatedActigraphCountByActivity[,4]) * 200
-        sim_acti_boxValue = boxplot.stats(simulatedActigraphCountByActivity[,4])
-        sim_acti_boxValue$stats = sim_acti_boxValue$stats * 200
+        meanValue2 = mean(countByActivity2[,4])
+        stdValue2 = sd(countByActivity2[,4])
+        boxValue2 = boxplot.stats(countByActivity2[,4])
+        boxValue2$stats = boxValue2$stats
+        
+        meanValue3 = mean(countByActivity3[,4])
+        stdValue3 = sd(countByActivity3[,4])
+        boxValue3 = boxplot.stats(countByActivity3[,4])
+        boxValue3$stats = boxValue3$stats
+        
+        meanValue4 = mean(countByActivity4[,4])
+        stdValue4 = sd(countByActivity4[,4])
+        boxValue4 = boxplot.stats(countByActivity4[,4])
+        boxValue4$stats = boxValue4$stats
         
         actiMeanValue = mean(actigraphCountByActivity[,4])
         actiStdValue = sd(actigraphCountByActivity[,4])
         actiBoxValue = boxplot.stats(actigraphCountByActivity[,4])
         
-        
         met_value = mets[mets[,1] == label,2]
         corrected_met_value = mets[mets[,1] == label,3]
         
-        result = data.frame(ACTIVITY_NAME = label, mean = meanValue, std = stdValue, 
-                            ymin = boxValue$stats[1], lower = boxValue$stats[2],
-                            middle = boxValue$stats[3], higher = boxValue$stats[4], ymax = boxValue$stats[5], 
-                            mean_sim_acti = sim_acti_meanValue, std_sim_acti = sim_acti_stdValue, 
-                            ymin_sim_acti = sim_acti_boxValue$stats[1], lower_sim_acti = sim_acti_boxValue$stats[2],
-                            middle_sim_acti = sim_acti_boxValue$stats[3], higher_sim_acti = sim_acti_boxValue$stats[4], ymax_sim_acti = sim_acti_boxValue$stats[5], 
+        result = data.frame(ACTIVITY_NAME = label, 
+                            mean1 = meanValue1, std1 = stdValue1, 
+                            ymin1 = boxValue1$stats[1], lower1 = boxValue1$stats[2],
+                            middle1 = boxValue1$stats[3], higher1 = boxValue1$stats[4], ymax1 = boxValue1$stats[5], 
+                            mean2 = meanValue2, std2 = stdValue2, 
+                            ymin2 = boxValue2$stats[1], lower2 = boxValue2$stats[2],
+                            middle2 = boxValue2$stats[3], higher2 = boxValue2$stats[4], ymax2 = boxValue2$stats[5], 
+                            mean3 = meanValue3, std3 = stdValue3, 
+                            ymin3 = boxValue3$stats[1], lower3 = boxValue3$stats[2],
+                            middle3 = boxValue3$stats[3], higher3 = boxValue3$stats[4], ymax3 = boxValue3$stats[5], 
+                            mean4 = meanValue4, std4 = stdValue4, 
+                            ymin4 = boxValue4$stats[1], lower4 = boxValue4$stats[2],
+                            middle4 = boxValue4$stats[3], higher4 = boxValue4$stats[4], ymax4 = boxValue4$stats[5], 
                             mean_acti = actiMeanValue, std_acti = actiStdValue,
                             ymin_acti = actiBoxValue$stats[1], lower_acti = actiBoxValue$stats[2],
                             middle_acti = actiBoxValue$stats[3], higher_acti = actiBoxValue$stats[4], ymax_acti = actiBoxValue$stats[5],met = met_value,corrected_met = corrected_met_value, 
-                            n = boxValue$n)
+                            n = boxValue1$n)
         return(result)
       })
       
       # scale mets value
       shift_value = min(countByActivities[,"corrected_met"])
-      scale_factor = max(countByActivities[,"middle"])/max(countByActivities[,"corrected_met"] - shift_value)
+      scale_factor = max(countByActivities[,"middle2"])/max(countByActivities[,"corrected_met"] - shift_value)
       countByActivities[,"corrected_met"] = (countByActivities[,"corrected_met"] - shift_value)*scale_factor
       countByActivities[,"met"] = (countByActivities[,"met"] - shift_value)*scale_factor
       
@@ -109,20 +157,24 @@ for(subj in subjects){
       countByActivities = countByActivities[order(countByActivities[,"met"]),]
       levels = as.character(countByActivities[,1])
       countByActivities[,1] = factor(countByActivities[,1], levels = levels)
-      
+      alpha = 0.4
       p = ggplot(countByActivities, aes(ACTIVITY_NAME)) + 
-        geom_boxplot(aes(x = ACTIVITY_NAME, ymin = ymin, lower = lower, middle = middle, upper = higher, ymax = ymax, color = "our count"), stat = "identity", fill = NA) + 
-            geom_boxplot(aes(x = ACTIVITY_NAME, ymin = ymin_acti, lower = lower_acti, middle = middle_acti, upper = higher_acti, ymax = ymax_acti, color = "actigraph count"), stat = "identity", fill = NA) +
-            # geom_boxplot(aes(x = ACTIVITY_NAME, ymin = ymin_sim_acti, lower = lower_sim_acti, middle = middle_sim_acti, upper = higher_sim_acti, ymax = ymax_sim_acti, color = "simed actigraph count"), stat = "identity", fill = NA) +
-            geom_boxplot(aes(x = ACTIVITY_NAME, lower = met, ymin = met, ymax = met, upper = met, middle = met, color = "met"), stat = "identity", fill = NA) +
-            geom_boxplot(aes(x = ACTIVITY_NAME, lower = corrected_met, ymin = corrected_met, ymax = corrected_met, upper = corrected_met, middle = corrected_met, color = "met"), stat = "identity", fill = NA) + coord_flip()
+        geom_boxplot(aes(x = ACTIVITY_NAME, ymin = ymin_acti, lower = lower_acti, middle = middle_acti, upper = higher_acti, ymax = ymax_acti, color = "actigraph count"), stat = "identity", fill = NA, alpha = alpha) +
+        geom_boxplot(aes(x = ACTIVITY_NAME, lower = corrected_met, ymin = corrected_met, ymax = corrected_met, upper = corrected_met, middle = corrected_met, color = "corrected met"), stat = "identity", fill = NA, alpha = alpha) +
+        geom_boxplot(aes(x = ACTIVITY_NAME, ymin = ymin1, lower = lower1, middle = middle1, upper = higher1, ymax = ymax1, color = "count (0.6~10)"), stat = "identity", fill = NA, alpha = alpha) + 
+            
+        geom_boxplot(aes(x = ACTIVITY_NAME, ymin = ymin2, lower = lower2, middle = middle2, upper = higher2, ymax = ymax2, color = "count (0.25~5)"), stat = "identity", fill = NA, alpha = alpha) +
+        geom_boxplot(aes(x = ACTIVITY_NAME, ymin = ymin3, lower = lower3, middle = middle3, upper = higher3, ymax = ymax3, color = "count (0.25~2.5)"), stat = "identity", fill = NA, alpha = alpha) +
+        geom_boxplot(aes(x = ACTIVITY_NAME, ymin = ymin4, lower = lower4, middle = middle4, upper = higher4, ymax = ymax4, color = "count (0.25~10)"), stat = "identity", fill = NA, alpha = alpha) +
+            # geom_boxplot(aes(x = ACTIVITY_NAME, lower = met, ymin = met, ymax = met, upper = met, middle = met, color = "met"), stat = "identity", fill = NA, alpha = alpha) +
+        coord_flip()
       
-      p = p + theme_few() + ggtitle(paste(id, location, sep = "_")) + guides(alpha = FALSE, color = FALSE) + theme(legend.title = element_blank()) + ylim(0, 5000)
+      p = p + theme_few() + ggtitle(paste(id, location, sep = "_")) + guides(alpha = FALSE) + ylim(0, 9000) + theme(legend.title = element_blank()) + scale_color_manual(values = c("#000000", "purple", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00", "#CC79A7"))
       dataChunk$countByActivityPlot[[epoch]] = p
       boxplot_filename = paste(id, location, "countByActivities", paste0(epoch, "sec.png"), sep = "_")
       boxplot_filepath = normalizePath(file.path(folder, subj, plot_folder, "countByActivities"))
       dir.create(boxplot_filepath, recursive = TRUE)
-      ggsave(filename = boxplot_filename, path = boxplot_filepath, plot = p, width = 6, height = 4, scale = 2)
+      ggsave(filename = boxplot_filename, path = boxplot_filepath, plot = p, width = 8, height = 5, scale = 2)
     }
       
     return(dataChunk)
