@@ -71,9 +71,10 @@ FrequencyResponse.changeResolution = function(frData, resolution = 0.01){
 #' @export
 #' @import ggplot2 stringr reshape2 ggthemes
 #' @param frData should be compatible with frequency response data format, with the first column be the frequencies, following by numeric columns
-#' @param scale "normal" or "log", plot values in normal scale or log10 scale. Default is "normal".
+#' @param scale "normal" or "log" or "db", plot values in normal scale or log10 or dB scale. Default is "normal".
 #' @param resolution plot resolution for frequencies. If resolution is higher than the actual data resolution, it will do nothing, if resolution is lower than the actual data, it will skip some of the data points evenly. Default is 0.01Hz.
-FrequencyResponse.spectrum.ggplot = function(frData, scale = "normal", resolution = 0.01){
+#' @param label if TRUE, show dominant frequency values.
+FrequencyResponse.spectrum.ggplot = function(frData, scale = "normal", resolution = 0.01, label = TRUE){
   data = frData
   nCols = ncol(data)
   nRows = nrow(data)
@@ -87,9 +88,11 @@ FrequencyResponse.spectrum.ggplot = function(frData, scale = "normal", resolutio
 
   titleText = paste("Frequency Response")
 
-  data = melt(data, id = c(MHEALTH_CSV_FFT_FREQUENCY_HEADER))
+  data = melt(data, id = c(MHEALTH_CSV_FREQUENCY_HEADER))
+  
+  if(scale == "db"){data$value = 10 * log10(data$value)}
 
-  p = ggplot(data = data, aes_string(x = MHEALTH_CSV_FFT_FREQUENCY_HEADER, y = "value", colour = "variable"))
+  p = ggplot(data = data, aes_string(x = MHEALTH_CSV_FREQUENCY_HEADER, y = "value", colour = "variable"))
 
   p = p + geom_line() + geom_point() +
     labs(title = titleText, x = xlab, y = ylab, colour = "type")
@@ -97,7 +100,7 @@ FrequencyResponse.spectrum.ggplot = function(frData, scale = "normal", resolutio
   switch(scale,
          log = {p = p + scale_y_log10()})
 
-  p = p + scale_color_few(labels = labelNames) + theme_bw() + theme(legend.position="bottom")
+  p = p + theme_bw() + theme(legend.position="bottom")
 
   p
 
