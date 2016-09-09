@@ -1,0 +1,23 @@
+------------ Data File Created By ActiGraph Link ActiLife v6.13.2 Firmware v1.4.0 date format M/d/yyyy Filter Normal -----------
+Serial Number: TASACTIGRAPHSPECTRUM
+Start Time 18:00:00
+Start Date 1/1/2010
+Epoch Period (hh:mm:ss) 00:00:05
+Download Time 19:00:00
+Download Date 1/1/2010
+Current Memory Address: 0
+Current Battery Voltage: 4.19     Mode = 0
+--------------------------------------------------
+timestamp,axis1
+2010-01-01 18:00:00,542
+2010-01-01 18:00:05,554
+2010-01-01 18:00:10,581
+2010-01-01 18:00:15,554
+2010-01-01 18:00:20,581
+2010-01-01 18:00:25,554
+2010-01-01 18:00:30,581
+2010-01-01 18:00:35,554
+2010-01-01 18:00:40,581
+2010-01-01 18:00:45,554
+2010-01-01 18:00:50,581
+2010-01-01 18:00:55,554
