@@ -4,18 +4,34 @@
 \alias{SensorData.summary.counts.compute}
 \title{Compute activity counts using [citation] algorithm}
 \usage{
-SensorData.summary.counts.compute(sensorData, breaks, filterType = "butter",
-  cutoffs = c(0.6, 10), integrationType = "trapz")
+SensorData.summary.counts.compute(sensorData, breaks, range, noise_std,
+  k = 0.1, spar = 0.4, confident = 0.5, resample = 50,
+  filterType = "butter", cutoffs = c(0.2, 5), integrationType = "trapz")
 }
 \arguments{
 \item{sensorData}{input sensor data frame that fits the mhealth specification}
 
 \item{breaks}{epoch to compute counts on}
 
-\item{filterType}{"butter", "bessel"}
+\item{range}{dynamic range of the device (two element vector)}
 
-\item{cutoffs}{cut off frequencies to be used in filtering, default is 0.6Hz and 10Hz. If choosing bessel, the low pass cut off would be multipled by 2 when being used.}
+\item{noise_std}{noise level should be between 0.01 and 0.1}
 
-\item{integrationType}{the integration method to be used: "trapz", "power", "sum", "meanBySecond", "meanBySize"}
+\item{k}{neighborhood duration for extrapolation in seconds, default is 0.1 seconds}
+
+\item{spar}{smoothing parameter for extrapolation, default is 0.4}
+
+\item{confident}{confident level of judging maxed out region}
+
+\item{resample}{set 0 to not use resampling, otherwise set to the desired sampling rate in numerical, e.g 40 for 40Hz. Default is 50.}
+
+\item{filterType}{"butter", "ellip", "bessel"}
+
+\item{cutoffs}{cut off frequencies to be used in filtering, default is 0.3Hz and 5Hz. If choosing bessel, the low pass cut off would be multipled by 2 when being used.}
+
+\item{integrationType}{the integration method to be used: "trapz", "absoluteMeanByPoints".}
+}
+\value{
+Will return NA if a segment break is too short to have enough samples to compute AUC
 }
 

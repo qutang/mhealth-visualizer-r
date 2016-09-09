@@ -4,6 +4,7 @@
 \alias{AnnotationData.simplify.filter}
 \title{filter out/include only simplified annotation data frame with the presented labels}
 \usage{
-AnnotationData.simplify.filter(annotationData, labels, include.labels = TRUE)
+AnnotationData.simplify.filter(annotationData, labels, include.labels = TRUE,
+  and.logic = TRUE)
 }
 
