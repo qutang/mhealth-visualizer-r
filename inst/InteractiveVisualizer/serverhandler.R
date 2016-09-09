@@ -336,7 +336,7 @@ handleComputeSummaryClicked = function(input, session) {
                    rValues$summaryData = SummaryData.simpleMean(merged, breaks = interval)
                  },
                  AUC = {
-                   rValues$summaryData = SummaryData.auc(merged, breaks = interval)
+                   rValues$summaryData = SummaryData.auc(merged, breaks = interval, rectify = TRUE)
                  },
                  SamplingRate = {
                    rValues$summaryData = SamplingRate.summary(merged, breaks = interval)
