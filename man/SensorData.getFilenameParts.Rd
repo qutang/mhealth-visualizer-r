@@ -6,4 +6,3 @@
 \usage{
 SensorData.getFilenameParts(filename)
 }
-

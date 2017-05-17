@@ -16,4 +16,3 @@ SensorData.clip(sensorData, startTime, endTime)
 \note{
 Make sure that the data frame is including timestamps.
 }
-

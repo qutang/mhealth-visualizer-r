@@ -14,4 +14,3 @@ SensorData.split(sensorData, breaks = "hour")
 \value{
 list of splitted dataframes
 }
-

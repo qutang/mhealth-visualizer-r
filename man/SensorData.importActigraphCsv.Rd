@@ -22,4 +22,3 @@ Please make sure the Actigraph raw csv file has timestamp included. The Actigrap
 \seealso{
 [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importBinary`](SensorData.importBinary.html)
 }
-

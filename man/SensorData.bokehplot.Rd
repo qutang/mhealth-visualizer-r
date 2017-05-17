@@ -12,4 +12,3 @@ SensorData.bokehplot(sensorData)
 \description{
 All columns will be plotted on the same graph with different colors.
 }
-

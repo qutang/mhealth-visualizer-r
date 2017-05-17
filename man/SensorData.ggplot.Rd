@@ -12,4 +12,3 @@ SensorData.ggplot(sensorData)
 \description{
 All columns will be plotted on the same graph with different colors.
 }
-

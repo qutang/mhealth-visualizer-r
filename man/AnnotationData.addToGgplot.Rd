@@ -11,4 +11,3 @@ AnnotationData.addToGgplot(p, annotationData)
 
 \item{annotationData}{input annotation dataframe that matches mhealth specification.}
 }
-

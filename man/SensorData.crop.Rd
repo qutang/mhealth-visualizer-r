@@ -14,4 +14,3 @@ SensorData.crop(sensorData, range = NULL)
 \value{
 dataframe after being cropped
 }
-

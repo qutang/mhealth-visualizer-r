@@ -14,4 +14,3 @@ SummaryData.ggplot(summaryData, plotType = "line")
 \description{
 All columns will be on the same graph with different colors.
 }
-

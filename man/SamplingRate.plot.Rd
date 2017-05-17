@@ -13,4 +13,3 @@ SamplingRate.plot(sr_dat, unit = "Count", ref)
 
 \item{ref}{reference value to be plotted as dashed line if not missing; or used to calculate data loss percentage.}
 }
-

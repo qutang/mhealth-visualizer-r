@@ -24,4 +24,3 @@ SensorData.extrapolate.v2(sensorData, ...)
 \author{
 Qu Tang
 }
-

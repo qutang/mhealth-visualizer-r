@@ -7,4 +7,3 @@
 SensorData.interpolate(sensorData, method = "spline_natural",
   polyDegree = 3)
 }
-

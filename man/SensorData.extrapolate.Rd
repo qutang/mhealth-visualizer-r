@@ -20,4 +20,3 @@ SensorData.extrapolate(sensorData, lambda = 1, interpolate, range, noiseStd)
 \author{
 Qu Tang
 }
-

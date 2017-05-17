@@ -1,6 +1,6 @@
-Package: mhealthformatsupportr
+Package: mHealthVisualizer
 Type: Package
-Title: mHealth Format Support Package for R
+Title: Interactive visualizer for annotated mhealth data 
 Version: 0.18
 Date: 2015-07-06
 Author: Qu Tang
@@ -8,11 +8,9 @@ Maintainer: Qu Tang <tqshelly@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
 LazyData: TRUE
-Requirement: Java ( >= 1.8.45 )
 Imports:
     plyr,
     lubridate,
-    rJava,
     stringr,
     shiny,
     foreach,
@@ -30,11 +28,10 @@ Imports:
     rbokeh,
     readr,
     R.utils,
-    Cairo,
     akima
 Suggests:
     testthat,
     knitr,
     rmarkdown
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 VignetteBuilder: knitr

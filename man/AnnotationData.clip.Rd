@@ -19,4 +19,3 @@ clipped annotation dataframe
 \note{
 Make sure that the data frame is compatible with mhealth annotation data file format.
 }
-

@@ -7,4 +7,3 @@
 AnnotationData.filter.original(annotationData, ontologyData, labels = NULL,
   categories = NULL, include.labels = FALSE, include.categories = FALSE)
 }
-

@@ -12,4 +12,3 @@ SensorData.importActigraphCountCsv(filename, count_col, count_col_name)
 \seealso{
 [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importBinary`](SensorData.importBinary.html)
 }
-

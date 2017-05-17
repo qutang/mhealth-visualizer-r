@@ -20,4 +20,3 @@ SensorData.filter.bessel(sensorData, breaks, Fs, Fc, order)
 \note{
 If "breaks" is missing, filter will be applied on the whole sequence and return a list with a single dataframe.
 }
-

@@ -16,7 +16,7 @@ MhealthInteractiveVisualizer.run = function(volumes) {
 #' @import shiny
 #' @export
 MhealthInteractiveVisualizer.getApp = function(volumes = NULL){
-  appFolder = system.file('InteractiveVisualizer', package='mhealthformatsupportr')
+  appFolder = system.file('InteractiveVisualizer', package='mHealthVisualizer')
   source(file.path(appFolder, "server.R"), local = TRUE)
   source(file.path(appFolder, "ui.R"), local = TRUE)
   app = shinyApp(ui = ui, server = server)

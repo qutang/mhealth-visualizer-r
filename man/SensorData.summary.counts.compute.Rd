@@ -34,4 +34,3 @@ SensorData.summary.counts.compute(sensorData, breaks, range, noise_std,
 \value{
 Will return NA if a segment break is too short to have enough samples to compute AUC
 }
-

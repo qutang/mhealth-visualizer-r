@@ -19,4 +19,3 @@ For example, if level is "year", sensor data will be trimmed according to the pr
 \note{
 Make sure that the data frame is including timestamps.
 }
-

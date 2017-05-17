@@ -6,4 +6,3 @@
 \usage{
 SensorData.getSamplingRate(sensorData)
 }
-

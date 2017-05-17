@@ -6,4 +6,3 @@
 \usage{
 SensorData.io.writeAsActigraphRaw(folder, sensorData, headerStr, custom_name)
 }
-

@@ -16,4 +16,3 @@ FrequencyResponse.spectrum.ggplot(frData, scale = "normal",
 
 \item{label}{if TRUE, show dominant frequency values.}
 }
-

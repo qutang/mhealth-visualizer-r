@@ -6,4 +6,3 @@
 \usage{
 AnnotationData.io.getOntologyId(filename)
 }
-

@@ -11,4 +11,3 @@ AnnotationData.getLabelNames(annotationData, currentTime)
 
 \item{currentTime}{POSIXct date object of a timestamp to search for the corresponding labels.}
 }
-

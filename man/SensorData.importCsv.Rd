@@ -17,4 +17,3 @@ input file must match mhealth specification. Note that the time zone of timestam
 \seealso{
 [`SensorData.importBinary`](SensorData.importBinary.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html)
 }
-

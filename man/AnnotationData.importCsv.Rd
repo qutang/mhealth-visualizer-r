@@ -12,4 +12,3 @@ AnnotationData.importCsv(filename)
 \note{
 Time zone is from local computer for now. But should be changed to use filename in the future.
 }
-

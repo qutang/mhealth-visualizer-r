@@ -12,4 +12,3 @@ SensorData.plot(sensorData)
 \description{
 All columns will be plotted on the same graph.
 }
-

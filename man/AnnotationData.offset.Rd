@@ -14,4 +14,3 @@ AnnotationData.offset(annotationData, offsetValue = 0)
 \value{
 annotation dataframe after timestamps being offset.
 }
-

@@ -14,4 +14,3 @@ SensorData.merge(listOfData, ...)
 \note{
 Make sure that the data frame is including timestamps.
 }
-

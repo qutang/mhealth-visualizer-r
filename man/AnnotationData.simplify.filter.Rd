@@ -7,4 +7,3 @@
 AnnotationData.simplify.filter(annotationData, labels, include.labels = TRUE,
   and.logic = TRUE)
 }
-

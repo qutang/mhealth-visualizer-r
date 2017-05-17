@@ -11,4 +11,3 @@ AnnotationData.merge(annotationDataList, ...)
 
 \item{...}{other optional annotation data frames}
 }
-

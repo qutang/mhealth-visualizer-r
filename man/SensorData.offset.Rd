@@ -14,4 +14,3 @@ SensorData.offset(sensorData, offsetValue = 0)
 \value{
 dataframe after timestamps being offset
 }
-

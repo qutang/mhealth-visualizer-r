@@ -7,4 +7,3 @@
 SensorData.createActigraphCsvHeader(startTime, downloadTime, samplingRate,
   sensorId, firmVersion, softVersion)
 }
-

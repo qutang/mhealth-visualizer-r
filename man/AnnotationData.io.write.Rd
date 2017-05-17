@@ -31,4 +31,3 @@ AnnotationData.io.write(folder, annotationData, ontologyId = NA,
 
 \item{header}{whether to add column header or not}
 }
-

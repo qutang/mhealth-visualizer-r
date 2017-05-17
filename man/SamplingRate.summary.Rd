@@ -17,4 +17,3 @@ Returned dataframe would have headers: `HEADER_TIME_STAMP, SAMPLING_RATE`.
 \note{
 If "breaks" is missing, filter will be applied on the whole sequence and return a list with a single dataframe.
 }
-

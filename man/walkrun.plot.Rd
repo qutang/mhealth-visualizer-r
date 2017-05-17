@@ -25,4 +25,3 @@ walkrun.plot(walkrun_count, layout = SUBJECT ~ LOCATION,
 \note{
 This function would be only feasible for the output of walkrun.count function of walkrun type of data. There are two dataset attached with the package "walkrun1" and "walkrun2". Please use `?walkrun1` or `?walkrun2` to check its format.
 }
-

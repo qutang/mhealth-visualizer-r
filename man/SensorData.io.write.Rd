@@ -35,4 +35,3 @@ SensorData.io.write(folder, sensorData, sensorType = NA, dataType = NA,
 
 \item{header}{whether to add column header or not}
 }
-

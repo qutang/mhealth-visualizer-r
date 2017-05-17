@@ -9,4 +9,3 @@ MhealthInteractiveVisualizer.getApp(volumes = NULL)
 \description{
 This can be used if you want to embed the interactive visualizer in something else
 }
-

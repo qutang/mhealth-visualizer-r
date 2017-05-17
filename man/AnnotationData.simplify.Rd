@@ -6,4 +6,3 @@
 \usage{
 AnnotationData.simplify(annotationData)
 }
-

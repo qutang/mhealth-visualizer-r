@@ -6,4 +6,3 @@
 \usage{
 SensorData.as(df, type = "ACCELEROMETER")
 }
-

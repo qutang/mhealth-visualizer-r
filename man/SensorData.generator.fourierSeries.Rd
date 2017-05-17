@@ -45,4 +45,3 @@ frequency component will be generated with formula: `n * fstep * fbase`. `n` is 
 \note{
 If arguments (range, fbase, fstep, ampMin, ampMax, phaseMin, phaseMax, noiseStd) are vectors, multiple columns will be generated accordingly. But the vectors should have the same length.
 }
-

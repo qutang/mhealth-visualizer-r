@@ -6,4 +6,3 @@
 \usage{
 SensorData.parseActigraphCsvHeader(filename, header = TRUE)
 }
-

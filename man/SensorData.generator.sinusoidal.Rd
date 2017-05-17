@@ -31,4 +31,3 @@ SensorData.generator.sinusoidal(startTime, endTime, Fs, range, f, amp,
 \note{
 If arguments (range, f, amp, phase, noiseStd) are vectors, multiple columns will be generated accordingly. But the vectors should have the same length. Values will be cut off if beyonding the dynamic range.
 }
-

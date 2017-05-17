@@ -14,4 +14,3 @@ FrequencyResponse.changeResolution(frData, resolution = 0.01)
 \description{
 If resolution is higher than the actual data resolution, it will do nothing, if resolution is lower than the actual data, it will down sample the frequency data by skipping some of the data points evenly.
 }
-

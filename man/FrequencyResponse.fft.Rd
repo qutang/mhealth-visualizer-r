@@ -19,4 +19,3 @@ FrequencyResponse.fft(sensorData, Fs, type = "magnitude",
 \value{
 frequency dataframe with HEADER `HEADER_FREQUENCY_STAMP,[FFTMAGNITUDE/FFTVECTOR]_[ORIGINAL_HEADER]`.
 }
-

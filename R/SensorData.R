@@ -50,53 +50,6 @@ SensorData.importCsv = function(filename, violate = FALSE) {
   return(dat)
 }
 
-#' @name SensorData.importBinary
-#' @title Import and decode binary file from the smart watch and load into dataframe as mhealth format.
-#' @note It will call `SensorData.importCsv` after decoding.
-#' @export
-#' @import rJava
-#' @param filename full file path of input smart watch binary data file.
-#' @param dest full directory path of destination folder. Default is ".fromBinary" folder of current working directory.
-#' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importGT3X`](SensorData.importGT3X.html), [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html)
-SensorData.importBinary = function(filename, dest = file.path(getwd(), ".fromBinary")) {
-  if (dir.exists(dest)) {
-    unlink(dest, recursive = TRUE, force = TRUE)
-  }
-  dir.create(dest, recursive = TRUE)
-  paras = c(filename, dest)
-  J("edu.neu.mhealthformat.utils.converter.WatchBinaryDecoder")$main(.jarray(paras))
-  # load iteratively into dataframe
-  csvFile = list.files(path = dest, full.names = TRUE)[1]
-  return(SensorData.importCsv(csvFile))
-}
-
-#' @name SensorData.importGT3X
-#' @title Import and decode GT3X files and load into dataframe as mhealth format.
-#' @export
-#' @import rJava
-#' @note it will call `SensorData.importCsv` after decoding GT3X binary data.
-#' @param filename full file path of input gt3x binary data file, should have extension "gt3x".
-#' @param dest full directory path of destination folder. Default is ".fromGT3X" folder of current working directory.
-#' @param split Whether to split input data into hourly dataframe list.
-#' @return list of dataframes storing decoded gt3x sensor data file.
-#' @seealso [`SensorData.importCsv`](SensorData.importCsv.html), [`SensorData.importBinary`](SensorData.importBinary.html), [`SensorData.importActigraphCsv`](SensorData.importActigraphCsv.html)
-SensorData.importGT3X = function(filename, dest = file.path(getwd(), ".fromGT3X"), split = FALSE) {
-  dir.create(dest, recursive = TRUE)
-  if (split) {
-    para_split = "SPLIT"
-  }else{
-    para_split = "NO_SPLIT"
-  }
-  paras = c(filename, dest, "G_VALUE", "WITH_TIMESTAMP", para_split)
-  J("com.qmedic.data.converter.gt3x.ConverterMain")$main(.jarray(paras))
-
-  # load iteratively into dataframe
-  csvFiles = list.files(dest, pattern = ".csv", full.names = TRUE, recursive = TRUE)
-  datList = lapply(csvFiles, function(file) {
-    return(SensorData.importCsv(filename = file))
-  })
-}
-
 #' @name SensorData.importActigraphCsv
 #' @title Import and convert Actigraph raw csv files and load into data frame as in mhealth format.
 #' @export

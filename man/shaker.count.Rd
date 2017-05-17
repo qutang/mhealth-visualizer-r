@@ -24,4 +24,3 @@ shaker.count(raw_data = "shaker1", epoches = c("2 sec", "5 sec", "10 sec",
 \note{
 This function would be only feasible for shaker type of data. There are two dataset attached with the package "shaker1" and "shaker2". Please use `?shaker1` or `?shaker2` to check its format.
 }
-

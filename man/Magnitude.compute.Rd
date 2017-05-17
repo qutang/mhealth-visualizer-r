@@ -12,4 +12,3 @@ Magnitude.compute(sensorData)
 \value{
 dataframe with headers: `HEADER_CSV_TIMESTAMP,MAGNITUDE_[ORIGINAL_HEADER]`
 }
-
