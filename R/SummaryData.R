@@ -25,6 +25,34 @@ SummaryData.simpleMean = function(sensorData, breaks){
   return(result)
 }
 
+#' @name SummaryData.meanAngle
+#' @title Calculate mean angle over a certain time break (e.g. hour, min)
+#' @export
+#' @note If certain break is not provided or missing, will use the entire sequence. The column name (except for the first column) of output dataframe would be: [SUMMARY\_METHOD]\_INPUT\_HEADER\_NAME
+#' @import plyr
+#' @note If certain break is not provided or missing, will use the entire sequence
+#' @param sensorData input dataframe that matches mhealth sensor data format.
+#' @param breaks could be "sec", "min", "hour", "day", "week", "month", "quarter" or "year"; or preceded by an interger and a space.
+SummaryData.meanAngle = function(sensorData, breaks){
+  nCols = ncol(sensorData)
+  if(missing(breaks) || is.null(breaks)){
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER])
+  }else{
+    sensorData$breaks = .SummaryData.getBreaks(ts = sensorData[,MHEALTH_CSV_TIMESTAMP_HEADER], breaks = breaks)
+  }
+  result = plyr::ddply(sensorData,.(breaks), function(rows){
+    meanValues = colMeans(rows[2:nCols], na.rm = TRUE)
+    meanAngles = acos(meanValues / sqrt(sum(meanValues^2))) * 180 / pi
+    return(meanAngles)
+  })
+  names(result)[1] = MHEALTH_CSV_TIMESTAMP_HEADER
+  for(i in 2:nCols){
+    names(result)[i] = paste("MeanAngle", colnames(sensorData)[i],sep="_")
+  }
+  result[MHEALTH_CSV_TIMESTAMP_HEADER] = as.POSIXct(result[[MHEALTH_CSV_TIMESTAMP_HEADER]])
+  return(result)
+}
+
 #' @name SummaryData.auc
 #' @title Calculate summary value (area under curve) for each column over a certain break (e.g. hour, min).
 #' @note If certain break is not provided or missing, will use the entire sequence. The column name (except for the first column) of output dataframe would be: [SUMMARY\_METHOD]\_INPUT\_HEADER\_NAME.

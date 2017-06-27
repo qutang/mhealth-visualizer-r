@@ -1,7 +1,7 @@
 Package: mHealthVisualizer
 Type: Package
 Title: Interactive visualizer for annotated mhealth data 
-Version: 0.18
+Version: 0.19
 Date: 2015-07-06
 Author: Qu Tang
 Maintainer: Qu Tang <tqshelly@gmail.com>
