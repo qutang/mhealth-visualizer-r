@@ -6,3 +6,5 @@
 ^devtools$
 ^offline_data$
 ^data-raw$
+^packrat/
+^\.Rprofile$
