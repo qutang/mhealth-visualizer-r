@@ -1,3 +1,5 @@
+Because I no longer actively use R, and no longer actively use this app in my daily work. This repo is no longer maintained. Feel free to fork and work on your own version.
+
 # Shiny mHealth Visualizer 
 
 ## Installation
